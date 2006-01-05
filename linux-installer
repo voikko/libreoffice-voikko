@@ -1,0 +1,264 @@
+#!/bin/sh
+
+# This script is released under GNU General Public License and is based
+# on Debian installation scripts by Teemu Likonen <tlikonen@ulapland.fi>.
+# Modifications by Harri Pitkänen <hatapitk@cc.jyu.fi>
+
+PATH=/sbin:$PATH
+
+# Directory containing the package to be installed:
+MODULEDIR=.
+
+# Name of the language module:
+COMPONENT=$(find $MODULEDIR -maxdepth 1 -name LF_SHORTNAME-Linux_x86-*.uno.pkg -printf %f\\n | tail -n 1)
+
+# Function for printing messages in different languages:
+if [ $(locale | grep LC_MESSAGES | grep fi_FI.UTF-8) ]; then
+  MSG_LANG=fi_FI
+else
+  MSG_LANG=C
+fi
+function message() {
+  if [ "$MSG_LANG" == "fi_FI" ]; then
+    case $1 in
+    "user_installation")
+      echo Varoitus: asennus / asennuksen poisto suoritetaan vain käyttäjälle $(whoami)!
+      echo Jos haluat, että LF_FULLNAME tulee kaikkien käyttäjien käytettäväksi,
+      echo suorita tämä komento pääkäyttäjänä \(root\).
+      ;;
+    "process_running")
+      echo Näyttää siltä että OpenOffice.org on tällä hetkellä käynnissä tällä koneella.
+      echo Ongelmien välttämiseksi asennus / asennuksen poisto keskeytetään.
+      echo Sulje OpenOffice.org ja yritä uudelleen.
+      echo Jos olit juuri päivittämässä OpenOffice.orgia, suorita install-LF_SHORTNAME
+      echo pääkäyttäjänä jotta LF_FULLNAME varmasti toimisi oikein.
+      ;;
+    "wrong_directory")
+      echo Suorita tämä komento sellaisesta hakemistosta, joka sisältää ohjelman LF_FULLNAME UNO-paketin.
+      ;;
+    "install_ok")
+      echo LF_FULLNAME on asennettu onnistuneesti hakemistoon $2.
+      ;;
+    "install_failed")
+      echo Ohjelman LF_FULLNAME asennus epäonnistui hakemistossa $2.
+      ;;
+    "listing_failed")
+      echo Asennettujen pakettien listaaminen epäonnistui hakemistossa $2.
+      ;;
+    "uninstall_ok")
+      echo \(Vanha\) LF_FULLNAME on poistettu onnistuneesti hakemistosta $2.
+      ;;
+    "uninstall_failed")
+      echo \(Vanhan\) LF_FULLNAME -version poisto hakemistosta $2 epäonnistui.
+      ;;
+    "usage")
+      echo "Käyttö: install-LF_SHORTNAME --install [oo2_asennushakemisto] |"
+      echo "                           --uninstall [oo2_asennushakemisto] |"
+      echo "                           --uninstall-rpm-pkg oo2_rpm_paketti"
+      ;;
+    "searching_installations")
+      echo Etsitään asennettuja OpenOffice.orgin versioita ...
+      ;;
+    "need_cxxabi_1.2")
+      echo OpenOffice.org hakemistossa $2 on epäyhteensopiva tämän paketin kanssa. Tarvitset
+      echo Linux/gcc3.3-version ohjelmasta LF_FULLNAME.
+      ;;
+    "need_cxxabi_1.3")
+      echo Tämä on Linux/gcc3.3-versio ohjelmasta LF_FULLNAME, mutta OpenOffice.org hakemistossa
+      echo $2 toimii tavallisella versiolla.
+      ;;
+    esac
+  else
+    case $1 in
+    "user_installation")
+      echo Warning: performing installation/uninstallation only for user $(whoami)!
+      echo If you want LF_FULLNAME to be available to all users, please run this command
+      echo as root.
+      ;;
+    "process_running")
+      echo It seems that there are OpenOffice.org processes running.
+      echo To prevent problems, installation/uninstallation will be
+      echo aborted.
+      echo Please close all instances of OpenOffice.org and try again.
+      echo If you are trying to upgrade OpenOffice.org related
+      echo packages, please run install-LF_SHORTNAME as root
+      echo to make sure that LF_FULLNAME will be available to them.
+      ;;
+    "wrong_directory")
+      echo Please run this script from a directory containing the LF_FULLNAME UNO package to be installed.
+      ;;
+    "install_ok")
+      echo LF_FULLNAME installed succesfully for $2.
+      ;;
+    "install_failed")
+      echo Installation of LF_FULLNAME failed for $2.
+      ;;
+    "listing_failed")
+      echo Could not list installed packages for $2.
+      ;;
+    "uninstall_ok")
+      echo \(Old\) LF_FULLNAME uninstalled succesfully for $2.
+      ;;
+    "uninstall_failed")
+      echo Uninstallation of \(old\) LF_FULLNAME failed for $2.
+      ;;
+    "usage")
+      echo "Usage: install-LF_SHORTNAME --install [oo2_installation_directory] |"
+      echo "                          --uninstall [oo2_installation_directory] |"
+      echo "                          --uninstall-rpm-pkg oo2_packagename"
+      ;;
+    "searching_installations")
+      echo Searching for installations of OpenOffice.org ...
+      ;;
+    "need_cxxabi_1.2")
+      echo OpenOffice.org in $2 is incompatible with this package. You need
+      echo the Linux/gcc3.3 version of LF_FULLNAME instead.
+      ;;
+    "need_cxxabi_1.3")
+      echo This is the Linux/gcc3.3 version of LF_FULLNAME but OpenOffice.org in
+      echo $2 requires the ordinary Linux version of this package.
+      ;;
+    esac
+  fi
+}
+
+function find_all_installations() {
+  # Returns every occasion of program 'unopkg' that is found from the system.
+  message searching_installations
+  EVERYONE=$(find /opt /usr/lib /usr/local -type f -perm -u+x -path '*/program/unopkg')
+  # Alternative method:
+  # shopt -s nullglob
+  # EVERYONE='/opt/openoffice.org*/program/unopkg /usr/lib/openoffice*/program/unopkg'
+}
+
+if [ $(pidof soffice.bin) ]; then
+  message process_running
+  exit 1
+fi
+
+if [ $(whoami) == "root" ]; then
+  SHAREDFLAG="--shared"
+  # Registering program 'unopkg' writes (?) something to
+  # ${HOME}/.openoffice.orgVERSION/ directory. We must set $HOME to /root so that
+  # these (root owned) files don't get written to the regular user's HOME (in
+  # case he/she runs this with sudo.)
+  export HOME=/root
+else
+  SHAREDFLAG=""
+  message user_installation
+fi
+
+echo ""
+
+function register() {
+  UNOPKG=$1
+  if [ "${COMPONENT}" == "" ]; then
+    message wrong_directory
+    exit 1
+  fi
+  if $UNOPKG add $SHAREDFLAG ${MODULEDIR}/${COMPONENT} &>/dev/null
+  then
+    message install_ok "$(echo $UNOPKG | sed -e s/\\/program\\/unopkg//)"
+  else
+    message install_failed "$(echo $UNOPKG | sed -e s/\\/program\\/unopkg//)"
+  fi
+}
+
+# Arguments: oo2_installation_directory
+function unregister() {
+  UNOPKG=$1
+  UNOPKG_LIST="$(${UNOPKG} list $SHAREDFLAG 2> /dev/null)"
+  if [[ $? != 0 ]] ; then
+    message listing_failed "$(echo $UNOPKG | sed -e s/\\/program\\/unopkg//)"
+    return
+  fi
+  PKGS_TO_UNREGISTER=$(echo "${UNOPKG_LIST}" | grep "^Name: LF_SHORTNAME-Linux_x86-" | sed -e "s/Name: //")  
+  for PKG in $PKGS_TO_UNREGISTER
+  do
+    if $UNOPKG remove $SHAREDFLAG ${PKG} &>/dev/null
+    then
+      message uninstall_ok "$(echo $UNOPKG | sed -e s/\\/program\\/unopkg//)"
+    else
+      message uninstall_failed "$(echo $UNOPKG | sed -e s/\\/program\\/unopkg//)"
+    fi
+  done
+}
+
+# Arguments: name of the package containing the unopkg tool.
+function unregister_rpm_pkg() {
+  PKGNAME=$1
+  unregister $(rpm -ql $PKGNAME | grep /program/unopkg\$) 0
+}
+
+function register_all() {
+  find_all_installations
+  for UNOPKG in $EVERYONE
+  do
+    if grep -U -q CXXABI_1.3 "$UNOPKG".bin
+    then
+      if echo "$COMPONENT" | grep -q gcc3.3
+      then
+        message need_cxxabi_1.3 "$(echo $UNOPKG | sed -e s/\\/program\\/unopkg//)"
+      else
+        unregister $UNOPKG
+        register $UNOPKG
+      fi
+    else
+      if echo "$COMPONENT" | grep -q gcc3.3
+      then
+        unregister $UNOPKG
+        register $UNOPKG
+      else
+        message need_cxxabi_1.2 "$(echo $UNOPKG | sed -e s/\\/program\\/unopkg//)"
+      fi
+    fi
+  done
+}
+
+function unregister_all() {
+  find_all_installations
+  for UNOPKG in $EVERYONE
+  do
+    unregister $UNOPKG
+  done
+}
+
+if [[ $# == 0 ]] ; then
+  register_all
+  exit
+fi
+
+if [[ $1 == "--install" ]]
+then
+  if [[ $# == 1 ]] ; then
+    register_all
+  else
+    unregister $2/program/unopkg
+    register $2/program/unopkg
+  fi
+  exit
+fi
+
+if [[ $1 == "--uninstall" ]]
+then
+  if [[ $# == 1 ]] ; then
+    unregister_all
+  else
+    unregister $2/program/unopkg
+  fi
+  exit
+fi
+
+if [[ $1 == "--uninstall-rpm-pkg" ]]
+then
+  if [[ $# == 2 ]] ; then
+    unregister_rpm_pkg $2
+    exit
+  fi
+fi
+
+
+# We have been called incorrectly
+message usage
+exit 1
+
