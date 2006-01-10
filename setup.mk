@@ -1,6 +1,8 @@
 # This file contains compilation-related setting that are common
 # between different spellchecker and hyphenator implementations.
 
+LF_CONFIGURATOR = oo2-lingconfig
+
 # LF_DEBUG controls the amount of debugging information in the resulting UNO
 # package. Possible values are NO (creates an optimized build without any
 # debugging information), LOG (creates an optimized build with runtime debug
@@ -33,3 +35,10 @@ LF_DEBUG=NO
 #	CPPUHELPERLIB=-luno_cppuhelpergcc3
 #	CPPU_ENV=gcc3
 #endif
+
+ifeq "$(LF_DEBUG)" "NO"
+	LF_PACKAGENAME=$(LF_SHORTNAME)-$(UNOPKG_PLATFORM)-$(LF_VERSION)
+else
+	LF_PACKAGENAME=$(LF_SHORTNAME)-$(UNOPKG_PLATFORM)-dbg-$(LF_VERSION)
+endif
+LF_PACKAGE=$(LF_OUTDIR)/$(LF_PACKAGENAME).$(UNOPKG_EXT)

@@ -49,9 +49,36 @@ LF_REPLACE_SHORTNAME:=sed 's/LF_SHORTNAME/$(LF_SHORTNAME)/g'
 LF_REPLACE_FULLNAME:=sed 's/LF_FULLNAME/$(LF_FULLNAME)/g'
 
 ifeq "$(PLATFORM)" "windows"
+
+# Check if the cygwin is installed
+    LF_CYGWIN_CHECK := $(shell cygcheck -V)
+    LF_CYGWIN_CHECK := $(findstring Cygwin, $(LF_CYGWIN_CHECK))
+
+    ifeq "$(LF_CYGWIN_CHECK)" ""
+# Cygwin is not installed
+    else
+# Cygwin is installed so use Linux like defines
+        PS=/
+        ECHO=@echo
+        MKDIR=mkdir -p
+        CAT=cat
+        OSEP=\<
+        CSEP=\>
+        QUOTE=$(subst S,\,S)
+        QM=\"
+        SQM='
+        ECHOLINE=@echo
+        P2BG=&
+        DEL=rm -f
+        DELRECURSIVE=rm -rf
+        COPY=cp
+        EMPTYSTRING=
+        PATH_SEPARATOR=:
+    endif
+    
 	CC_FLAGS=-c -GX -MT
-	CC_INCLUDES=-I. -I$(PRJ)/include
-	LF_INSTALLPKG_EXT=zip
+	CC_INCLUDES=-I. -I"$(PRJ)/include"
+	LF_INSTALLPKG_EXT=exe
 	ifeq "$(LF_DEBUG)" "LOG"
 		CC_DEFINES+= -DLF_DEBUG_OUTPUT
 	endif
@@ -79,12 +106,6 @@ LF_TYPEFLAG=$(LF_OUTDIR)/types.flag
 LF_HPPDIR=$(LF_OUTDIR)/hpp
 LF_SLONAME=$(LF_SHORTNAME).$(SHAREDLIB_EXT)
 LF_SLO=$(LF_OUTDIR)/pkg/$(UNOPKG_PLATFORM)/$(LF_SLONAME)
-ifeq "$(LF_DEBUG)" "NO"
-	LF_PACKAGENAME=$(LF_SHORTNAME)-$(UNOPKG_PLATFORM)-$(LF_VERSION)
-else
-	LF_PACKAGENAME=$(LF_SHORTNAME)-$(UNOPKG_PLATFORM)-dbg-$(LF_VERSION)
-endif
-LF_PACKAGE=$(LF_OUTDIR)/$(LF_PACKAGENAME).$(UNOPKG_EXT)
 
 LF_CXXFILES := sprophelp.cxx sspellimp.cxx register.cxx \
 	XSpellAlternatives_impl.cxx hyphenimp.cxx XHyphenatedWord_impl.cxx \
@@ -112,6 +133,7 @@ $(LF_OUTDIR)/%.$(OBJ_EXT) : %.cxx $(LF_TYPEFLAG)
 
 ifeq "$(OS)" "WIN"
 $(LF_SLO) : $(LF_SLOFILES)
+	-$(ECHO) $(LF_CYGWIN_CHECK)
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(LINK) $(COMP_LINK_FLAGS) /OUT:$@ \
 	/MAP:$(LF_OUTDIR)/$(LF_SHORTNAME).map $(LF_SLOFILES) \
@@ -138,15 +160,15 @@ $(LF_OUTDIR)/pkg/META-INF/manifest.xml :
 
 $(LF_OUTDIR)/pkg/config.xcu : config.xcu
 	-$(MKDIR) $(subst /,$(PS),$(@D))
-	cat $(subst /,$(PS),$<) | $(LF_REPLACE_NAMESPACE) > $(subst /,$(PS),$@)
+	$(CAT) $(subst /,$(PS),$<) | $(LF_REPLACE_NAMESPACE) > $(subst /,$(PS),$@)
 
 $(LF_OUTDIR)/pkg/config.xcs : config.xcs
 	-$(MKDIR) $(subst /,$(PS),$(@D))
-	cat $(subst /,$(PS),$<) | $(LF_REPLACE_NAMESPACE) > $(subst /,$(PS),$@)
+	$(CAT) $(subst /,$(PS),$<) | $(LF_REPLACE_NAMESPACE) > $(subst /,$(PS),$@)
 
 $(LF_OUTDIR)/$(LF_PACKAGENAME)/install-$(LF_SHORTNAME) : linux-installer
 	-$(MKDIR) $(subst /,$(PS),$(@D))
-	cat $(subst /,$(PS),$<) | $(LF_REPLACE_NAMESPACE) | $(LF_REPLACE_SHORTNAME) | $(LF_REPLACE_FULLNAME) > $(subst /,$(PS),$@)
+	$(CAT) $(subst /,$(PS),$<) | $(LF_REPLACE_NAMESPACE) | $(LF_REPLACE_SHORTNAME) | $(LF_REPLACE_FULLNAME) > $(subst /,$(PS),$@)
 	chmod a+x $(subst /,$(PS),$@)
 
 $(patsubst %,$(LF_OUTDIR)/pkg/%,$(LF_IMPL_EXTRA_FILES)): $(LF_OUTDIR)/pkg/%: impl/%
@@ -191,6 +213,20 @@ $(LF_OUTDIR)/$(LF_PACKAGENAME).tar.gz : $(LF_OUTDIR)/$(LF_PACKAGENAME)/$(LF_PACK
 	$(LF_OUTDIR)/$(LF_PACKAGENAME)/install-$(LF_SHORTNAME)
 	tar czf $(LF_OUTDIR)/$(LF_PACKAGENAME).$(LF_INSTALLPKG_EXT) --owner 0 --group 0 \
 		-C $(LF_OUTDIR) $(LF_PACKAGENAME)
+
+$(LF_OUTDIR)/$(LF_PACKAGENAME)/$(LF_CONFIGURATOR)$(EXE_EXT) : $(LF_OUTDIR)/$(LF_CONFIGURATOR)$(EXE_EXT) 
+	-$(MKDIR) $(subst /,$(PS),$(@D))
+	$(COPY) $(subst /,$(PS),$<) $(subst /,$(PS),$@)
+		
+$(LF_OUTDIR)/$(LF_CONFIGURATOR)$(EXE_EXT) :
+	cd installer/$(LF_CONFIGURATOR) && $(MAKE)
+	
+$(LF_OUTDIR)/$(LF_PACKAGENAME).exe : $(LF_OUTDIR)/$(LF_PACKAGENAME)/$(LF_PACKAGENAME).$(UNOPKG_EXT) \
+	$(patsubst %,$(LF_OUTDIR)/$(LF_PACKAGENAME)/%,$(LF_DOCS)) \
+	$(patsubst %,$(LF_OUTDIR)/$(LF_PACKAGENAME)/%,$(LF_IMPL_DOCS_SHARED)) \
+	$(patsubst %,$(LF_OUTDIR)/$(LF_PACKAGENAME)/%,$(LF_IMPL_DOCS_PLATF)) \
+	$(LF_OUTDIR)/$(LF_PACKAGENAME)/$(LF_CONFIGURATOR)$(EXE_EXT)
+	cd installer/windows && $(MAKE)
 
 install_pkg: $(LF_OUTDIR)/$(LF_PACKAGENAME).$(LF_INSTALLPKG_EXT)
 
