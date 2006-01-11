@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  *  Authors:
- *  Kai Solehmainen (kai.solehmainen@oikeatoliot.fi), 2005
+ *  Kai Solehmainen (kai.solehmainen@oikeatoliot.fi), 2006
  *
  *  The Contents of this file are made available subject to the terms of
  *  GNU Lesser General Public License Version 2.1
@@ -55,7 +55,7 @@
   !endif
 
   !ifndef LF_CONFIGURATOR
-  !define LF_CONFIGURATOR "oo2-soikko-configurator.exe"
+  !define LF_CONFIGURATOR "oo2-lingconfig.exe"
   !endif
 
   !ifndef LF_PACKAGEFILE
@@ -104,6 +104,16 @@
 ; Pages 
 ; Installer
 
+  !define MUI_WELCOMEPAGE_TITLE_3LINES
+  !define MUI_WELCOMEPAGE_TEXT \
+    "This wizard will guide you through the installation of ${INSTALLER_NAME}.\r\n\r\n\
+     Before starting the Setup, start OpenOffice.org at least once after the installation of the OpenOffice.org and \
+     close all OpenOffice.org applications including the QuickStart. The Setup Wizard will start \
+     and close the OpenOffice.org in the end of the installation.\r\n\r\n\
+     During the installation ${LF_CONFIGURATOR} tries to connect to OpenOffice.org \
+     to the address 127.0.01 and this may cause a firewall software to raise a warning. \
+     Accept the connection if you want Setup to configure OpenOffice.org automatically.\r\n\r\n\
+     Click Next to continue."
   !insertmacro MUI_PAGE_WELCOME
 
   !define MUI_LICENSEPAGE_TEXT_BOTTOM \
@@ -115,6 +125,8 @@
   !define MUI_DIRECTORYPAGE_VERIFYONLEAVE
   !insertmacro MUI_PAGE_DIRECTORY
 
+  !define MUI_PAGE_HEADER_TEXT "Choose OpenOffice.org 2.0 Installation"
+  !define MUI_PAGE_HEADER_SUBTEXT "Choose the OpenOffice.org 2.0 folder in which to install ${INSTALLER_NAME}."
   !define MUI_DIRECTORYPAGE_VARIABLE $OO_PATH
   !define MUI_PAGE_CUSTOMFUNCTION_PRE OOInstallationPre
   !define MUI_DIRECTORYPAGE_TEXT_TOP \
@@ -123,13 +135,17 @@
     Browse and select another installation folder. Click Next to Continue.$\n$\n\
     Note that the Next button will be activated only if the given installation folder contains \
     a valid OpenOffice.org 2.0 installation."
-  
   !define MUI_DIRECTORYPAGE_TEXT_DESTINATION "Folder of the OpenOffice.org 2.0 installation"
   !insertmacro MUI_PAGE_DIRECTORY
 
   !insertmacro MUI_PAGE_INSTFILES
 
 ; Uninstaller
+  !define MUI_WELCOMEPAGE_TITLE_3LINES
+  !define MUI_WELCOMEPAGE_TEXT \
+    "This wizard will guide you through the uninstallation of ${INSTALLER_NAME}.\r\n\r\n\
+     Before starting the uninstallation, close all OpenOffice.org applications including the QuickStart.\r\n\r\n\
+     Click Next to continue."
   !insertmacro MUI_UNPAGE_WELCOME
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
@@ -167,6 +183,19 @@ Section "Oo2-soikko"
 ; ExecWait '"$OO_PATH\program\unopkg" add "$INSTDIR\${LF_PACKAGEFILE}"' $0
     DetailPrint "Adding ${LF_PACKAGEFILE} to OpenOffice.org ..."
     ExecDos::exec "/BRAND=Installing ${LF_PACKAGEFILE}" '"$OO_PATH\program\unopkg" add --verbose "$INSTDIR\${LF_PACKAGEFILE}"' "" "$INSTDIR\logs\adding_${LF_PACKAGEFILE}.txt"
+
+; Check for the errors
+    Pop $0 # return value
+    IntCmp $0 0 packageSuccess packageFailed packageFailed
+
+  packageFailed:
+    DetailPrint "Failed to add ${LF_PACKAGEFILE} to the OpenOffice.org. Exit code = $0"
+    MessageBox MB_ICONSTOP|MB_OK \
+      "Failed to add ${LF_PACKAGEFILE} to the OpenOffice.org.$\n$\n\
+      Try to add ${LF_PACKAGEFILE} manually after the installation. Exiting."
+    Goto end
+    
+  packageSuccess:
   
 ; Configure package to the OpenOffice.org
     Call ConfigurePackage
@@ -175,6 +204,7 @@ Section "Oo2-soikko"
     Call AddUninstaller
 
 ; Dump the details to the log file    
+  end:
     Push "$INSTDIR\logs\details.txt"
     Call DumpLog
 
@@ -256,14 +286,40 @@ FunctionEnd
 Function ConfigurePackage
 
 ; Start OpenOffice.org so that the configurator can connect to it
+    SetErrorLevel 0
+    
     DetailPrint "Starting OpenOffice.org for setting configuration ..."
     Exec '"$OO_PATH\program\soffice.exe" "-nologo" "-accept=socket,host=localhost,port=${LF_PORT};urp;StartOffice.ServiceManager"'
+    
+; Check for errors
+   GetErrorLevel $0
+   IntCmp $0 0 oo2Success oo2Failed oo2Failed
+   
+  oo2Failed:
+    DetailPrint "Failed to start $OO_PATH\program\soffice.exe."
+    MessageBox MB_OK \
+      "Failed to start the OpenOffice.org.$\n$\n\
+      Configure ${LF_PACKAGEFILE} manually after the installation."
+    Goto openOfficeClosed
+    
+  oo2Success:
   
 ; Start the configurator that connect to the OpenOffice.org and configures the soikko
-; ExecWait '"$INSTDIR\${LF_CONFIGURATOR}" ${LF_PORT} 30 1' 
     ExecDos::exec "/BRAND=Configuring OpenOffice.org" \
       '"$INSTDIR\${LF_CONFIGURATOR}" ${LF_PORT} 30 1 ${LF_NAMESPACE}.Hyphenator ${LF_NAMESPACE}.SpellChecker fi FI' \
       "" "$INSTDIR\logs\configurator.txt"
+      
+; Check for the errors
+    Pop $0 # return value
+    IntCmp $0 0 packageSuccess packageFailed packageFailed
+
+  packageFailed:
+    DetailPrint "Failed to configure ${LF_PACKAGEFILE} to the OpenOffice.org. Exit code = $0"
+    MessageBox MB_OK \
+      "Failed to configure ${LF_PACKAGEFILE} to the OpenOffice.org.$\n$\n\
+       Configure ${LF_PACKAGEFILE} manually after the installation."
+    
+  packageSuccess:
   
 ; Close the OpenOffice that was started before configurator
     DetailPrint "Closing OpenOffice.org application ..."
@@ -315,7 +371,6 @@ Section "Uninstall"
 ; OpenOffice.org was found
 ; Remove the package from the OpenOffice.org
         DetailPrint "Removing ${LF_PACKAGEFILE} from OpenOffice.org  ..."
-;        ExecWait '"$OO_PATH\program\unopkg" remove "${LF_PACKAGEFILE}"' $0
         ExecDos::exec "/BRAND=Removing ${LF_PACKAGEFILE}" '"$OO_PATH\program\unopkg.exe" remove "${LF_PACKAGEFILE}"' "" "c:\removing_${LF_PACKAGEFILE}.txt"
   
   OONotFound:  
