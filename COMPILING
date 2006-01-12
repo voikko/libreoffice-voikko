@@ -1,0 +1,66 @@
+These are the instructions for compiling an installable spellchecker
+and hyphenator component for OpenOffice.org. Currently this component
+will only work for Finnish, but it can easily be modified to work for
+other languages too. Also the implementation can be easily changed by
+replacing the contents of subdirectory "impl".
+
+These instructions are written for Linux, but they should work on any
+Unix-like operating system where OpenOffice.org is available. Some extra
+tools are needen for compiling on Windows.
+
+Requirements
+============
+
+- OpenOffice.org SDK, version 2.0.1 (= SRC680_m135) or newer. Older versions
+  will also work, but the installation procedure is somewhat different and
+  the differences are not explained here.
+- OpenOffice.org. This should have exactly the same version number as the SDK.
+- On Linux: the C++ compiler from the GCC. GCC versions 3.3, 3.4 and 4.0 are
+  known to work. If you need to use a compiler which is not the default on your
+  Linux distribution, you will need to modify setup.mk. The compiler should
+  be ABI compatible with the one used to compile OpenOffice.org and the SDK.
+  Versions 3.4 and 4.0 are ABI compatible, and the installer script assumes that
+  either of these is used unless LF_SHORTNAME contains the string "gcc3.3".
+  Other tools needed for compilation are usually present in default setups of
+  any distribution.
+- On Windows:
+  - Microsoft Visual C++/Visual Studio Version 2003. This is currently
+    the only compiler that works, none of the freely available compilers or any
+    other version of the compiler can be used.
+  - Tools listed in the SDK installation guide (Zip and GNU Make).
+  - Cygwin tools for Windows (for the "sed" utility).
+  - If you want to create a native installer package, you will need to install
+    NSIS (from http://http://nsis.sourceforge.net) and NSIS plugins ExecDos and
+    KillProc. The installation directory of NSIS has to be added to the executable
+    search path.
+
+
+Compilation
+===========
+
+- Install OpenOffice.org and the SDK.
+- Unpack the unopkg module from Hunspell-fi somewhere and optionally replace the
+  subdirectory "impl" with your favourite implementation.
+- Files setup.mk and impl/setup.mk contain some parameters that you may want
+  to modify at this point.
+- In a shell, run the SDK setup script which is located in the SDK installation
+  directory. It is called setsdkenv_unix on Linux and setsdkenv_windows on
+  Windows. During the first run, this script will ask the location of certain tools.
+  You should answer the questions, although at least on Linux the defaults are
+  usually correct. Answers to these questions will be saved under the home directory
+  of the user (for example to a file openoffice.org2.0_sdk/setsdkenv_unix.sh).
+- Go to the directory "unopkg" and run "make". This will build an UNO package under
+  subdirectory "build".
+- If you want a package that contains an installer for your operating system, run
+  "make install_pkg".
+
+
+Writing an alternative implementation
+=====================================
+
+The unopkg module is designed to make it as easy as possible to experiment with
+different implementations for spellchecker and hyphenator. The idea is that all
+that needs to be changed is under the subdirectory "impl". You only need to implement
+a minimal set of functions and provide implementation specific documentation and
+data files. A working, commented example implementation will be provided soon within
+this package.
