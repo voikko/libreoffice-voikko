@@ -10,23 +10,19 @@ LF_CONFIGURATOR = oo2-lingconfig
 # Default is NO.
 LF_DEBUG=NO
 
-# Compiler settings. Leave these all commented unless you need to use non-default
-# compiler
+# Compiler settings for Linux. Leave these all commented unless you need to
+# use a non-default compiler.
 
-# C++ compiler command (default is to use SDK configuration)
-#ifeq "$(PLATFORM)" "linux"
-#	LF_CC=gcc-3.3
-#endif
+ifeq "$(PLATFORM)" "linux"
+	# C++ compiler command (default is to use SDK configuration)
+	LF_CC=gcc-3.4
 
-# Linker command (default is to use SDK configuration)
-#ifeq "$(PLATFORM)" "linux"
-#	LF_LINK=g++-3.3
-#endif
+	# Linker command (default is to use SDK configuration)
+	LF_LINK=g++-3.4
 
-# C++ include path (default is the one for C++ compiler in SDK configuration)
-#ifeq "$(PLATFORM)" "linux"
-#	SDK_GXX_INCLUDE_PATH=/usr/include/c++/3.3
-#endif
+	# C++ include path (default is the one for C++ compiler in SDK configuration)
+	SDK_GXX_INCLUDE_PATH=/usr/include/c++/3.4
+endif
 
 
 # Fix compilation when C++ compiler in SDK configuration is gcc 4.0

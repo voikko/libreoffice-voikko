@@ -155,32 +155,27 @@ SpellChecker::hasLocale(const Locale& rLocale)
 sal_Bool SAL_CALL 
 SpellChecker::isValid( const OUString& rWord, const Locale& rLocale, 
 		       const PropertyValues& rProperties ) 
-  throw(IllegalArgumentException, RuntimeException)
-{
-	return lfIsValid(rWord, TRUE, TRUE); //FIXME
+  throw(IllegalArgumentException, RuntimeException) {
+	PropertyHelper_Spell &rHelper = GetPropHelper();
+	sal_Bool isSpellWithDigits = rHelper.IsSpellWithDigits();
+	sal_Bool isSpellUpperCase = rHelper.IsSpellUpperCase();
+	return lfIsValid(rWord, isSpellWithDigits, isSpellUpperCase);
 }
-
-
-// Retrieves the return values for the 'spell' function call in case
-// of a misspelled word.
-// Especially it may give a list of suggested (correct) words.
-/*Reference< XSpellAlternatives >
-SpellChecker::GetProposals( const OUString &rWord, const Locale &rLocale )
-{
-	return lfGetProposals(rWord);
-}*/
 
 
 Reference< XSpellAlternatives > SAL_CALL 
 SpellChecker::spell( const OUString& rWord, const Locale& rLocale, 
 		     const PropertyValues& rProperties ) 
   throw(IllegalArgumentException, RuntimeException) {
-	return lfSpell(rWord, TRUE, TRUE); //FIXME
+	PropertyHelper_Spell &rHelper = GetPropHelper();
+	sal_Bool isSpellWithDigits = rHelper.IsSpellWithDigits();
+	sal_Bool isSpellUpperCase = rHelper.IsSpellUpperCase();
+	return lfSpell(rWord, isSpellWithDigits, isSpellUpperCase);
 }
 
 
-    
-	
+
+
 sal_Bool SAL_CALL 
 SpellChecker::addLinguServiceEventListener( 
 					   const Reference< XLinguServiceEventListener >& rxLstnr ) 
