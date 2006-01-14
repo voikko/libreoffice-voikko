@@ -62,12 +62,11 @@ sal_Bool getLinguServiceManager(Reference<XLinguServiceManager>& aManager,
     sal_Int32 aPort, sal_Int32 aCount, sal_Int32 aWait);
 
 /**
-* Sets the soikko as the hyphenator and spellchecker for the Finnish locale.
+* Sets the given hyphenator and spellchecker for the given locale.
 *
-* Usage: oo2-soikko-configurator [port] [count] [wait]
-*   [port]   Port number of the OpenOffice.org service manager
-*   [count]  Stop trying to connect after count re-tries
-*   [wait]   Wait wait seconds between re-tries
+* Usage: linguistic-configurator [port] [count] [wait] [hyphenator] [spellChecker] [language] [country]
+* 
+* Arguments are explained below.
 *
 * Before the program is started following command has to be executed:
 * > soffice "-accept=socket,host=localhost,port=[port];urp;StartOffice.ServiceManager"
@@ -121,7 +120,7 @@ int main(int argc, char *argv[])
                 "com.sun.star.linguistic2.Hyphenator");
 
             OUString hyphenatorServiceImp = OUString::createFromAscii(
-                hyphenator); // "soikko.Hyphenator"
+                hyphenator); // "LF_NAMESPACE.Hyphenator"
 
             if (!setLinguServiceImp(rLinguServiceManager, hyphenatorService,
                 locale, hyphenatorServiceImp))
@@ -133,7 +132,7 @@ int main(int argc, char *argv[])
             OUString spellCheckerService = OUString::createFromAscii(
                 "com.sun.star.linguistic2.SpellChecker");
             OUString spellCheckerServiceImp = OUString::createFromAscii(
-                spellChecker); // "soikko.SpellChecker"
+                spellChecker); // "LF_NAMESPACE.SpellChecker"
 
             if (!setLinguServiceImp(rLinguServiceManager, spellCheckerService, 
                 locale, spellCheckerServiceImp))
