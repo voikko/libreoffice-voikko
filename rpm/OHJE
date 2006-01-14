@@ -1,5 +1,0 @@
-- kopioi hakemiston oo2-soikko sisältö kokonaisuudessaan hakemistoon
-  /usr/src/redhat/BUILD (tai vastaavaan)
-- # cd /usr/src/redhat/BUILD
-- # rpmbuild -bb rpm/oo2-soikko.spec
-
