@@ -131,7 +131,7 @@ function find_all_installations() {
   # EVERYONE='/opt/openoffice.org*/program/unopkg /usr/lib/openoffice*/program/unopkg'
 }
 
-if [ $(pidof soffice.bin) ]; then
+if pidof soffice.bin > /dev/null; then
   message process_running
   exit 1
 fi
