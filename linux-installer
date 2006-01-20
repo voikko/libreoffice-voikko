@@ -33,6 +33,13 @@ function message() {
       echo Jos olit juuri päivittämässä OpenOffice.orgia, suorita install-LF_SHORTNAME
       echo pääkäyttäjänä jotta LF_FULLNAME varmasti toimisi oikein.
       ;;
+    "lockfile_found")
+      echo Lukkotiedoston olemassaolo viittaa siihen, että OpenOffice.org on tällä hetkellä
+      echo käynnissä. Jos näin on, sulje OpenOffice.org ja yritä asennusta uudelleen.
+      echo Jos OpenOffice.org ei ole käynnissä, poista lukkotiedosto
+      echo $2
+      echo ja yritä asennusta uudelleen.
+      ;;
     "wrong_directory")
       echo Suorita tämä komento sellaisesta hakemistosta, joka sisältää ohjelman LF_FULLNAME UNO-paketin.
       ;;
@@ -84,6 +91,12 @@ function message() {
       echo packages, please run install-LF_SHORTNAME as root
       echo to make sure that LF_FULLNAME will be available to them.
       ;;
+    "lockfile_found")
+      echo Existence of a lock file suggests that OpenOffice.org is currently running.
+      echo If it is, please close OpenOffice.org and try again. If it is not, remove
+      echo $2
+      echo and try again.
+      ;;
     "wrong_directory")
       echo Please run this script from a directory containing the LF_FULLNAME UNO package to be installed.
       ;;
@@ -131,21 +144,33 @@ function find_all_installations() {
   # EVERYONE='/opt/openoffice.org*/program/unopkg /usr/lib/openoffice*/program/unopkg'
 }
 
-if pidof soffice.bin > /dev/null; then
-  message process_running
-  exit 1
-fi
-
 if [ $(whoami) == "root" ]; then
   SHAREDFLAG="--shared"
-  # Registering program 'unopkg' writes (?) something to
+  # Registering program 'unopkg' writes things to
   # ${HOME}/.openoffice.orgVERSION/ directory. We must set $HOME to /root so that
   # these (root owned) files don't get written to the regular user's HOME (in
   # case he/she runs this with sudo.)
   export HOME=/root
+
+  # No OpenOffice.org processes are allowed during a shared installation.
+  if pidof soffice.bin > /dev/null; then
+    message process_running
+    exit 1
+  fi
+  # Check the lockfile too because unopkg may have crashed during previous installation.
+  if [[ -e $HOME/.openoffice.org2/.lock ]]; then
+    message lockfile_found $HOME/.openoffice.org2/.lock
+    exit 1
+  fi
 else
   SHAREDFLAG=""
   message user_installation
+  # For an ordinary user it is sufficient to check if the lockfile exists.
+  if [[ -e $HOME/.openoffice.org2/.lock ]]; then
+    echo ""
+    message lockfile_found $HOME/.openoffice.org2/.lock
+    exit 1
+  fi
 fi
 
 echo ""
