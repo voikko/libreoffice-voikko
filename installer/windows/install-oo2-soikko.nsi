@@ -27,27 +27,27 @@
 
 ; These settings are given by the makefile in the command line
   !ifndef INSTALLER_NAME
-  !define INSTALLER_NAME "oo2-soikko-Windows-1.1pre1"
+  !define INSTALLER_NAME "oo2-soikko-Windows-1.1"
   !endif
 
   !ifndef OUTDIR
-  !define OUTDIR "oo2-soikko-Windows-1.1pre1"
+  !define OUTDIR "oo2-soikko-Windows-1.1"
   !endif
 
   !ifndef SRCDIR
-  !define SRCDIR "..\..\build\oo2-soikko-Windows-1.1pre1"
+  !define SRCDIR "..\..\build\oo2-soikko-Windows-1.1"
   !endif
 
   !ifndef LICENSE_FILE
-  !define LICENSE_FILE "..\..\build\oo2-soikko-Windows-1.1pre1\COPYING"
+  !define LICENSE_FILE "..\..\build\oo2-soikko-Windows-1.1\COPYING"
   !endif
 
   !ifndef INSTALLER_FILE
-  !define INSTALLER_FILE "..\..\build\oo2-soikko-Windows-1.1pre1.exe"
+  !define INSTALLER_FILE "..\..\build\oo2-soikko-Windows-1.1.exe"
   !endif
 
   !ifndef UNINSTALLER_FILE
-  !define UNINSTALLER_FILE "uninstall-oo2-soikko-Windows-1.1pre1.exe"
+  !define UNINSTALLER_FILE "uninstall-oo2-soikko-Windows-1.1.exe"
   !endif
 
   !ifndef LF_PORT
@@ -59,7 +59,7 @@
   !endif
 
   !ifndef LF_PACKAGEFILE
-  !define LF_PACKAGEFILE "oo2-soikko-Windows-1.1pre1.uno.pkg"
+  !define LF_PACKAGEFILE "oo2-soikko-Windows-1.1.uno.pkg"
   !endif
   
   !ifndef LF_NAMESPACE 
@@ -67,7 +67,8 @@
   !endif 
 
 ; Window class of the OpenOffice.org application
-  !define OO_WINDOW_CLASS "SALFRAME"
+  !define OO_WINDOW_CLASS_APPLICATION "SALFRAME"
+  !define OO_WINDOW_CLASS_QUICKSTART  "SALCOMWND"
   
 ; Default installation path of the OpenOffice.org
   !define OO_PATH_DEFAULT "$PROGRAMFILES\OpenOffice.org 2.0"
@@ -85,11 +86,18 @@
 ;--------------------------------
 ; Macros
 !macro CheckRunningApp
-    FindWindow $0 ${OO_WINDOW_CLASS}
-    StrCmp $0 0 openOfficeClosed
-      MessageBox MB_ICONSTOP|MB_OK "OpenOffice.org is running. Close the application and try again."
+    FindWindow $0 ${OO_WINDOW_CLASS_APPLICATION}
+    StrCmp $0 0 _openOfficeClosed
+      MessageBox MB_ICONSTOP|MB_OK "OpenOffice.org is running. Close it and try again."
       Abort
-  openOfficeClosed:
+  _openOfficeClosed:
+
+    FindWindow $0 ${OO_WINDOW_CLASS_QUICKSTART}
+    StrCmp $0 0 _quickStartClosed
+      MessageBox MB_ICONSTOP|MB_OK "OpenOffice.org QuickStart is running. Close it and try again."
+      Abort
+  _quickStartClosed:
+  
 !macroend
 
 ;--------------------------------
@@ -107,7 +115,7 @@
   !define MUI_WELCOMEPAGE_TITLE_3LINES
   !define MUI_WELCOMEPAGE_TEXT \
     "This wizard will guide you through the installation of ${INSTALLER_NAME}.\r\n\r\n\
-     Before starting the Setup, start OpenOffice.org at least once after the installation of the OpenOffice.org and \
+     Before starting the Setup, make sure that the OpenOffice.org starts normally and then \
      close all OpenOffice.org applications including the QuickStart. The Setup Wizard will start \
      and close the OpenOffice.org in the end of the installation.\r\n\r\n\
      During the installation ${LF_CONFIGURATOR} tries to connect to OpenOffice.org \
@@ -182,7 +190,9 @@ Section "Oo2-soikko"
 ; Install soikko to OpenOffice.org
 ; ExecWait '"$OO_PATH\program\unopkg" add "$INSTDIR\${LF_PACKAGEFILE}"' $0
     DetailPrint "Adding ${LF_PACKAGEFILE} to OpenOffice.org ..."
-    ExecDos::exec "/BRAND=Installing ${LF_PACKAGEFILE}" '"$OO_PATH\program\unopkg" add --verbose "$INSTDIR\${LF_PACKAGEFILE}"' "" "$INSTDIR\logs\adding_${LF_PACKAGEFILE}.txt"
+    ExecDos::exec "/BRAND=Installing ${LF_PACKAGEFILE}" \
+                  '"$OO_PATH\program\unopkg" add --verbose "$INSTDIR\${LF_PACKAGEFILE}"' \
+                  "" "$INSTDIR\logs\adding_${LF_PACKAGEFILE}.txt"
 
 ; Check for the errors
     Pop $0 # return value
@@ -192,7 +202,9 @@ Section "Oo2-soikko"
     DetailPrint "Failed to add ${LF_PACKAGEFILE} to the OpenOffice.org. Exit code = $0"
     MessageBox MB_ICONSTOP|MB_OK \
       "Failed to add ${LF_PACKAGEFILE} to the OpenOffice.org.$\n$\n\
-      Try to add ${LF_PACKAGEFILE} manually after the installation. Exiting."
+      Close the installer, make sure that the OpenOffice.org starts normally$\n\
+      and start the installer again.$\n$\n\
+      The package can be added also manually from OpenOffice.org."
     Goto end
     
   packageSuccess:
@@ -218,9 +230,6 @@ Function .onInit
 ; Check if there is previous uninstallers that are not uninstalled
   Call CheckExistingUninstaller
   
-; Nasty way to kill the OpenOffice QuickStart
-    KillProcDLL::KillProc "soffice.bin"
-   
 ; Check that output dir has been set properly
     StrCmp ${OUTDIR} "" noOutDir outDirDefined
   noOutDir:
@@ -234,14 +243,17 @@ FunctionEnd
 ;--------------------------------
 Function .onVerifyInstDir
     IfFileExists $OO_PATH\program\unopkg.exe PathGood
-      Abort ; If the given path is not OpenOffice.org installation then the path is not valid
+; If the given path is not OpenOffice.org installation then the path is not valid
+      Abort 
   PathGood:
 FunctionEnd
 
 ;--------------------------------
 Function OOInstallationPre
 ; Try to find the OpenOffice.org from registry  
-    ReadRegStr $OO_PATH HKLM "Software\Microsoft\Windows\CurrentVersion\App Paths\soffice.exe" "Path"
+    ReadRegStr $OO_PATH HKLM \
+               "Software\Microsoft\Windows\CurrentVersion\App Paths\soffice.exe" \
+               "Path"
 
     StrCmp $OO_PATH "" useDefaultPath pathOk
   useDefaultPath:
@@ -255,7 +267,9 @@ FunctionEnd
 Function RemoveExistingPackages
 
     DetailPrint "Searching for existing packages ..."
-    ExecDos::exec "/BRAND=Searching for existing packages" '"$OO_PATH\program\unopkg" list' "" "$INSTDIR\logs\packages.txt"
+    ExecDos::exec "/BRAND=Searching for existing packages"  \
+                  '"$OO_PATH\program\unopkg" list'  \
+                  "" "$INSTDIR\logs\packages.txt"
 
     ClearErrors
     FileOpen $0 "$INSTDIR\logs\packages.txt" r
@@ -275,7 +289,9 @@ Function RemoveExistingPackages
         Call TrimNewLines
         Pop $R0
         DetailPrint "Removing $R0 from OpenOffice.org ..."
-        ExecDos::exec "/BRAND=Removing $R0" '"$OO_PATH\program\unopkg" remove --verbose "$R0"' "" "$INSTDIR\logs\removing_$R0.txt"
+        ExecDos::exec "/BRAND=Removing $R0" \
+                      '"$OO_PATH\program\unopkg" remove --verbose "$R0"' \
+                      "" "$INSTDIR\logs\removing_$R0.txt"
         
         Goto readNextLine 
   done:
@@ -289,7 +305,8 @@ Function ConfigurePackage
     SetErrorLevel 0
     
     DetailPrint "Starting OpenOffice.org for setting configuration ..."
-    Exec '"$OO_PATH\program\soffice.exe" "-nologo" "-accept=socket,host=localhost,port=${LF_PORT};urp;StartOffice.ServiceManager"'
+    Exec '"$OO_PATH\program\soffice.exe" "-nologo"  \
+          "-accept=socket,host=localhost,port=${LF_PORT};urp;StartOffice.ServiceManager"'
     
 ; Check for errors
    GetErrorLevel $0
@@ -323,7 +340,7 @@ Function ConfigurePackage
   
 ; Close the OpenOffice that was started before configurator
     DetailPrint "Closing OpenOffice.org application ..."
-    FindWindow $0 ${OO_WINDOW_CLASS}
+    FindWindow $0 ${OO_WINDOW_CLASS_APPLICATION}
     StrCmp $0 0 openOfficeClosed
       SendMessage $0 ${WM_CLOSE} 0 0
     openOfficeClosed:
@@ -362,16 +379,24 @@ FunctionEnd
 Section "Uninstall"
 ; Try to get the path of the OpenOffice.org that was used in installation phase
     DetailPrint "Searching for OpenOffice.org installation ..."
-    ReadRegStr $OO_PATH HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLER_NAME}" "OpenOffice.orgPath" 
+    ReadRegStr $OO_PATH HKLM  \
+               "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLER_NAME}" \
+               "OpenOffice.orgPath" 
     IfFileExists "$OO_PATH\program\unopkg.exe" OOFound
+    
 ; Try to find the installation location from the OS
-      ReadRegStr $OO_PATH HKLM "Software\Microsoft\Windows\CurrentVersion\App Paths\soffice.exe" "Path"
+      ReadRegStr $OO_PATH HKLM  \
+                 "Software\Microsoft\Windows\CurrentVersion\App Paths\soffice.exe" \
+                 "Path"
       IfFileExists "$OO_PATH\program\unopkg.exe" OOFound OONotFound
   OOFound:
+  
 ; OpenOffice.org was found
 ; Remove the package from the OpenOffice.org
         DetailPrint "Removing ${LF_PACKAGEFILE} from OpenOffice.org  ..."
-        ExecDos::exec "/BRAND=Removing ${LF_PACKAGEFILE}" '"$OO_PATH\program\unopkg.exe" remove "${LF_PACKAGEFILE}"' "" "c:\removing_${LF_PACKAGEFILE}.txt"
+        ExecDos::exec "/BRAND=Removing ${LF_PACKAGEFILE}"  \
+                      '"$OO_PATH\program\unopkg.exe" remove "${LF_PACKAGEFILE}"'  \
+                      "" "c:\removing_${LF_PACKAGEFILE}.txt"
   
   OONotFound:  
 ; Remove uninstaller from the add/remove programs
@@ -393,9 +418,6 @@ SectionEnd
 Function un.onInit
 ; Check that the OpenOffice.org is not running
     !insertmacro CheckRunningApp
-   
-; Nasty way to kill the OpenOffice QuickStart
-    KillProcDLL::KillProc "soffice.bin"
 FunctionEnd
 
 
