@@ -42,9 +42,9 @@ Requirements
   - Tools listed in the SDK installation guide (Zip and GNU Make).
   - Cygwin tools for Windows (for the "sed" utility).
   - If you want to create a native installer package, you will need to install
-    NSIS (from http://http://nsis.sourceforge.net) and NSIS plugins ExecDos and
-    KillProc. The installation directory of NSIS has to be added to the executable
-    search path.
+    NSIS (from http://http://nsis.sourceforge.net) and NSIS plugin ExecDos.
+    The installation directory of NSIS has to be added to the executable search 
+    path.
 
 
 Compilation
