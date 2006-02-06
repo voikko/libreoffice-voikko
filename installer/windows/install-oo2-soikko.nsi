@@ -82,7 +82,54 @@
 ; The name of the installer
   Name ${INSTALLER_NAME}
   OutFile ${INSTALLER_FILE}
-  
+
+;--------------------------------
+; UI strings and translations
+
+LangString InstWelcomepageText ${LANG_ENGLISH} \
+    "This wizard will guide you through the installation of ${INSTALLER_NAME}.\r\n\r\n\
+     Before starting the Setup, make sure that the OpenOffice.org starts normally and then \
+     close all OpenOffice.org applications including the QuickStart. The Setup Wizard will start \
+     and close the OpenOffice.org in the end of the installation.\r\n\r\n\
+     During the installation ${LF_CONFIGURATOR} tries to connect to OpenOffice.org \
+     at the local address 127.0.0.1 and this may cause firewall software to raise a warning. \
+     Accept the connection if you want Setup to configure OpenOffice.org automatically.\r\n\r\n\
+     Click Next to continue."
+LangString InstWelcomepageText ${LANG_FINNISH} \
+    "T‰m‰ ohjattu toiminto auttaa sinua asentamaan ohjelman ${INSTALLER_NAME}.\r\n\r\n\
+     Varmista ennen asennuksen aloittamista, ett‰ OpenOffice.org k‰ynnistyy normaalisti. \
+     Sulje sen j‰lkeen OpenOffice.org ja sen pikakak‰ynnistystoiminto. Asennusohjelma \
+     k‰ynnist‰‰ ja sulkee OpenOffice.orgin asennuksen loppuvaiheessa.\r\n\r\n\
+     Asennuksen aikana ${LF_CONFIGURATOR} yritt‰‰ ottaa yhteytt‰ OpenOffice.orgiin \
+     paikallisen verkko-osoitteen 127.0.0.1 kautta. T‰m‰ voi aiheuttaa palomuurohjelmiston \
+     varoituksen. Jos haluat asennusohjelman tekev‰n tarvittavat asetusmuutokset \
+     OpenOffice.orgiin automaattisesti, hyv‰ksy t‰m‰ yhteys.\r\n\r\n\
+     Paina Seuraava jatkaaksesi."
+LangString InstLicensepageTextBottom ${LANG_ENGLISH} \
+    "If you accept the terms of the agreement, click I Agree to continue. \
+     You must accept the agreement to install ${INSTALLER_NAME}.$\n\
+     License files can be found in the destination folder."
+LangString InstLicensepageTextBottom ${LANG_FINNISH} \
+    "Jos hyv‰ksyt n‰m‰ ehdot, paina Hyv‰ksyn. \
+     Sinun on hyv‰ksytt‰v‰ n‰m‰ ehdot jotta voit asentaa ohjelman ${INSTALLER_NAME}.$\n\
+     Lisenssitiedostot lˆytyv‰t asennuksen kohdehakemistosta."
+LangString InstPageHeaderText ${LANG_ENGLISH} "Choose OpenOffice.org 2.0 Installation"
+LangString InstPageHeaderText ${LANG_FINNISH} "Valitse OpenOffice.org 2.0:n asennushakemisto"
+LangString InstPageHeaderSubtext ${LANG_ENGLISH} "Choose the OpenOffice.org 2.0 folder in which to install ${INSTALLER_NAME}."
+LangString InstPageHeaderSubtext ${LANG_FINNISH} "Valitse OpenOffice.org 2.0:n asennushakemisto johon ${INSTALLER_NAME} asennetaan."
+LangString InstDirectorypageTextTop ${LANG_ENGLISH} \
+   "Setup will install ${INSTALLER_NAME} to the following OpenOffice.org 2.0 \
+    installation. To install to a different installation, click \
+    Browse and select another installation folder. Click Next to continue.$\n$\n\
+    Note that the Next button will be activated only if the given installation folder contains \
+    a valid OpenOffice.org 2.0 installation."
+LangString InstDirectorypageTextTop ${LANG_FINNISH} \
+   "Asennusohjelman asentaa ohjelman ${INSTALLER_NAME} seuraavaan OpenOffice.org 2.0:n asennukseen. \
+    Jos haluat asentaa jonnekin muualle, paina Selaa ja valitse toinen kansio. Paina Seuraava jatkaaksesi.$\n$\n\
+    Huomaa, ett‰ painike Seuraava on aktiivinen vain, jos annettu asennushakemisto sis‰lt‰‰ kelvollisen \
+    OpenOffice.org 2.0:n asennuksen."
+
+
 ;--------------------------------
 ; Macros
 !macro CheckRunningApp
@@ -113,36 +160,20 @@
 ; Installer
 
   !define MUI_WELCOMEPAGE_TITLE_3LINES
-  !define MUI_WELCOMEPAGE_TEXT \
-    "This wizard will guide you through the installation of ${INSTALLER_NAME}.\r\n\r\n\
-     Before starting the Setup, make sure that the OpenOffice.org starts normally and then \
-     close all OpenOffice.org applications including the QuickStart. The Setup Wizard will start \
-     and close the OpenOffice.org in the end of the installation.\r\n\r\n\
-     During the installation ${LF_CONFIGURATOR} tries to connect to OpenOffice.org \
-     to the address 127.0.01 and this may cause a firewall software to raise a warning. \
-     Accept the connection if you want Setup to configure OpenOffice.org automatically.\r\n\r\n\
-     Click Next to continue."
+  !define MUI_WELCOMEPAGE_TEXT $(InstWelcomepageText)
   !insertmacro MUI_PAGE_WELCOME
 
-  !define MUI_LICENSEPAGE_TEXT_BOTTOM \
-    "If you accept the terms of the agreement, click I Agree to continue. \
-    You must accept the agreement to install ${INSTALLER_NAME}.$\n\
-    License files can be found in the destination folder."
+  !define MUI_LICENSEPAGE_TEXT_BOTTOM $(InstLicensepageTextBottom)
   !insertmacro MUI_PAGE_LICENSE ${LICENSE_FILE}
 
   !define MUI_DIRECTORYPAGE_VERIFYONLEAVE
   !insertmacro MUI_PAGE_DIRECTORY
 
-  !define MUI_PAGE_HEADER_TEXT "Choose OpenOffice.org 2.0 Installation"
-  !define MUI_PAGE_HEADER_SUBTEXT "Choose the OpenOffice.org 2.0 folder in which to install ${INSTALLER_NAME}."
+  !define MUI_PAGE_HEADER_TEXT $(InstPageHeaderText)
+  !define MUI_PAGE_HEADER_SUBTEXT $(InstPageHeaderSubtext)
   !define MUI_DIRECTORYPAGE_VARIABLE $OO_PATH
   !define MUI_PAGE_CUSTOMFUNCTION_PRE OOInstallationPre
-  !define MUI_DIRECTORYPAGE_TEXT_TOP \
-    "Setup will install ${INSTALLER_NAME} to the following OpenOffice.org 2.0 \
-    installation. To install to a different installation, click \
-    Browse and select another installation folder. Click Next to Continue.$\n$\n\
-    Note that the Next button will be activated only if the given installation folder contains \
-    a valid OpenOffice.org 2.0 installation."
+  !define MUI_DIRECTORYPAGE_TEXT_TOP $(InstDirectorypageTextTop)
   !define MUI_DIRECTORYPAGE_TEXT_DESTINATION "Folder of the OpenOffice.org 2.0 installation"
   !insertmacro MUI_PAGE_DIRECTORY
 
