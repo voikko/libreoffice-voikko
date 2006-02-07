@@ -54,8 +54,8 @@ LangString InstPageHeaderSubtext ${LANG_ENGLISH} "Choose the OpenOffice.org 2.0 
 LangString InstDirectorypageTextTop ${LANG_ENGLISH} \
    "Setup will install ${INSTALLER_NAME} to the following OpenOffice.org 2.0 \
     installation. To install to a different installation, click \
-    Browse and select another installation folder. Click Next to continue.$\n$\n\
-    Note that the Next button will be activated only if the given installation folder contains \
+    Browse and select another installation folder. Click Install to continue.$\n$\n\
+    Note that the Install button will be activated only if the given installation folder contains \
     a valid OpenOffice.org 2.0 installation."
 LangString InstDirectorypageTextDestination ${LANG_ENGLISH} "Folder of the OpenOffice.org 2.0 installation"
 LangString InstOnInitInternalErrorText ${LANG_ENGLISH} \

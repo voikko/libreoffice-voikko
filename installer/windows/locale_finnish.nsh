@@ -44,8 +44,7 @@ LangString InstWelcomepageText ${LANG_FINNISH} \
      Asennuksen aikana ${LF_CONFIGURATOR} yritt‰‰ ottaa yhteytt‰ OpenOffice.orgiin \
      paikallisen verkko-osoitteen 127.0.0.1 kautta. T‰m‰ voi aiheuttaa palomuuriohjelmiston \
      varoituksen. Jos haluat asennusohjelman tekev‰n tarvittavat asetusmuutokset \
-     OpenOffice.orgiin automaattisesti, hyv‰ksy t‰m‰ yhteys.\r\n\r\n\
-     Paina Seuraava jatkaaksesi."
+     OpenOffice.orgiin automaattisesti, hyv‰ksy t‰m‰ yhteys."
 LangString InstLicensepageTextBottom ${LANG_FINNISH} \
     "Jos hyv‰ksyt n‰m‰ ehdot, paina Hyv‰ksyn. \
      Sinun on hyv‰ksytt‰v‰ n‰m‰ ehdot jotta voit asentaa ohjelman ${INSTALLER_NAME}.$\n\
@@ -54,8 +53,8 @@ LangString InstPageHeaderText ${LANG_FINNISH} "Valitse OpenOffice.org 2.0:n asen
 LangString InstPageHeaderSubtext ${LANG_FINNISH} "Valitse OpenOffice.org 2.0:n asennushakemisto johon ${INSTALLER_NAME} asennetaan."
 LangString InstDirectorypageTextTop ${LANG_FINNISH} \
    "Asennusohjelman asentaa ohjelman ${INSTALLER_NAME} seuraavaan OpenOffice.org 2.0:n asennukseen. \
-    Jos haluat asentaa jonnekin muualle, paina Selaa ja valitse toinen kansio. Paina Seuraava jatkaaksesi.$\n$\n\
-    Huomaa, ett‰ painike Seuraava on aktiivinen vain, jos annettu asennushakemisto sis‰lt‰‰ kelvollisen \
+    Jos haluat asentaa jonnekin muualle, paina Selaa ja valitse toinen kansio. Paina Asenna jatkaaksesi.$\n$\n\
+    Huomaa, ett‰ painike Asenna on aktiivinen vain, jos annettu asennushakemisto sis‰lt‰‰ kelvollisen \
     OpenOffice.org 2.0:n asennuksen."
 LangString InstDirectorypageTextDestination ${LANG_FINNISH} "OpenOffice.org 2.0:n asennushakemisto"
 LangString InstOnInitInternalErrorText ${LANG_FINNISH} \
