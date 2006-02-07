@@ -102,6 +102,8 @@
 ; Pages 
 ; Installer
 
+  !define MUI_CUSTOMFUNCTION_GUIINIT myGuiInit
+
   !define MUI_WELCOMEPAGE_TITLE_3LINES
   !define MUI_WELCOMEPAGE_TEXT $(InstWelcomepageText)
   !insertmacro MUI_PAGE_WELCOME
@@ -212,6 +214,12 @@ Function .onInit
   !define MUI_LANGDLL_WINDOWTITLE $(InstLanguageDialogWindowTitle)
   !define MUI_LANGDLL_INFO $(InstLanguageDialogInfoText)
   !insertmacro MUI_LANGDLL_DISPLAY
+FunctionEnd
+
+;--------------------------------
+Function myGUIInit
+; These checkings has to be done here instead of .onInit-function because
+; language texts are modified only after the .onInit-function.
 
 ; Check that the OpenOffice.org is not running
   !insertmacro CheckRunningApp
@@ -227,7 +235,6 @@ Function .onInit
     
   outDirDefined:
       StrCpy $INSTDIR "$PROGRAMFILES\${OUTDIR}"
-      
 FunctionEnd
 
 ;--------------------------------
