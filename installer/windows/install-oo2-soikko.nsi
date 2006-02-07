@@ -25,7 +25,9 @@
  *
  ************************************************************************/
 
-; These settings are given by the makefile in the command line
+; These settings are given by the makefile in the command line.
+; In order to use the script through Eclipse plugin definitions are n
+; are given here.
   !ifndef INSTALLER_NAME
   !define INSTALLER_NAME "oo2-soikko-Windows-1.1"
   !endif
@@ -75,6 +77,11 @@
   
 ; Registry Key where the uninstallers are defined
   !define WINDOWS_UNINSTALLERS "Software\Microsoft\Windows\CurrentVersion\Uninstall" 
+  
+; Remember the installer language in uninstaller
+  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
+  !define MUI_LANGDLL_REGISTRY_KEY "Software\${INSTALLER_NAME}" 
+  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
 ; Path of the OpenOffice.org installation
   var /GLOBAL OO_PATH
@@ -82,71 +89,7 @@
 ; The name of the installer
   Name ${INSTALLER_NAME}
   OutFile ${INSTALLER_FILE}
-
-;--------------------------------
-; UI strings and translations
-
-LangString InstWelcomepageText ${LANG_ENGLISH} \
-    "This wizard will guide you through the installation of ${INSTALLER_NAME}.\r\n\r\n\
-     Before starting the Setup, make sure that the OpenOffice.org starts normally and then \
-     close all OpenOffice.org applications including the QuickStart. The Setup Wizard will start \
-     and close the OpenOffice.org in the end of the installation.\r\n\r\n\
-     During the installation ${LF_CONFIGURATOR} tries to connect to OpenOffice.org \
-     at the local address 127.0.0.1 and this may cause firewall software to raise a warning. \
-     Accept the connection if you want Setup to configure OpenOffice.org automatically.\r\n\r\n\
-     Click Next to continue."
-LangString InstWelcomepageText ${LANG_FINNISH} \
-    "T‰m‰ ohjattu toiminto auttaa sinua asentamaan ohjelman ${INSTALLER_NAME}.\r\n\r\n\
-     Varmista ennen asennuksen aloittamista, ett‰ OpenOffice.org k‰ynnistyy normaalisti. \
-     Sulje sen j‰lkeen OpenOffice.org ja sen pikakak‰ynnistystoiminto. Asennusohjelma \
-     k‰ynnist‰‰ ja sulkee OpenOffice.orgin asennuksen loppuvaiheessa.\r\n\r\n\
-     Asennuksen aikana ${LF_CONFIGURATOR} yritt‰‰ ottaa yhteytt‰ OpenOffice.orgiin \
-     paikallisen verkko-osoitteen 127.0.0.1 kautta. T‰m‰ voi aiheuttaa palomuurohjelmiston \
-     varoituksen. Jos haluat asennusohjelman tekev‰n tarvittavat asetusmuutokset \
-     OpenOffice.orgiin automaattisesti, hyv‰ksy t‰m‰ yhteys.\r\n\r\n\
-     Paina Seuraava jatkaaksesi."
-LangString InstLicensepageTextBottom ${LANG_ENGLISH} \
-    "If you accept the terms of the agreement, click I Agree to continue. \
-     You must accept the agreement to install ${INSTALLER_NAME}.$\n\
-     License files can be found in the destination folder."
-LangString InstLicensepageTextBottom ${LANG_FINNISH} \
-    "Jos hyv‰ksyt n‰m‰ ehdot, paina Hyv‰ksyn. \
-     Sinun on hyv‰ksytt‰v‰ n‰m‰ ehdot jotta voit asentaa ohjelman ${INSTALLER_NAME}.$\n\
-     Lisenssitiedostot lˆytyv‰t asennuksen kohdehakemistosta."
-LangString InstPageHeaderText ${LANG_ENGLISH} "Choose OpenOffice.org 2.0 Installation"
-LangString InstPageHeaderText ${LANG_FINNISH} "Valitse OpenOffice.org 2.0:n asennushakemisto"
-LangString InstPageHeaderSubtext ${LANG_ENGLISH} "Choose the OpenOffice.org 2.0 folder in which to install ${INSTALLER_NAME}."
-LangString InstPageHeaderSubtext ${LANG_FINNISH} "Valitse OpenOffice.org 2.0:n asennushakemisto johon ${INSTALLER_NAME} asennetaan."
-LangString InstDirectorypageTextTop ${LANG_ENGLISH} \
-   "Setup will install ${INSTALLER_NAME} to the following OpenOffice.org 2.0 \
-    installation. To install to a different installation, click \
-    Browse and select another installation folder. Click Next to continue.$\n$\n\
-    Note that the Next button will be activated only if the given installation folder contains \
-    a valid OpenOffice.org 2.0 installation."
-LangString InstDirectorypageTextTop ${LANG_FINNISH} \
-   "Asennusohjelman asentaa ohjelman ${INSTALLER_NAME} seuraavaan OpenOffice.org 2.0:n asennukseen. \
-    Jos haluat asentaa jonnekin muualle, paina Selaa ja valitse toinen kansio. Paina Seuraava jatkaaksesi.$\n$\n\
-    Huomaa, ett‰ painike Seuraava on aktiivinen vain, jos annettu asennushakemisto sis‰lt‰‰ kelvollisen \
-    OpenOffice.org 2.0:n asennuksen."
-
-
-;--------------------------------
-; Macros
-!macro CheckRunningApp
-    FindWindow $0 ${OO_WINDOW_CLASS_APPLICATION}
-    StrCmp $0 0 _openOfficeClosed
-      MessageBox MB_ICONSTOP|MB_OK "OpenOffice.org is running. Close it and try again."
-      Abort
-  _openOfficeClosed:
-
-    FindWindow $0 ${OO_WINDOW_CLASS_QUICKSTART}
-    StrCmp $0 0 _quickStartClosed
-      MessageBox MB_ICONSTOP|MB_OK "OpenOffice.org QuickStart is running. Close it and try again."
-      Abort
-  _quickStartClosed:
   
-!macroend
-
 ;--------------------------------
   !include WinMessages.nsh  ; Windows Message definitions for closing applications
   !include "MUI.nsh"        ; Modern UI
@@ -174,33 +117,48 @@ LangString InstDirectorypageTextTop ${LANG_FINNISH} \
   !define MUI_DIRECTORYPAGE_VARIABLE $OO_PATH
   !define MUI_PAGE_CUSTOMFUNCTION_PRE OOInstallationPre
   !define MUI_DIRECTORYPAGE_TEXT_TOP $(InstDirectorypageTextTop)
-  !define MUI_DIRECTORYPAGE_TEXT_DESTINATION "Folder of the OpenOffice.org 2.0 installation"
+  !define MUI_DIRECTORYPAGE_TEXT_DESTINATION $(InstDirectorypageTextDestination)
   !insertmacro MUI_PAGE_DIRECTORY
 
   !insertmacro MUI_PAGE_INSTFILES
 
 ; Uninstaller
   !define MUI_WELCOMEPAGE_TITLE_3LINES
-  !define MUI_WELCOMEPAGE_TEXT \
-    "This wizard will guide you through the uninstallation of ${INSTALLER_NAME}.\r\n\r\n\
-     Before starting the uninstallation, close all OpenOffice.org applications including the QuickStart.\r\n\r\n\
-     Click Next to continue."
+  !define MUI_WELCOMEPAGE_TEXT $(UninstWelcomepageText)
   !insertmacro MUI_UNPAGE_WELCOME
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
-
-;--------------------------------
-;Languages
- 
-  !insertmacro MUI_LANGUAGE "English"
   
+;--------------------------------
+; Support for languages  
+  !include "locale_english.nsh"
+  !include "locale_finnish.nsh"
+  
+  !insertmacro MUI_RESERVEFILE_LANGDLL
+  
+;--------------------------------
+; Macros
+!macro CheckRunningApp
+    FindWindow $0 ${OO_WINDOW_CLASS_APPLICATION}
+    StrCmp $0 0 _openOfficeClosed
+      MessageBox MB_ICONSTOP|MB_OK $(OpenOfficeRunningText)
+      Abort
+  _openOfficeClosed:
+
+    FindWindow $0 ${OO_WINDOW_CLASS_QUICKSTART}
+    StrCmp $0 0 _quickStartClosed
+      MessageBox MB_ICONSTOP|MB_OK $(OpenOfficeQuickStartRunningText)
+      Abort
+  _quickStartClosed:
+!macroend
+
 ;--------------------------------
 ;Installer Sections
  
 ; The stuff to install
 Section "Oo2-soikko"
     SectionIn RO
-  
+   
     CreateDirectory "$INSTDIR"
     CreateDirectory "$INSTDIR\logs" ; Folder for log files
     
@@ -209,7 +167,7 @@ Section "Oo2-soikko"
     WriteUninstaller "$INSTDIR\${UNINSTALLER_FILE}"
   
 ; Add all files from the source directory 
-    DetailPrint "Copying files to $INSTDIR folder ..."
+    DetailPrint $(InstCopyingFilesDetailText)
     File /a "${SRCDIR}\*"
   
 ; Path needs to be set in order to have correct DLL's for the configurator 
@@ -219,9 +177,8 @@ Section "Oo2-soikko"
     Call RemoveExistingPackages
     
 ; Install soikko to OpenOffice.org
-; ExecWait '"$OO_PATH\program\unopkg" add "$INSTDIR\${LF_PACKAGEFILE}"' $0
-    DetailPrint "Adding ${LF_PACKAGEFILE} to OpenOffice.org ..."
-    ExecDos::exec "/BRAND=Installing ${LF_PACKAGEFILE}" \
+    DetailPrint $(InstAddingPackageDetailText)
+    ExecDos::exec "/BRAND=$(InstAddingPackageProgressBarText) Installing ${LF_PACKAGEFILE}" \
                   '"$OO_PATH\program\unopkg" add --verbose "$INSTDIR\${LF_PACKAGEFILE}"' \
                   "" "$INSTDIR\logs\adding_${LF_PACKAGEFILE}.txt"
 
@@ -230,12 +187,8 @@ Section "Oo2-soikko"
     IntCmp $0 0 packageSuccess packageFailed packageFailed
 
   packageFailed:
-    DetailPrint "Failed to add ${LF_PACKAGEFILE} to the OpenOffice.org. Exit code = $0"
-    MessageBox MB_ICONSTOP|MB_OK \
-      "Failed to add ${LF_PACKAGEFILE} to the OpenOffice.org.$\n$\n\
-      Close the installer, make sure that the OpenOffice.org starts normally$\n\
-      and start the installer again.$\n$\n\
-      The package can be added also manually from OpenOffice.org."
+    DetailPrint $(InstAddingPackageFailedDetailText)
+    MessageBox MB_ICONSTOP|MB_OK $(InstAddingPackageFailedText)
     Goto end
     
   packageSuccess:
@@ -254,7 +207,12 @@ Section "Oo2-soikko"
 SectionEnd
 
 ;--------------------------------
-Function .onInit
+Function .onInit    
+; Select language.
+  !define MUI_LANGDLL_WINDOWTITLE $(InstLanguageDialogWindowTitle)
+  !define MUI_LANGDLL_INFO $(InstLanguageDialogInfoText)
+  !insertmacro MUI_LANGDLL_DISPLAY
+
 ; Check that the OpenOffice.org is not running
   !insertmacro CheckRunningApp
   
@@ -264,11 +222,12 @@ Function .onInit
 ; Check that output dir has been set properly
     StrCmp ${OUTDIR} "" noOutDir outDirDefined
   noOutDir:
-      MessageBox MB_ICONSTOP|MB_OK "Internal error. Default destination folder is not defined. Exiting."
+      MessageBox MB_ICONSTOP|MB_OK $(InstOnInitInternalErrorText)
       Abort
     
   outDirDefined:
       StrCpy $INSTDIR "$PROGRAMFILES\${OUTDIR}"
+      
 FunctionEnd
 
 ;--------------------------------
@@ -297,8 +256,8 @@ FunctionEnd
 ;--------------------------------
 Function RemoveExistingPackages
 
-    DetailPrint "Searching for existing packages ..."
-    ExecDos::exec "/BRAND=Searching for existing packages"  \
+    DetailPrint $(InstSearchingExistingPackagesDetailText)
+    ExecDos::exec "/BRAND=$(InstSearchingExistingPackagesProgressBarText)"  \
                   '"$OO_PATH\program\unopkg" list'  \
                   "" "$INSTDIR\logs\packages.txt"
 
@@ -319,8 +278,8 @@ Function RemoveExistingPackages
         ; Push $R0
         Call TrimNewLines
         Pop $R0
-        DetailPrint "Removing $R0 from OpenOffice.org ..."
-        ExecDos::exec "/BRAND=Removing $R0" \
+        DetailPrint $(InstRemovingPackageDetailText)
+        ExecDos::exec "/BRAND=$(InstRemovingPackageProgressBarText)" \
                       '"$OO_PATH\program\unopkg" remove --verbose "$R0"' \
                       "" "$INSTDIR\logs\removing_$R0.txt"
         
@@ -335,7 +294,7 @@ Function ConfigurePackage
 ; Start OpenOffice.org so that the configurator can connect to it
     SetErrorLevel 0
     
-    DetailPrint "Starting OpenOffice.org for setting configuration ..."
+    DetailPrint $(InstStartingOpenOfficeDetailText)
     Exec '"$OO_PATH\program\soffice.exe" "-nologo"  \
           "-accept=socket,host=localhost,port=${LF_PORT};urp;StartOffice.ServiceManager"'
     
@@ -344,16 +303,14 @@ Function ConfigurePackage
    IntCmp $0 0 oo2Success oo2Failed oo2Failed
    
   oo2Failed:
-    DetailPrint "Failed to start $OO_PATH\program\soffice.exe."
-    MessageBox MB_OK \
-      "Failed to start the OpenOffice.org.$\n$\n\
-      Configure ${LF_PACKAGEFILE} manually after the installation."
+    DetailPrint $(InstStartingOpenOfficeFailedDetailText)
+    MessageBox MB_OK $(InstStartingOpenOfficeFailedText)
     Goto openOfficeClosed
     
   oo2Success:
   
 ; Start the configurator that connect to the OpenOffice.org and configures the soikko
-    ExecDos::exec "/BRAND=Configuring OpenOffice.org" \
+    ExecDos::exec "/BRAND=$(InstConfiguringOpenOfficeOrgProgressBarText)" \
       '"$INSTDIR\${LF_CONFIGURATOR}" ${LF_PORT} 30 1 ${LF_NAMESPACE}.Hyphenator ${LF_NAMESPACE}.SpellChecker fi FI' \
       "" "$INSTDIR\logs\configurator.txt"
       
@@ -362,15 +319,13 @@ Function ConfigurePackage
     IntCmp $0 0 packageSuccess packageFailed packageFailed
 
   packageFailed:
-    DetailPrint "Failed to configure ${LF_PACKAGEFILE} to the OpenOffice.org. Exit code = $0"
-    MessageBox MB_OK \
-      "Failed to configure ${LF_PACKAGEFILE} to the OpenOffice.org.$\n$\n\
-       Configure ${LF_PACKAGEFILE} manually after the installation."
+    DetailPrint $(InstConfiguringOpenOfficeOrgFailedDetailText)
+    MessageBox MB_OK $(InstConfiguringOpenOfficeFailedText)
     
   packageSuccess:
   
 ; Close the OpenOffice that was started before configurator
-    DetailPrint "Closing OpenOffice.org application ..."
+    DetailPrint $(InstClosingOpenOfficeFailedDetailText)
     FindWindow $0 ${OO_WINDOW_CLASS_APPLICATION}
     StrCmp $0 0 openOfficeClosed
       SendMessage $0 ${WM_CLOSE} 0 0
@@ -379,7 +334,7 @@ FunctionEnd
 
 ;--------------------------------
 Function AddUninstaller
-    DetailPrint "Adding uninstaller to Add/remove Programs ..."
+    DetailPrint $(InstAddingUninstallerToAddRemoveProgramsDetailText)
     WriteRegStr HKLM "${WINDOWS_UNINSTALLERS}\${INSTALLER_NAME}"   "DisplayName"        "${INSTALLER_NAME}"
     WriteRegStr HKLM "${WINDOWS_UNINSTALLERS}\${INSTALLER_NAME}"   "UninstallString"    "$INSTDIR\${UNINSTALLER_FILE}"
     WriteRegStr HKLM "${WINDOWS_UNINSTALLERS}\${INSTALLER_NAME}"   "InstallLocation"    "$INSTDIR"
@@ -400,7 +355,7 @@ Function CheckExistingUninstaller
       Pop $R0
       IntOp $0 $0 + 1
       StrCmp $R0 "" loop
-        MessageBox MB_ICONSTOP|MB_OK "Uninstall $R0 from Add/remove programs and try again."
+        MessageBox MB_ICONSTOP|MB_OK $(InstUninstallPreviousInstallationText)
         Abort     
   done:
 FunctionEnd
@@ -409,7 +364,7 @@ FunctionEnd
 ; Uninstaller
 Section "Uninstall"
 ; Try to get the path of the OpenOffice.org that was used in installation phase
-    DetailPrint "Searching for OpenOffice.org installation ..."
+    DetailPrint $(UninstSearchingOpenOfficeInstallationFromRegistryDetailText)
     ReadRegStr $OO_PATH HKLM  \
                "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLER_NAME}" \
                "OpenOffice.orgPath" 
@@ -424,31 +379,233 @@ Section "Uninstall"
   
 ; OpenOffice.org was found
 ; Remove the package from the OpenOffice.org
-        DetailPrint "Removing ${LF_PACKAGEFILE} from OpenOffice.org  ..."
-        ExecDos::exec "/BRAND=Removing ${LF_PACKAGEFILE}"  \
+        DetailPrint $(UninstRemovingPackageDetailText)
+        ExecDos::exec "/BRAND=$(UninstRemovingPackageProgressBarText) ${LF_PACKAGEFILE}"  \
                       '"$OO_PATH\program\unopkg.exe" remove "${LF_PACKAGEFILE}"'  \
                       "" "c:\removing_${LF_PACKAGEFILE}.txt"
   
   OONotFound:  
 ; Remove uninstaller from the add/remove programs
-    DetailPrint "Removing uninstaller from Add/remove programs ..."
+    DetailPrint $(UninstRemovingUninstallerDetailText)
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLER_NAME}" 
+    
+; Remove installer language
+    DeleteRegKey HKCU ${MUI_LANGDLL_REGISTRY_KEY}
 
 ; Check that there is valid path for deleting
     StrCmp $INSTDIR "" noOutDir outDirDefined
 noOutDir:
-      DetailPrint "Installation folder was not defined. Folder is not deleted."
-      MessageBox MB_ICONSTOP|MB_OK "Installation folder was not defined. Folder is not deleted."
+      DetailPrint $(UninstInstallationFolderNotDefinedDetailText)
+      MessageBox MB_ICONSTOP|MB_OK $(UninstInstallationFolderNotDefinedText)
       Abort
  outDirDefined:
-      DetailPrint "Deleting installation folder $INSTDIR ..."
+      DetailPrint $(UninstDeletingInstallationFolderDetailText)
       RMDir /r $INSTDIR
 SectionEnd
 
 ;--------------------------------
 Function un.onInit
+; Select language. 
+  !insertmacro MUI_UNGETLANGUAGE
+  
 ; Check that the OpenOffice.org is not running
-    !insertmacro CheckRunningApp
+  !insertmacro CheckRunningApp
 FunctionEnd
 
+;--------------------------------
+; UI strings and translations
 
+; Installer
+/*
+LangString InstLanguageDialogWindowTitle ${LANG_ENGLISH} "Installer Language"
+LangString InstLanguageDialogWindowTitle ${LANG_FINNISH} "Asennusohjelman kieli"
+
+LangString InstLanguageDialogInfoText ${LANG_ENGLISH} "Please select the language of the installer"
+LangString InstLanguageDialogInfoText ${LANG_FINNISH} "Valitse asennusohjelman kieli"
+
+LangString InstWelcomepageText ${LANG_ENGLISH} \
+    "This wizard will guide you through the installation of ${INSTALLER_NAME}.\r\n\r\n\
+     Before starting the Setup, make sure that the OpenOffice.org starts normally and then \
+     close all OpenOffice.org applications including the QuickStart. The Setup Wizard will start \
+     and close the OpenOffice.org in the end of the installation.\r\n\r\n\
+     During the installation ${LF_CONFIGURATOR} tries to connect to OpenOffice.org \
+     at the local address 127.0.0.1 and this may cause firewall software to raise a warning. \
+     Accept the connection if you want Setup to configure OpenOffice.org automatically.\r\n\r\n\
+     Click Next to continue."
+LangString InstWelcomepageText ${LANG_FINNISH} \
+    "T‰m‰ ohjattu toiminto auttaa sinua asentamaan ohjelman ${INSTALLER_NAME}.\r\n\r\n\
+     Varmista ennen asennuksen aloittamista, ett‰ OpenOffice.org k‰ynnistyy normaalisti. \
+     Sulje t‰m‰n j‰lkeen OpenOffice.org ja sen pikakak‰ynnistystoiminto. Asennusohjelma \
+     k‰ynnist‰‰ ja sulkee OpenOffice.orgin asennuksen loppuvaiheessa.\r\n\r\n\
+     Asennuksen aikana ${LF_CONFIGURATOR} yritt‰‰ ottaa yhteytt‰ OpenOffice.orgiin \
+     paikallisen verkko-osoitteen 127.0.0.1 kautta. T‰m‰ voi aiheuttaa palomuuriohjelmiston \
+     varoituksen. Jos haluat asennusohjelman tekev‰n tarvittavat asetusmuutokset \
+     OpenOffice.orgiin automaattisesti, hyv‰ksy t‰m‰ yhteys.\r\n\r\n\
+     Paina Seuraava jatkaaksesi."
+     
+LangString InstLicensepageTextBottom ${LANG_ENGLISH} \
+    "If you accept the terms of the agreement, click I Agree to continue. \
+     You must accept the agreement to install ${INSTALLER_NAME}.$\n\
+     License files can be found in the destination folder."
+LangString InstLicensepageTextBottom ${LANG_FINNISH} \
+    "Jos hyv‰ksyt n‰m‰ ehdot, paina Hyv‰ksyn. \
+     Sinun on hyv‰ksytt‰v‰ n‰m‰ ehdot jotta voit asentaa ohjelman ${INSTALLER_NAME}.$\n\
+     Lisenssitiedostot lˆytyv‰t asennuksen kohdehakemistosta."
+     
+LangString InstPageHeaderText ${LANG_ENGLISH} "Choose OpenOffice.org 2.0 Installation"
+LangString InstPageHeaderText ${LANG_FINNISH} "Valitse OpenOffice.org 2.0:n asennushakemisto"
+
+LangString InstPageHeaderSubtext ${LANG_ENGLISH} "Choose the OpenOffice.org 2.0 folder in which to install ${INSTALLER_NAME}."
+LangString InstPageHeaderSubtext ${LANG_FINNISH} "Valitse OpenOffice.org 2.0:n asennushakemisto johon ${INSTALLER_NAME} asennetaan."
+
+LangString InstDirectorypageTextTop ${LANG_ENGLISH} \
+   "Setup will install ${INSTALLER_NAME} to the following OpenOffice.org 2.0 \
+    installation. To install to a different installation, click \
+    Browse and select another installation folder. Click Next to continue.$\n$\n\
+    Note that the Next button will be activated only if the given installation folder contains \
+    a valid OpenOffice.org 2.0 installation."
+LangString InstDirectorypageTextTop ${LANG_FINNISH} \
+   "Asennusohjelman asentaa ohjelman ${INSTALLER_NAME} seuraavaan OpenOffice.org 2.0:n asennukseen. \
+    Jos haluat asentaa jonnekin muualle, paina Selaa ja valitse toinen kansio. Paina Seuraava jatkaaksesi.$\n$\n\
+    Huomaa, ett‰ painike Seuraava on aktiivinen vain, jos annettu asennushakemisto sis‰lt‰‰ kelvollisen \
+    OpenOffice.org 2.0:n asennuksen."
+    
+LangString InstDirectorypageTextDestination ${LANG_ENGLISH} "Folder of the OpenOffice.org 2.0 installation"
+LangString InstDirectorypageTextDestination ${LANG_FINNISH} "OpenOffice.org 2.0:n asennushakemisto"
+
+LangString InstOnInitInternalErrorText ${LANG_ENGLISH} \
+   "Internal error. Default destination folder is not defined. Exiting."
+LangString InstOnInitInternalErrorText ${LANG_FINNISH} \
+   "Ohjelman sis‰inen virhe. Oletusasennushakemisto ei ole m‰‰ritelty. Keskeytet‰‰n."
+
+LangString InstUninstallPreviousInstallationText ${LANG_ENGLISH} \
+      "Uninstall $R0 from Add/remove programs and try again."
+LangString InstUninstallPreviousInstallationText ${LANG_FINNISH} \
+      "Poista asennus $R0 'Lis‰‰ tai poista sovellus'-toiminnon avulla ja yrit‰ uudelleen."
+
+LangString OpenOfficeRunningText ${LANG_ENGLISH} "OpenOffice.org is running. Close it and try again."
+LangString OpenOfficeRunningText ${LANG_FINNISH} "OpenOffice.org on k‰ynniss‰. Sulje ohjelma ja yrit‰ uudelleen."
+
+LangString OpenOfficeQuickStartRunningText ${LANG_ENGLISH} "OpenOffice.org QuickStart is running. Close it and try again."
+LangString OpenOfficeQuickStartRunningText ${LANG_FINNISH} "OpenOffice.org -pikak‰ynnistys on k‰ynniss‰. Sulje ohjelma ja yrit‰ uudelleen."
+
+LangString InstSearchingExistingPackagesDetailText ${LANG_ENGLISH} "Searching for existing packages ..."
+LangString InstSearchingExistingPackagesDetailText ${LANG_FINNISH} "Etsit‰‰n olemassa olevia paketteja ..."
+
+LangString InstSearchingExistingPackagesProgressBarText ${LANG_ENGLISH} "Searching for existing packages"
+LangString InstSearchingExistingPackagesProgressBarText ${LANG_FINNISH} "Etsit‰‰n olemassa olevia paketteja"
+
+LangString InstRemovingPackageDetailText ${LANG_ENGLISH} "Removing $R0 from OpenOffice.org ..."
+LangString InstRemovingPackageDetailText ${LANG_FINNISH} "Poistetaan $R0 OpenOffice.org-ohjelmasta ..."
+
+LangString InstRemovingPackageProgressBarText ${LANG_ENGLISH} "Removing $R0"
+LangString InstRemovingPackageProgressBarText ${LANG_FINNISH} "Poistetaan $R0"
+
+LangString InstCopyingFilesDetailText ${LANG_ENGLISH} "Copying files to $INSTDIR folder ..."
+LangString InstCopyingFilesDetailText ${LANG_FINNISH} "Kopioidaan tiedostoja hakemistoon $INSTDIR ..."
+
+LangString InstAddingPackageDetailText ${LANG_ENGLISH} "Installing ${LF_PACKAGEFILE} to OpenOffice.org ..."
+LangString InstAddingPackageDetailText ${LANG_FINNISH} "Asennetaan ${LF_PACKAGEFILE} OpenOffice.orgiin ..."
+
+LangString InstAddingPackageProgressBarText ${LANG_ENGLISH} "Installing ${LF_PACKAGEFILE}"
+LangString InstAddingPackageProgressBarText ${LANG_FINNISH} "Asennetaan ${LF_PACKAGEFILE}"
+
+LangString InstAddingPackageFailedDetailText ${LANG_ENGLISH} \
+     "Failed to add ${LF_PACKAGEFILE} to the OpenOffice.org. Exit code = $0"
+LangString InstAddingPackageFailedDetailText ${LANG_FINNISH} \
+     "Paketin ${LF_PACKAGEFILE} asennus OpenOffice.orgiin ep‰onnistui. Paluukoodi = $0"
+     
+LangString InstAddingPackageFailedText ${LANG_ENGLISH} \
+      "Failed to add ${LF_PACKAGEFILE} to the OpenOffice.org.$\n$\n\
+      Close the installer, make sure that the OpenOffice.org starts normally$\n\
+      and start the installer again.$\n$\n\
+      The package can be added also manually from OpenOffice.org."
+LangString InstAddingPackageFailedText ${LANG_FINNISH} \
+      "Paketin ${LF_PACKAGEFILE} asennus OpenOffice.orgiin ep‰onnistui.$\n$\n\
+      Sulje asennusohjelma, varmista ett‰ OpenOffice.org k‰ynnistyy normaalisti$\n\
+      ja k‰ynnist‰ asennusohjelmas uudelleen.$\n$\n\
+      Paketti voidaan asentaa myˆs manuaalisesti OpenOffice.orgissa."
+
+LangString InstStartingOpenOfficeDetailText ${LANG_ENGLISH} "Starting OpenOffice.org for setting configuration ..."
+LangString InstStartingOpenOfficeDetailText ${LANG_FINNISH} "K‰ynnistet‰‰n OpenOffice.org asetusmuutosten tekemiseksi ..."
+
+LangString InstStartingOpenOfficeFailedDetailText ${LANG_ENGLISH} "Failed to start $OO_PATH\program\soffice.exe."
+LangString InstStartingOpenOfficeFailedDetailText ${LANG_FINNISH} "Ohjelman $OO_PATH\program\soffice.exe k‰ynnist‰minen ep‰onnistui."
+
+LangString InstStartingOpenOfficeFailedText ${LANG_ENGLISH} \ 
+     "Failed to start the OpenOffice.org.$\n$\n\
+      Configure ${LF_PACKAGEFILE} manually after the installation."
+LangString InstStartingOpenOfficeFailedText ${LANG_FINNISH} \ 
+     "OpenOffice.orgin k‰ynnist‰minen ep‰onnistui.$\n$\n\
+      Tee tarvittavat asetusmuutokset paketille ${LF_PACKAGEFILE} $\n$\n\
+      OpenOffice.orgissa asennuksen j‰lkeen."
+      
+LangString InstConfiguringOpenOfficeOrgProgressBarText ${LANG_ENGLISH} "Configuring OpenOffice.org"
+LangString InstConfiguringOpenOfficeOrgProgressBarText ${LANG_FINNISH} "Tehd‰‰n asetusmuutokset OpenOffice.orgiin"
+
+LangString InstConfiguringOpenOfficeOrgFailedDetailText ${LANG_ENGLISH} \
+      "Failed to configure ${LF_PACKAGEFILE} to the OpenOffice.org. Exit code = $0"
+LangString InstConfiguringOpenOfficeOrgFailedDetailText ${LANG_FINNISH} \ 
+      "Asetusmuutosten tekeminen paketille ${LF_PACKAGEFILE} ep‰onnistui OpenOffice.orgissa. Paluukoodi = $0"
+      
+LangString InstConfiguringOpenOfficeFailedText ${LANG_ENGLISH} \
+      "Failed to configure ${LF_PACKAGEFILE} to the OpenOffice.org.$\n$\n\
+       Configure ${LF_PACKAGEFILE} manually after the installation."
+LangString InstConfiguringOpenOfficeFailedText ${LANG_FINNISH} \
+      "Asetusmuutosten tekeminen paketille ${LF_PACKAGEFILE} ep‰onnistui OpenOffice.orgissa.$\n$\n\
+       Tee tarvittavat asetusmuutokset paketille ${LF_PACKAGEFILE} OpenOffice.orgissa asennuksen j‰lkeen."
+       
+LangString InstClosingOpenOfficeFailedDetailText ${LANG_ENGLISH} "Closing OpenOffice.org ..."
+LangString InstClosingOpenOfficeFailedDetailText ${LANG_FINNISH} "Suljetaan OpenOffice.org ..."
+
+LangString InstAddingUninstallerToAddRemoveProgramsDetailText ${LANG_ENGLISH} \ 
+      "Adding uninstaller to Add/remove Programs ..."
+LangString InstAddingUninstallerToAddRemoveProgramsDetailText ${LANG_FINNISH} \
+      "Lis‰t‰‰n asennuksen poisto 'Lis‰‰ tai poista sovellus'-toimintoon ..."
+
+; Uninstaller
+
+LangString UninstWelcomepageText ${LANG_ENGLISH} \
+    "This wizard will guide you through the uninstallation of ${INSTALLER_NAME}.\r\n\r\n\
+     Before starting the uninstallation, make sure that the OpenOffice.org starts normally and then \
+     close all OpenOffice.org applications including the QuickStart.\r\n\r\n\
+     Click Next to continue."
+LangString UninstWelcomepageText ${LANG_FINNISH} \
+    "T‰m‰ ohjattu toiminto auttaa sinua poistamaan ohjelman ${INSTALLER_NAME} asennuksen.\r\n\r\n\
+     Varmista ennen asennuksen poiston aloittamista, ett‰ OpenOffice.org k‰ynnistyy normaalisti. \
+     Sulje t‰m‰n j‰lkeen OpenOffice.org ja sen pikakak‰ynnistystoiminto.\r\n\r\n\
+     Paina Seuraava jatkaaksesi."
+      
+LangString UninstSearchingOpenOfficeInstallationFromRegistryDetailText ${LANG_ENGLISH} \
+      "Searching for OpenOffice.org installation ..."
+LangString UninstSearchingOpenOfficeInstallationFromRegistryDetailText ${LANG_FINNISH} \
+      "Etsit‰‰n OpenOffice.org asennusta ..."
+      
+LangString UninstRemovingPackageDetailText ${LANG_ENGLISH} \
+      "Removing ${LF_PACKAGEFILE} from OpenOffice.org  ..."
+LangString UninstRemovingPackageDetailText ${LANG_FINNISH} \
+      "Poistetaan ${LF_PACKAGEFILE} OpenOffice.orgista  ..."
+      
+LangString UninstRemovingPackageProgressBarText ${LANG_ENGLISH} "Removing"
+LangString UninstRemovingPackageProgressBarText ${LANG_FINNISH} "Poistetaan"
+
+LangString UninstRemovingUninstallerDetailText ${LANG_ENGLISH} \
+      "Removing uninstaller from Add/remove programs ..."
+LangString UninstRemovingUninstallerDetailText ${LANG_FINNISH} \
+      "Poistetaan asennuksen poisto 'Lis‰‰ tai poista sovellus'-toiminnosta ..."
+      
+LangString UninstInstallationFolderNotDefinedDetailText ${LANG_ENGLISH} \
+      "Installation folder was not defined. Folder is not deleted."
+LangString UninstInstallationFolderNotDefinedDetailText ${LANG_FINNISH} \
+      "Asennushakemistoa ei oltu m‰‰ritelty. Hakemistoa ei poistettu."
+      
+LangString UninstInstallationFolderNotDefinedText ${LANG_ENGLISH} \
+      "Installation folder was not defined. Folder is not deleted."
+LangString UninstInstallationFolderNotDefinedText ${LANG_FINNISH} \
+      "Asennushakemistoa ei oltu m‰‰ritelty. Hakemistoa ei poistettu."
+      
+LangString UninstDeletingInstallationFolderDetailText ${LANG_ENGLISH} \
+      "Deleting installation folder $INSTDIR ..."
+LangString UninstDeletingInstallationFolderDetailText ${LANG_FINNISH} \
+      "Poistetaan asennushakemisto $INSTDIR ..."
+*/

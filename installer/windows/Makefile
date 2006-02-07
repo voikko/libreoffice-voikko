@@ -56,7 +56,9 @@ $(LF_OUTDIR)/$(LF_PACKAGENAME).exe : \
 	$(LF_OUTDIR)/$(LF_PACKAGENAME)/$(LF_PACKAGE) \
 	$(LF_OUTDIR)/$(LF_PACKAGENAME)/$(LF_CONFIGURATOR)$(EXE_EXT) \
 	install-oo2-soikko.nsi \
-	helper-functions.nsh
+	helper-functions.nsh \
+	locale_english.nsh \
+	locale_finnish.nsh
 	$(ECHO) $(LF_PACKAGENAME)
 	c:\program files\nsis\makensis.exe \
 	    /DINSTALLER_NAME=$(LF_PACKAGENAME) \
