@@ -3,21 +3,21 @@
 # and hyphenation implementation.
 
 # Full human-readable name of the implementation
-LF_FULLNAME=Hunspell-fi
+LF_FULLNAME=Oo2-voikko
 
 # Short name of the implementation that will be used as a part
 # of file names etc.
-LF_SHORTNAME=hunspell-fi
+LF_SHORTNAME=oo2-voikko
 
 # Implementation namespace
-LF_NAMESPACE=hunspellfi
+LF_NAMESPACE=voikko
 
 # Version number
-LF_VERSION=0.1
+LF_VERSION=0.2
 
 # Name of the file containing the actual implementation
 # Note that this file must be released under the LGPL!
-LF_IMPL_CODE=hunspellfi-impl
+LF_IMPL_CODE=voikkoimpl
 
 # If the implementation requires additional files to be shipped
 # within the package, these files should be placed in a subdirectory
