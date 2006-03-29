@@ -29,47 +29,17 @@
 ; In order to use the script through Eclipse plugin definitions are n
 ; are given here.
   !ifndef INSTALLER_NAME
-  !define INSTALLER_NAME "oo2-soikko-Windows-1.1"
-  !endif
-
-  !ifndef OUTDIR
-  !define OUTDIR "oo2-soikko-Windows-1.1"
-  !endif
-
-  !ifndef SRCDIR
-  !define SRCDIR "..\..\build\oo2-soikko-Windows-1.1"
-  !endif
-
-  !ifndef LICENSE_FILE_EN
-  !define LICENSE_FILE_EN "..\..\build\oo2-soikko-Windows-1.1\COPYING"
-  !endif
-  
-  !ifndef LICENSE_FILE_FI
-  !define LICENSE_FILE_FI "..\..\build\oo2-soikko-Windows-1.1\COPYING_FI"
-  !endif
-
-  !ifndef INSTALLER_FILE
-  !define INSTALLER_FILE "..\..\build\oo2-soikko-Windows-1.1.exe"
-  !endif
-
-  !ifndef UNINSTALLER_FILE
-  !define UNINSTALLER_FILE "uninstall-oo2-soikko-Windows-1.1.exe"
-  !endif
-
-  !ifndef LF_PORT
-  !define LF_PORT 2083
-  !endif
-
-  !ifndef LF_CONFIGURATOR
-  !define LF_CONFIGURATOR "oo2-lingconfig.exe"
-  !endif
-
-  !ifndef LF_PACKAGEFILE
-  !define LF_PACKAGEFILE "oo2-soikko-Windows-1.1.uno.pkg"
-  !endif
-  
-  !ifndef LF_NAMESPACE 
-  !define LF_NAMESPACE "soikko"
+  !define INSTALLER_NAME      "oo2-soikko-Windows-1.1.1"
+  !define OUTDIR              "${INSTALLER_NAME}\${INSTALLER_NAME}"
+  !define SRCDIR              "..\..\build\${INSTALLER_NAME}"
+  !define LICENSE_FILE_EN     "${SRCDIR}\COPYING"
+  !define LICENSE_FILE_FI     "${SRCDIR}\COPYING_FI"
+  !define INSTALLER_FILE      "${SRCDIR}\${INSTALLER_NAME}.exe"
+  !define UNINSTALLER_FILE    "uninstall-${INSTALLER_NAME}.exe"
+  !define LF_PORT             2083
+  !define LF_CONFIGURATOR     "oo2-lingconfig.exe"
+  !define LF_PACKAGEFILE      "${INSTALLER_NAME}.uno.pkg"
+  !define LF_NAMESPACE        "soikko"
   !endif 
 
 ; Window class of the OpenOffice.org application
@@ -150,6 +120,11 @@
   InstType $(IntsTypeMinimal)
   
 ;--------------------------------
+; Keywords for true and false
+  !define KEYWORD_TRUE "true"
+  !define KEYWORD_FALSE "false"
+
+;--------------------------------
 ; Macros
 !macro CheckRunningApp
     FindWindow $0 ${OO_WINDOW_CLASS_APPLICATION}
@@ -167,10 +142,14 @@
 
 ;--------------------------------
 ;Installer Sections
- 
+   
 ; The stuff to install
 Section "Core" SecCore
     SectionIn RO
+    
+; Tells if the Oo2-Soikko has been installed successfully
+    var /GLOBAL OO_INSTALLED
+    StrCpy $OO_INSTALLED ${KEYWORD_FALSE}
    
     CreateDirectory "$INSTDIR"
     CreateDirectory "$INSTDIR\logs" ; Folder for log files
@@ -191,7 +170,7 @@ Section "Core" SecCore
     
 ; Install soikko to OpenOffice.org
     DetailPrint $(InstAddingPackageDetailText)
-    ExecDos::exec "/BRAND=$(InstAddingPackageProgressBarText) Installing ${LF_PACKAGEFILE}" \
+    ExecDos::exec "/BRAND=$(InstAddingPackageProgressBarText)" \
                   '"$OO_PATH\program\unopkg" add --verbose "$INSTDIR\${LF_PACKAGEFILE}"' \
                   "" "$INSTDIR\logs\adding_${LF_PACKAGEFILE}.txt"
 
@@ -205,6 +184,7 @@ Section "Core" SecCore
     Goto end
     
   packageSuccess:
+    StrCpy $OO_INSTALLED ${KEYWORD_TRUE}
     
 ; Add uninstaller to the add/remove programs
     Call AddUninstaller
@@ -216,8 +196,10 @@ SectionEnd
 Section "Config" SecConfig
     SectionIn 1
     
-; Configure package to the OpenOffice.org
-    Call ConfigurePackage
+; Configure package to the OpenOffice.org if the installation succeeded
+    StrCmp $OO_INSTALLED ${KEYWORD_FALSE} noConfig 
+      Call ConfigurePackage
+  noConfig:
 SectionEnd  
 
 Section -Finalize
