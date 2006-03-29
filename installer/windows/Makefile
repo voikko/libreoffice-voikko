@@ -49,6 +49,7 @@ all : $(LF_OUTDIR)/$(LF_PACKAGENAME).exe
 
 $(LF_OUTDIR)/$(LF_PACKAGENAME).exe : \
     $(LF_OUTDIR)/$(LF_PACKAGENAME)/COPYING \
+    $(LF_OUTDIR)/$(LF_PACKAGENAME)/COPYING_FI \
     $(LF_OUTDIR)/$(LF_PACKAGENAME)/COPYING.soikko \
     $(LF_OUTDIR)/$(LF_PACKAGENAME)/COPYING.gpl \
     $(LF_OUTDIR)/$(LF_PACKAGENAME)/COPYING.lgpl \
@@ -60,11 +61,12 @@ $(LF_OUTDIR)/$(LF_PACKAGENAME).exe : \
 	locale_english.nsh \
 	locale_finnish.nsh
 	$(ECHO) $(LF_PACKAGENAME)
-	c:\program files\nsis\makensis.exe \
+	makensis.exe \
 	    /DINSTALLER_NAME=$(LF_PACKAGENAME) \
         /DOUTDIR=$(LF_PACKAGENAME) \
 		/DSRCDIR=$(subst /,$(PS),$(LF_OUTDIR))$(PS)$(LF_PACKAGENAME) \
-		/DLICENSE_FILE=$(subst /,$(PS),$(LF_OUTDIR)$(PS)$(LF_PACKAGENAME)$(PS)COPYING) \
+		/DLICENSE_FILE_EN=$(subst /,$(PS),$(LF_OUTDIR)$(PS)$(LF_PACKAGENAME)$(PS)COPYING) \
+		/DLICENSE_FILE_FI=$(subst /,$(PS),$(LF_OUTDIR)$(PS)$(LF_PACKAGENAME)$(PS)COPYING_FI) \
 		/DINSTALLER_FILE=$(subst /,$(PS),$(LF_OUTDIR))$(PS)$(LF_PACKAGENAME)$(EXE_EXT) \
 		/DUNINSTALLER_FILE=Uninstall-$(LF_PACKAGENAME)$(EXE_EXT) \
 		/DLF_PORT=2083 \

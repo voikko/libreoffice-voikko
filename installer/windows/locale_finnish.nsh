@@ -34,6 +34,18 @@
 ;-------------------------------- 
 ; Installer
 
+LicenseLangString MUILicense ${LANG_FINNISH} "${LICENSE_FILE_FI}"
+
+LangString InstTypeFull    ${LANG_FINNISH} "T‰ysi"
+LangString IntsTypeMinimal ${LANG_FINNISH} "Minimaallinen"
+
+LangString SecCoreText   ${LANG_FINNISH} "Oo2-soikko"
+LangString SecCoreDesc   ${LANG_FINNISH} "Oo2-soikko-ohjelmiston pakolliset osat."
+LangString SecConfigText ${LANG_FINNISH} "Asetusmuutokset"
+LangString SecConfigDesc ${LANG_FINNISH} \
+    "OpenOffice.org asetetaan automaattisesti k‰ytt‰m‰‰n Oo2-soikko-ohjelmistoa \
+     suomen kielen oikoluvussa ja tavutuksessa."
+
 LangString InstLanguageDialogWindowTitle ${LANG_FINNISH} "Asennusohjelman kieli"
 LangString InstLanguageDialogInfoText ${LANG_FINNISH} "Valitse asennusohjelman kieli"
 LangString InstWelcomepageText ${LANG_FINNISH} \

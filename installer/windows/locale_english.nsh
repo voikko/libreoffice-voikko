@@ -34,6 +34,18 @@
 ;-------------------------------- 
 ; Installer
 
+LicenseLangString MUILicense ${LANG_ENGLISH} "${LICENSE_FILE_EN}"
+
+LangString InstTypeFull    ${LANG_ENGLISH} "Full"
+LangString IntsTypeMinimal ${LANG_ENGLISH} "Minimal"
+
+LangString SecCoreText   ${LANG_ENGLISH} "Oo2-soikko"
+LangString SecCoreDesc   ${LANG_ENGLISH} "Required parts of the Oo2-soikko software."
+LangString SecConfigText ${LANG_ENGLISH} "Configuring"
+LangString SecConfigDesc ${LANG_ENGLISH} \
+    "OpenOffice.org will be automatically set to use Oo2-soikko in spellchecking and \
+    hyphenation for finnish language."
+
 LangString InstLanguageDialogWindowTitle ${LANG_ENGLISH} "Installer Language"
 LangString InstLanguageDialogInfoText ${LANG_ENGLISH} "Please select the language of the installer"
 LangString InstWelcomepageText ${LANG_ENGLISH} \
