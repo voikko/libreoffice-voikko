@@ -25,7 +25,12 @@
 
 #include <lfmacros.hxx>
 #include <lfimpl.hxx>
+#ifdef UNX
 #include <dlfcn.h>
+#endif
+#ifdef WNT
+#include <windows.h>
+#endif
 
 #include <rtl/ustrbuf.hxx>
 
@@ -39,13 +44,12 @@
 #define VOIKKO_OPT_ENCODING 2
 #define VOIKKO_OPT_IGNORE_UPPERCASE 3
 
-#define LOAD_FUNC(fptr_type, fptr_name, symbol_name) \
-    fptr_name = (fptr_type) dlsym(voikko_handle, (symbol_name)); \
-    if (! fptr_name)  { \
-      LF_LOG(("Failed to load symbol %s\n", (symbol_name))); \
-      dlclose(voikko_handle); \
-      return; \
-    }
+#ifdef UNX
+#define VOIKKO_LIB "libvoikko.so.0"
+#endif
+#ifdef WNT
+#define VOIKKO_LIB "libvoikko.dll"
+#endif
 
 
 
@@ -65,6 +69,61 @@ char * voikko_hyphenate_cstr(const char * word);
 
 namespace LF_NAMESPACE {
 
+int closeDl(void *handle);
+static void * openDl(const char *file);
+static void * getFunc(void *handle, const char *name);
+
+#define LOAD_FUNC(fptr_type, fptr_name, symbol_name) \
+    fptr_name = (fptr_type) getFunc(voikko_handle, (symbol_name)); \
+    if (! fptr_name)  { \
+      LF_LOG(("Failed to load symbol %s\n", (symbol_name))); \
+      closeDl(voikko_handle); \
+      return; \
+    }
+
+/*
+ * Opens a dynamic library
+ */
+static void * openDl(const char *file_name) {
+#ifdef WNT
+  return (void *)LoadLibrary(file_name);
+#endif
+#ifdef UNX
+  return dlopen(file_name, RTLD_NOW);
+#endif
+  return NULL;
+}
+
+/*
+ * Returns named function of the given dynamic library
+ */
+static void * getFunc(void *handle, const char *name) {
+	LF_LOG(("getFunc(%s)\n", name));
+#ifdef WNT
+ 	return (void *)GetProcAddress((HMODULE)handle, name);
+#endif
+#ifdef UNX
+	return dlsym(handle, name);
+#endif
+	return NULL;
+}
+
+/*
+ * Closes the dynamic library.
+ * Returns 0 on success, non-zero on error.
+ */
+int closeDl(void *handle) {
+	int ret = 0;
+	if (handle == NULL) return 0;
+#ifdef WNT
+	ret = FreeLibrary((HMODULE)handle) ? 0 : 1;
+#endif
+#ifdef UNX
+	ret =  dlclose(handle);
+#endif
+	return ret;
+}
+
 
 typedef int (*setbopt_t)(int, int);
 typedef int (*spell_t)(const char *);
@@ -83,9 +142,9 @@ hyphenate_t voikko_hyphenate_cstr = 0;
 void lfInitSpeller() {
     MutexGuard aGuard(GetLinguMutex());
     if (!voikko_initialised) {
-        voikko_handle = dlopen("libvoikko.so.0", RTLD_NOW);
+        voikko_handle = openDl(VOIKKO_LIB);
 	if (!voikko_handle) {
-	    LF_LOG(("Failed to dlopen libvoikko.so.0\n"));
+	    LF_LOG(("Failed to dlopen " VOIKKO_LIB "\n"));
 	    return;
 	}
 	typedef char * (*initvoikko_t)();
@@ -94,7 +153,7 @@ void lfInitSpeller() {
 	char * initerror = initvoikko();
 	if (initerror) {
 		LF_LOG(("Failed to initialise voikko: %s\n", initerror));
-		dlclose(voikko_handle);
+		closeDl(voikko_handle);
 		return;
 	}
 	typedef int (*setsopt_t)(int, const char *);
