@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # This script is released under GNU General Public License and is based
-# on Debian installation scripts by Teemu Likonen <tlikonen@ulapland.fi>.
-# Modifications by Harri Pitkänen <hatapitk@cc.jyu.fi>
+# on Debian installation scripts by Teemu Likonen <tlikonen@iki.fi>.
+# Modifications by Harri Pitkänen <hatapitk@iki.fi>
 
 PATH=/sbin:$PATH
 

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  *  Authors:
- *  Harri Pitkänen (hatapitk@cc.jyu.fi), 2005
+ *  Harri Pitkänen (hatapitk@iki.fi), 2005
  *
  *  Based on example code from OOo1.9.104 SDK, file
  *  examples/DevelopersGuide/Database/DriverSkeleton/SServices.cxx.

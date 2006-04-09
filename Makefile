@@ -1,7 +1,7 @@
 #########################################################################
 #
 #  Authors:
-#  Harri Pitkänen (hatapitk@cc.jyu.fi), 2005
+#  Harri Pitkänen (hatapitk@iki.fi), 2005
 #  Kai Solehmainen (kai.solehmainen@oikeatoliot.fi), 2005
 #
 #  The Contents of this file are made available subject to the terms of

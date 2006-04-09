@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  *  Authors:
- *  Harri Pitkänen (hatapitk@cc.jyu.fi), 2005
+ *  Harri Pitkänen (hatapitk@iki.fi), 2005
  *
  *  This file contains macros and definitions from lingucomponent-fi 0.1.2
  *  (files source/spell/sspellimp.cxx and source/spell/sspellimp.hxx) and
