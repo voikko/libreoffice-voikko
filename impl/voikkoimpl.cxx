@@ -43,6 +43,7 @@
 #define VOIKKO_OPT_IGNORE_NUMBERS 1
 #define VOIKKO_OPT_ENCODING 2
 #define VOIKKO_OPT_IGNORE_UPPERCASE 3
+#define VOIKKO_OPT_NO_UGLY_HYPHENATION 4
 
 #ifdef UNX
 #define VOIKKO_LIB "libvoikko.so.0"
@@ -52,18 +53,17 @@
 #endif
 
 
+const char * voikko_init(int * handle, const char * langcode);
 
-char * voikko_init();
+int voikko_set_bool_option(int handle, int option, int value);
 
-int voikko_set_bool_option(int option, int value);
+int voikko_set_string_option(int handle, int option, const char * value);
 
-int voikko_set_string_option(int option, const char * value);
+int voikko_spell_cstr(int handle, const char * word);
 
-int voikko_spell_cstr(const char * word);
+char ** voikko_suggest_cstr(int handle, const char * word);
 
-char ** voikko_suggest_cstr(const char * word);
-
-char * voikko_hyphenate_cstr(const char * word);
+char * voikko_hyphenate_cstr(int handle, const char * word);
 
 
 
@@ -74,10 +74,10 @@ static void * openDl(const char *file);
 static void * getFunc(void *handle, const char *name);
 
 #define LOAD_FUNC(fptr_type, fptr_name, symbol_name) \
-    fptr_name = (fptr_type) getFunc(voikko_handle, (symbol_name)); \
+    fptr_name = (fptr_type) getFunc(voikko_lib_handle, (symbol_name)); \
     if (! fptr_name)  { \
       LF_LOG(("Failed to load symbol %s\n", (symbol_name))); \
-      closeDl(voikko_handle); \
+      closeDl(voikko_lib_handle); \
       return; \
     }
 
@@ -125,13 +125,14 @@ int closeDl(void *handle) {
 }
 
 
-typedef int (*setbopt_t)(int, int);
-typedef int (*spell_t)(const char *);
-typedef char ** (*suggest_t)(const char *);
-typedef char * (*hyphenate_t)(const char *);
+typedef int (*setbopt_t)(int, int, int);
+typedef int (*spell_t)(int, const char *);
+typedef char ** (*suggest_t)(int, const char *);
+typedef char * (*hyphenate_t)(int, const char *);
 
 sal_Bool voikko_initialised = FALSE;
-void * voikko_handle = 0;
+void * voikko_lib_handle = 0;
+int voikko_handle;
 setbopt_t voikko_set_bool_option = 0;
 spell_t voikko_spell_cstr = 0;
 suggest_t voikko_suggest_cstr = 0;
@@ -142,26 +143,27 @@ hyphenate_t voikko_hyphenate_cstr = 0;
 void lfInitSpeller() {
     MutexGuard aGuard(GetLinguMutex());
     if (!voikko_initialised) {
-        voikko_handle = openDl(VOIKKO_LIB);
-	if (!voikko_handle) {
+        voikko_lib_handle = openDl(VOIKKO_LIB);
+	if (!voikko_lib_handle) {
 	    LF_LOG(("Failed to dlopen " VOIKKO_LIB "\n"));
 	    return;
 	}
-	typedef char * (*initvoikko_t)();
+	typedef const char * (*initvoikko_t)(int *, const char *);
 	initvoikko_t initvoikko;
 	LOAD_FUNC(initvoikko_t, initvoikko, "voikko_init");
-	char * initerror = initvoikko();
+	const char * initerror = initvoikko(&voikko_handle, "fi_FI");
 	if (initerror) {
 		LF_LOG(("Failed to initialise voikko: %s\n", initerror));
-		closeDl(voikko_handle);
+		closeDl(voikko_lib_handle);
 		return;
 	}
-	typedef int (*setsopt_t)(int, const char *);
+	typedef int (*setsopt_t)(int, int, const char *);
 	setsopt_t setsopt;
 	LOAD_FUNC(setsopt_t, setsopt, "voikko_set_string_option");
-	setsopt(VOIKKO_OPT_ENCODING, "UTF-8");
+	setsopt(voikko_handle, VOIKKO_OPT_ENCODING, "UTF-8");
 	LOAD_FUNC(setbopt_t, voikko_set_bool_option, "voikko_set_bool_option");
-	voikko_set_bool_option(VOIKKO_OPT_IGNORE_DOT, 1);
+	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_DOT, 1);
+	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
 	LOAD_FUNC(spell_t, voikko_spell_cstr, "voikko_spell_cstr");
 	LOAD_FUNC(suggest_t, voikko_suggest_cstr, "voikko_suggest_cstr");
 	LOAD_FUNC(hyphenate_t, voikko_hyphenate_cstr, "voikko_hyphenate_cstr");
@@ -172,15 +174,15 @@ void lfInitSpeller() {
 }
 
 void lfInitHyphenator() {
-
+	lfInitSpeller();
 }
 
 void lfDisposeSpeller() {
-
+	// TODO
 }
 
 void lfDisposeHyphenator() {
-
+	// TODO
 }
 
 sal_Bool SAL_CALL lfIsValid( const OUString& rWord, sal_Bool isSpellWithDigits, sal_Bool isSpellUpperCase) 
@@ -189,13 +191,13 @@ sal_Bool SAL_CALL lfIsValid( const OUString& rWord, sal_Bool isSpellWithDigits, 
 	MutexGuard aGuard( GetLinguMutex() );
 	if (!voikko_initialised) return FALSE;
 	char * c_str = (char *) OU2UTF8(rWord);
-	if (isSpellWithDigits) voikko_set_bool_option(VOIKKO_OPT_IGNORE_NUMBERS, 0);
-	else voikko_set_bool_option(VOIKKO_OPT_IGNORE_NUMBERS, 1);
-	if (isSpellUpperCase) voikko_set_bool_option(VOIKKO_OPT_IGNORE_UPPERCASE, 0);
-	else voikko_set_bool_option(VOIKKO_OPT_IGNORE_UPPERCASE, 1);
+	if (isSpellWithDigits) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, 0);
+	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, 1);
+	if (isSpellUpperCase) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 0);
+	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 1);
 	
 	//LF_LOG(("c_str: '%s'\n", c_str));
-	if (voikko_spell_cstr(c_str)) return TRUE;
+	if (voikko_spell_cstr(voikko_handle, c_str)) return TRUE;
 	else return FALSE;
 }
 
@@ -207,12 +209,12 @@ Reference< XSpellAlternatives > SAL_CALL lfSpell(const OUString& rWord, sal_Bool
 	MutexGuard aGuard(GetLinguMutex());
 	if (!voikko_initialised) return FALSE;
 	char * c_str = (char *) OU2UTF8(rWord);
-	if (isSpellWithDigits) voikko_set_bool_option(VOIKKO_OPT_IGNORE_NUMBERS, 0);
-	else voikko_set_bool_option(VOIKKO_OPT_IGNORE_NUMBERS, 1);
-	if (isSpellUpperCase) voikko_set_bool_option(VOIKKO_OPT_IGNORE_UPPERCASE, 0);
-	else voikko_set_bool_option(VOIKKO_OPT_IGNORE_UPPERCASE, 1);
+	if (isSpellWithDigits) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, 0);
+	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, 1);
+	if (isSpellUpperCase) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 0);
+	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 1);
 	
-	char ** suggestions = voikko_suggest_cstr(c_str);
+	char ** suggestions = voikko_suggest_cstr(voikko_handle, c_str);
 	if (suggestions == 0 || suggestions[0] == 0) return 0;
 	int scount = 0;
 	while (suggestions[scount] != 0) scount++;
@@ -238,7 +240,7 @@ Reference< XHyphenatedWord > SAL_CALL lfHyphenate(const ::rtl::OUString& aWord, 
 		throw(::com::sun::star::uno::RuntimeException) {
 	MutexGuard aGuard(GetLinguMutex());
 	OString oWord(OU2UTF8(aWord));
-	char * hyphenationPoints = voikko_hyphenate_cstr(oWord.getStr());
+	char * hyphenationPoints = voikko_hyphenate_cstr(voikko_handle, oWord.getStr());
 	LF_LOG(("lfHyphenate: aWord='%s'\n", oWord.getStr()));
 	LF_LOG(("lfHyphenate: hyphenationPoints='%s'\n", hyphenationPoints));
 
@@ -260,7 +262,7 @@ Reference< XPossibleHyphens > SAL_CALL lfCreatePossibleHyphens(const ::rtl::OUSt
 	MutexGuard aGuard(GetLinguMutex());
 	OString oWord(OU2UTF8(aWord));
 	Reference< XPossibleHyphens > xRes;
-	char * hyphenationPoints = voikko_hyphenate_cstr(oWord.getStr());
+	char * hyphenationPoints = voikko_hyphenate_cstr(voikko_handle, oWord.getStr());
 	
 	/* Count the number of hyphenation points but remove the ones that correspond
 	* to a real hyphen in the word. This is required to prevent adding extra
@@ -268,8 +270,9 @@ Reference< XPossibleHyphens > SAL_CALL lfCreatePossibleHyphens(const ::rtl::OUSt
 	sal_Int16 hpcount = 0;
 	for (int i = 0; i < oWord.getLength(); i++) {
 		if (hyphenationPoints[i] == '-') {
-			if (aWord[i - 1] == '-') hyphenationPoints[i] = ' ';
-			else hpcount++;
+			// if (aWord[i - 1] == '-') hyphenationPoints[i] = ' ';
+			//else hpcount++;
+			hpcount++;
 		}
 	}
 

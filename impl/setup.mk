@@ -13,7 +13,7 @@ LF_SHORTNAME=oo2-voikko
 LF_NAMESPACE=voikko
 
 # Version number
-LF_VERSION=0.2
+LF_VERSION=0.3
 
 # Name of the file containing the actual implementation
 # Note that this file must be released under the LGPL!
