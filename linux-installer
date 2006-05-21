@@ -138,7 +138,7 @@ function message() {
 function find_all_installations() {
   # Returns every occasion of program 'unopkg' that is found from the system.
   message searching_installations
-  EVERYONE=$(find /opt /usr/lib /usr/local -type f -perm -u+x -path '*/program/unopkg')
+  EVERYONE=$(find /opt /usr/local -type f -perm -u+x -path '*/program/unopkg')
   # Alternative method:
   # shopt -s nullglob
   # EVERYONE='/opt/openoffice.org*/program/unopkg /usr/lib/openoffice*/program/unopkg'
