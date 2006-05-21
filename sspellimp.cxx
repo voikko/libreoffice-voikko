@@ -159,7 +159,8 @@ SpellChecker::isValid( const OUString& rWord, const Locale& rLocale,
 	PropertyHelper_Spell &rHelper = GetPropHelper();
 	sal_Bool isSpellWithDigits = rHelper.IsSpellWithDigits();
 	sal_Bool isSpellUpperCase = rHelper.IsSpellUpperCase();
-	return lfIsValid(rWord, isSpellWithDigits, isSpellUpperCase);
+	sal_Bool isSpellCapitalization = rHelper.IsSpellCapitalization();
+	return lfIsValid(rWord, isSpellWithDigits, isSpellUpperCase, isSpellCapitalization);
 }
 
 
@@ -170,7 +171,8 @@ SpellChecker::spell( const OUString& rWord, const Locale& rLocale,
 	PropertyHelper_Spell &rHelper = GetPropHelper();
 	sal_Bool isSpellWithDigits = rHelper.IsSpellWithDigits();
 	sal_Bool isSpellUpperCase = rHelper.IsSpellUpperCase();
-	return lfSpell(rWord, isSpellWithDigits, isSpellUpperCase);
+	sal_Bool isSpellCapitalization = rHelper.IsSpellCapitalization();
+	return lfSpell(rWord, isSpellWithDigits, isSpellUpperCase, isSpellCapitalization);
 }
 
 

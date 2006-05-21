@@ -44,16 +44,17 @@
 #define VOIKKO_OPT_ENCODING 2
 #define VOIKKO_OPT_IGNORE_UPPERCASE 3
 #define VOIKKO_OPT_NO_UGLY_HYPHENATION 4
+#define VOIKKO_OPT_IGNORE_CASE 8
 
 #ifdef UNX
-#define VOIKKO_LIB "libvoikko.so.0"
+#define VOIKKO_LIB "libvoikko.so.1"
 #endif
 #ifdef WNT
 #define VOIKKO_LIB "libvoikko.dll"
 #endif
 
 
-const char * voikko_init(int * handle, const char * langcode);
+const char * voikko_init(int * handle, const char * langcode, int cache_size);
 
 int voikko_set_bool_option(int handle, int option, int value);
 
@@ -148,10 +149,10 @@ void lfInitSpeller() {
 	    LF_LOG(("Failed to dlopen " VOIKKO_LIB "\n"));
 	    return;
 	}
-	typedef const char * (*initvoikko_t)(int *, const char *);
+	typedef const char * (*initvoikko_t)(int *, const char *, int);
 	initvoikko_t initvoikko;
 	LOAD_FUNC(initvoikko_t, initvoikko, "voikko_init");
-	const char * initerror = initvoikko(&voikko_handle, "fi_FI");
+	const char * initerror = initvoikko(&voikko_handle, "fi_FI", 0);
 	if (initerror) {
 		LF_LOG(("Failed to initialise voikko: %s\n", initerror));
 		closeDl(voikko_lib_handle);
@@ -185,7 +186,8 @@ void lfDisposeHyphenator() {
 	// TODO
 }
 
-sal_Bool SAL_CALL lfIsValid( const OUString& rWord, sal_Bool isSpellWithDigits, sal_Bool isSpellUpperCase) 
+sal_Bool SAL_CALL lfIsValid( const OUString& rWord, sal_Bool isSpellWithDigits, sal_Bool isSpellUpperCase,
+			     sal_Bool isSpellCapitalization) 
 		throw(::com::sun::star::lang::IllegalArgumentException,	::com::sun::star::uno::RuntimeException) {
 
 	MutexGuard aGuard( GetLinguMutex() );
@@ -195,6 +197,8 @@ sal_Bool SAL_CALL lfIsValid( const OUString& rWord, sal_Bool isSpellWithDigits, 
 	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, 1);
 	if (isSpellUpperCase) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 0);
 	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 1);
+	if (isSpellCapitalization) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_CASE, 0);
+	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_CASE, 1);
 	
 	//LF_LOG(("c_str: '%s'\n", c_str));
 	if (voikko_spell_cstr(voikko_handle, c_str)) return TRUE;
@@ -203,7 +207,8 @@ sal_Bool SAL_CALL lfIsValid( const OUString& rWord, sal_Bool isSpellWithDigits, 
 
 
 
-Reference< XSpellAlternatives > SAL_CALL lfSpell(const OUString& rWord, sal_Bool isSpellWithDigits, sal_Bool isSpellUpperCase) 
+Reference< XSpellAlternatives > SAL_CALL lfSpell(const OUString& rWord, sal_Bool isSpellWithDigits,
+                                sal_Bool isSpellUpperCase, sal_Bool isSpellCapitalization) 
 		throw(::com::sun::star::uno::RuntimeException) {
 
 	MutexGuard aGuard(GetLinguMutex());
@@ -213,6 +218,8 @@ Reference< XSpellAlternatives > SAL_CALL lfSpell(const OUString& rWord, sal_Bool
 	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, 1);
 	if (isSpellUpperCase) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 0);
 	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 1);
+	if (isSpellCapitalization) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_CASE, 0);
+	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_CASE, 1);
 	
 	char ** suggestions = voikko_suggest_cstr(voikko_handle, c_str);
 	if (suggestions == 0 || suggestions[0] == 0) return 0;

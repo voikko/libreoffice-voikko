@@ -42,13 +42,13 @@ using namespace ::rtl;
 
 namespace LF_NAMESPACE {
 
-//static sal_Int16 lfGetSpellFailure(const OUString &rWord);
 void lfInitSpeller();
 void lfDisposeSpeller();
-sal_Bool SAL_CALL lfIsValid(const OUString& rWord, sal_Bool isSpellWithDigits, sal_Bool isSpellUpperCase) 
+sal_Bool SAL_CALL lfIsValid(const OUString& rWord, sal_Bool isSpellWithDigits, sal_Bool isSpellUpperCase,
+		            sal_Bool isSpellCapitalization) 
 		throw(::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException);
-//Reference< XSpellAlternatives > lfGetProposals(const OUString &rWord);
-Reference< XSpellAlternatives > SAL_CALL lfSpell(const OUString& rWord, sal_Bool isSpellWithDigits, sal_Bool isSpellUpperCase)
+
+Reference< XSpellAlternatives > SAL_CALL lfSpell(const OUString& rWord, sal_Bool isSpellWithDigits, sal_Bool isSpellUpperCase, sal_Bool isSpellCapitalization)
 		throw(::com::sun::star::uno::RuntimeException);
 OUString lfSpellerDisplayName(const Locale& rLocale);
 
