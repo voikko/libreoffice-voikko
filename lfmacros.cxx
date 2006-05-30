@@ -40,12 +40,40 @@
 #include <com/sun/star/beans/XHierarchicalPropertySet.hpp>
 #include <com/sun/star/util/XMacroExpander.hpp>
 
+#ifdef WNT
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <io.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <memory.h>
+#include <string.h>
+#endif //WNT
+
 using namespace com::sun::star::uno;
 using namespace com::sun::star::bridge;
 using namespace com::sun::star::beans;
 using namespace com::sun::star::util;
 using namespace cppu;
 using namespace osl;
+
+#ifdef WNT
+extern void LfLog(const sal_Char * format, ...)
+{ 
+    va_list args;
+    char buffer[1024];
+    int fh; 
+
+    va_start(args, format);
+    vsprintf(buffer, format, args);
+
+    if ((fh = _open("c:\\voikko.log", _O_APPEND  | _O_CREAT | _O_WRONLY | _O_TEXT, _S_IREAD | _S_IWRITE )) != -1 ) {
+        _write( fh, buffer, strlen(buffer)); 
+        _close( fh ); 
+    }
+}
+#endif //WNT
 
 namespace LF_NAMESPACE {
 

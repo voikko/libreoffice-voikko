@@ -55,9 +55,17 @@ using namespace ::rtl;
 #define MACROTOSTRING(macro) MACROTOSTRING_2(macro)
 #define MACROTOSTRING_2(text) #text
 
+#ifdef WNT
+extern void LfLog(const sal_Char * format, ... );
+#endif //WNT
+
 // debugging
 #ifdef LF_DEBUG_OUTPUT
+#ifdef WNT
+#define LF_LOG(x) LfLog x
+#else
 #define LF_LOG(x) printf x
+#endif //WNT
 #else
 #define LF_LOG(x) 
 #endif
