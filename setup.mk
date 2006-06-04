@@ -13,16 +13,16 @@ LF_DEBUG=NO
 # Compiler settings for Linux. Leave these all commented unless you need to
 # use a non-default compiler.
 
-ifeq "$(PLATFORM)" "linux"
+#ifeq "$(PLATFORM)" "linux"
 	# C++ compiler command (default is to use SDK configuration)
-	LF_CC=gcc-3.4
+#	LF_CC=gcc-3.4
 
 	# Linker command (default is to use SDK configuration)
-	LF_LINK=g++-3.4
+#	LF_LINK=g++-3.4
 
 	# C++ include path (default is the one for C++ compiler in SDK configuration)
-	SDK_GXX_INCLUDE_PATH=/usr/include/c++/3.4
-endif
+#	SDK_GXX_INCLUDE_PATH=/usr/include/c++/3.4
+#endif
 
 
 # Fix compilation when C++ compiler in SDK configuration is gcc 4.0

@@ -10,7 +10,7 @@ PATH=/sbin:$PATH
 MODULEDIR=.
 
 # Name of the language module:
-COMPONENT=$(find $MODULEDIR -maxdepth 1 -name LF_SHORTNAME-Linux_x86-*.uno.pkg -printf %f\\n | tail -n 1)
+COMPONENT=$(find $MODULEDIR -maxdepth 1 -name LF_SHORTNAME-Linux_*.uno.pkg -printf %f\\n | tail -n 1)
 
 # Function for printing messages in different languages:
 if [ $(locale | grep LC_MESSAGES | grep fi_FI.UTF-8) ]; then
@@ -197,7 +197,7 @@ function unregister() {
     message listing_failed "$(echo $UNOPKG | sed -e s/\\/program\\/unopkg//)"
     return
   fi
-  PKGS_TO_UNREGISTER=$(echo "${UNOPKG_LIST}" | grep "^Name: LF_SHORTNAME-Linux_x86-" | sed -e "s/Name: //")  
+  PKGS_TO_UNREGISTER=$(echo "${UNOPKG_LIST}" | grep "^Name: LF_SHORTNAME-Linux_" | sed -e "s/Name: //")  
   for PKG in $PKGS_TO_UNREGISTER
   do
     if $UNOPKG remove $SHAREDFLAG ${PKG} &>/dev/null
