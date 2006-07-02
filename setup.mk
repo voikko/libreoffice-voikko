@@ -24,9 +24,13 @@ LF_DEBUG=NO
 #	SDK_GXX_INCLUDE_PATH=/usr/include/c++/3.4
 #endif
 
+# Fix for Linux/x86_64. Needed until OpenOffice.org issue 66162 is fixed.
+ifeq "$(PROCTYPE)" "x86_64"
+	UNOPKG_PLATFORM=Linux_x86_64
+endif
 
 # Fix compilation when C++ compiler in SDK configuration is gcc 4.0
-# Should not be needed anymore
+# Not needed when building with OpenOffice.org >= 2.0.1
 #ifeq "$(PLATFORM)" "linux"
 #	CPPUHELPERLIB=-luno_cppuhelpergcc3
 #	CPPU_ENV=gcc3
