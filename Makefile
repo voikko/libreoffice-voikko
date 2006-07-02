@@ -88,7 +88,7 @@ ifeq "$(PLATFORM)" "windows"
 	endif
 endif
 ifeq "$(PLATFORM)" "linux"
-	CC_FLAGS=-c -O2 -fpic -Wall
+	CC_FLAGS=-c -O2 -fpic
 	CC_INCLUDES=-I. -I$(PRJ)/include
 	LINK_LIBS=-L$(PRJ)/$(PLATFORM)/lib -L"$(OFFICE_PROGRAM_PATH)"
 	LF_INSTALLPKG_EXT=tar.gz
@@ -97,7 +97,7 @@ ifeq "$(PLATFORM)" "linux"
 	endif
 	ifeq "$(LF_DEBUG)" "FULL"
 		CC_DEFINES+= -DLF_DEBUG_OUTPUT
-		CC_FLAGS=-c -g -fpic
+		CC_FLAGS=-c -g -fpic -Wall
 	endif
 endif
 
