@@ -48,10 +48,6 @@ using namespace ::rtl;
 
 // conversions
 #define A2OU(x)	::rtl::OUString::createFromAscii( x )
-#define OU2ISO_1(rtlOUString)     ::rtl::OString((rtlOUString).getStr(), (rtlOUString).getLength(), RTL_TEXTENCODING_ISO_8859_1).getStr()
-#define OU2ISO_15(rtlOUString)     ::rtl::OString((rtlOUString).getStr(), (rtlOUString).getLength(), RTL_TEXTENCODING_ISO_8859_15).getStr()
-#define OU2A(rtlOUString)     ::rtl::OString((rtlOUString).getStr(), (rtlOUString).getLength(), RTL_TEXTENCODING_ASCII_US).getStr()
-#define OU2UTF8(rtlOUString)     ::rtl::OString((rtlOUString).getStr(), (rtlOUString).getLength(), RTL_TEXTENCODING_UTF8).getStr()
 #define MACROTOSTRING(macro) MACROTOSTRING_2(macro)
 #define MACROTOSTRING_2(text) #text
 

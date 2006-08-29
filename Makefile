@@ -90,7 +90,7 @@ endif
 ifeq "$(PLATFORM)" "linux"
 	CC_FLAGS=-c -O2 -fpic
 	CC_INCLUDES=-I. -I$(PRJ)/include
-	LINK_LIBS=-L$(PRJ)/$(PLATFORM)/lib -L"$(OFFICE_PROGRAM_PATH)"
+	LINK_LIBS=-L$(PRJ)/$(PLATFORM)/lib -L"$(OFFICE_PROGRAM_PATH)" -lvoikko
 	LF_INSTALLPKG_EXT=tar.gz
 	ifeq "$(LF_DEBUG)" "LOG"
 		CC_DEFINES+= -DLF_DEBUG_OUTPUT

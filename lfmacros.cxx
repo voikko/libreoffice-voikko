@@ -95,8 +95,6 @@ OUString getInstallationPath() {
     Any locationProp = propSet->getHierarchicalPropertyValue(A2OU("location"));
     OUString locationVal;
     locationProp >>= locationVal;
-    LF_LOG((OU2A(locationVal)));
-    LF_LOG(("\n"));
     // Cut the "vnd.sun.star.expand:" part
     OUString locationFileURL = locationVal.replaceAt(0, 20, A2OU(""));
     Reference< XMacroExpander > expander(
@@ -104,12 +102,8 @@ OUString getInstallationPath() {
                     ::rtl::OUString::createFromAscii( "/singletons/com.sun.star.util.theMacroExpander" ) ),
                     UNO_QUERY );
     OUString expandedLocation = expander->expandMacros(locationFileURL);
-    LF_LOG((OU2A(expandedLocation)));
-    LF_LOG(("\n"));
     OUString locationSystemPath;
     FileBase::getSystemPathFromFileURL( expandedLocation, locationSystemPath );
-    LF_LOG((OU2A(locationSystemPath)));
-    LF_LOG(("\n"));
     return locationSystemPath;
   }
   catch (Exception e) {
