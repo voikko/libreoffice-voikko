@@ -14,8 +14,7 @@ Porting status
 - Windows: Module can be built and it works correctly. Installer needs
   to be cleaned up from references to Soikko. Lots of tools need to be
   installed for building on Windows.
-- Mac OS X: Should be done, but lack of pre-built SDK is making this
-  difficult.
+- Mac OS X: Should be doable, but OOo SDK seems to be broken at the moment.
 
 
 Requirements
@@ -25,12 +24,12 @@ Requirements
   will also work, but the installation procedure is somewhat different and
   the differences are not explained here.
 - OpenOffice.org. This should have exactly the same version number as the SDK.
-- On Linux: the C++ compiler from the GCC. GCC versions 3.3, 3.4 and 4.0 are
+- On Linux: the C++ compiler from the GCC. GCC versions 3.3, 3.4, 4.0 and 4.1 are
   known to work. If you need to use a compiler which is not the default on your
   Linux distribution, you will need to modify setup.mk. The compiler should
   be ABI compatible with the one used to compile OpenOffice.org and the SDK.
-  Versions 3.4 and 4.0 are ABI compatible, and the installer script assumes that
-  either of these is used unless LF_SHORTNAME contains the string "gcc3.3".
+  Versions 3.4, 4.0 and 4.1 are ABI compatible, and the installer script assumes that
+  some of these is used unless LF_SHORTNAME contains the string "gcc3.3".
   Other tools needed for compilation are usually present in default setups of
   any distribution.
 - On FreeBSD: Same as on Linux, but you should install gmake and use that instead
@@ -51,7 +50,7 @@ Compilation
 ===========
 
 - Install OpenOffice.org and the SDK.
-- Unpack the unopkg module from Hunspell-fi somewhere and optionally replace the
+- Unpack the unopkg module from hunspell-fi.org SVN somewhere and optionally replace the
   subdirectory "impl" with your favourite implementation.
 - Files setup.mk and impl/setup.mk contain some parameters that you may want
   to modify at this point.

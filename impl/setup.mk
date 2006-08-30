@@ -13,11 +13,14 @@ LF_SHORTNAME=oo2-voikko
 LF_NAMESPACE=voikko
 
 # Version number
-LF_VERSION=1.0
+LF_VERSION=1.1
 
 # Name of the file containing the actual implementation
 # Note that this file must be released under the LGPL!
 LF_IMPL_CODE=voikkoimpl
+
+# Extra flags needed to be passed to linker command line
+LF_LINK_EXTRA=-lvoikko
 
 # If the implementation requires additional files to be shipped
 # within the package, these files should be placed in a subdirectory

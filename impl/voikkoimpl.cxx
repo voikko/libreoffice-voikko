@@ -59,11 +59,15 @@ void lfInitHyphenator() {
 }
 
 void lfDisposeSpeller() {
-	// TODO
+	MutexGuard aGuard(GetLinguMutex());
+	if (voikko_initialised) {
+		voikko_terminate(voikko_handle);
+		voikko_initialised = FALSE;
+	}
 }
 
 void lfDisposeHyphenator() {
-	// TODO
+	lfDisposeSpeller();
 }
 
 sal_Bool SAL_CALL lfIsValid( const OUString& rWord, sal_Bool isSpellWithDigits, sal_Bool isSpellUpperCase,

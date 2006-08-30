@@ -9,8 +9,8 @@ ohjeessa sulkuihin vastaavien suomenkielisten tekstien perään.
 Asennus
 =======
 
-Pura asennuspaketti, siirry komentorivillä hakemistoon hunspell-fi ja suorita pääkäyttäjän (root) oikeuksilla
-asennusohjelma install-hunspell-fi:
+Pura asennuspaketti, siirry komentorivillä hakemistoon syntyneeseen ja suorita pääkäyttäjän (root) oikeuksilla
+asennusohjelma install-voikko:
 
 Tämä komento poistaa ensin mahdolliset vanhat asennukset ja asentaa sitten uuden version kaikkiin
 löytämiinsä OpenOffice.org 2.0:n asennuksiin.
@@ -18,7 +18,7 @@ löytämiinsä OpenOffice.org 2.0:n asennuksiin.
 Vaihtoehtoinen asennustapa niille, joilla ei ole pääkäyttäjän oikeuksia tai jotka haluavat asentaa ohjelman
 ainoastaan yhden käyttäjän käyttöön: Käynnistä OpenOffice.org ja valitse valikosta Työkalut ->
 Pakettihallinta (Tools -> Package Manager). Valitse Omat paketit (My Packages) ja paina sitten Lisää (Add).
-Valitse tiedosto hunspell-fi-[versio].uno.pkg ja paina Avaa (Open). Nyt paketin pitäisi asentua, ja voit sulkea
+Valitse tiedosto voikko-[versio].uno.pkg ja paina Avaa (Open). Nyt paketin pitäisi asentua, ja voit sulkea
 pakettien hallinnan. Huomaa, että jos asennat ohjelman  samalle koneelle sekä pääkäyttäjänä että tavallisena
 käyttäjän, on sinun päivityksen yhteydessä huolehdittava itse siitä, että vanha versio tulee poistetuksi.
 Pääkäyttäjänä tehtävän asennuksen ajaksi OpenOffice.org on suljettava, samoin mahdollisesti käynnissä olevat
@@ -28,11 +28,11 @@ OpenOffice.orgin pikakäynnistysohjelmat.
 Käyttöönotto
 ============
 
-Varmista, että Hunspell-fi on aktivoitu kirjoituksen aputyökaluissa. Tämän voit tehdä OpenOffice.orgissa
+Varmista, että Voikko on aktivoitu kirjoituksen aputyökaluissa. Tämän voit tehdä OpenOffice.orgissa
 valitsemalla Työkalut -> Asetukset -> Kieliasetukset -> Kirjoituksen aputyökalut (Tools -> Options ->
 Language Settings -> Writing aids). Paina listan Käytettävissä olevat kielimoduulit (Available language modules)
 vieressä olevaa painiketta Muokkaa (Edit). Näyttöön avautuu uusi ikkuna. Valitse kielivalikosta suomi ja lisää
-tarvittaessa rastit kohtiin Suomen kielen oikoluku (Hunspell-fi) ja Suomen kielen tavutus (Hunspell-fi). Jos
+tarvittaessa rastit kohtiin Suomen kielen oikoluku (Voikko) ja Suomen kielen tavutus (Voikko). Jos
 listalla on muita oikeinkirjoitus- tai tavutusmoduuleja, poista rastit niiden edestä.
 
 
@@ -40,6 +40,6 @@ Asennuksen poisto
 =================
 
 Jos asensit asennusohjeen ensimmäisen mukaisella tavalla, asennus poistuu antamalla pääkäyttäjän oikeuksilla komento
-  ./install-hunspell-fi --uninstall
+  ./install-voikko --uninstall
 Jos asensit asennusohjeen vaihtoehdon 2 mukaisella tavalla, voit poistaa paketin pakettienhallinnan kautta.
-Valitse Hunspell-fi listasta Omat paketit (My Packages) ja paina Poista (Remove).
+Valitse Voikko listasta Omat paketit (My Packages) ja paina Poista (Remove).

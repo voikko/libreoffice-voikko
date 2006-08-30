@@ -1,5 +1,5 @@
-Script install-hunspell-fi is partially based on Debian installation scripts by
-Teemu Likonen (tlikonen@ulapland.fi) and is released under GNU General Public
+Script install-voikko is partially based on Debian installation scripts by
+Teemu Likonen (tlikonen@iki.fi) and is released under GNU General Public
 License (see COPYING.gpl).
 
 Windows installer script copyright 2006 Oikeat Oliot Oy. Script has been 
@@ -10,7 +10,7 @@ COPYING.lgpl).
 Everything else in this package is distributed under the terms of GNU Lesser
 General Public License (see COPYING.lgpl).
 
-Harri Pitkänen (hatapitk@cc.jyu.fi)
+Harri Pitkänen (hatapitk@iki.fi)
 
 
 
