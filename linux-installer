@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script is released under GNU General Public License and is based
 # on Debian installation scripts by Teemu Likonen <tlikonen@iki.fi>.
