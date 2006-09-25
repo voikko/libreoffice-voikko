@@ -1,0 +1,16 @@
+linux-installer:
+Script linux-installer is partially based on Debian installation scripts by
+Teemu Likonen (tlikonen@iki.fi) and is released under GNU General Public
+License (see COPYING.gpl).
+
+subdirectory installer:
+Windows installer script copyright 2006 Oikeat Oliot Oy. Script has been 
+written by Kai Solehmainen (kai.solehmainen@oikeatoliot.fi). Installer 
+is distributed under the terms of GNU Lesser General Public License (see 
+COPYING.lgpl).
+
+Everything else in this package is distributed under the terms of GNU Lesser
+General Public License (see COPYING.lgpl). The primary copyright holder is
+Harri Pitkänen (hatapitk@iki.fi) but there are others as well, listed in the
+individual source files.
+
