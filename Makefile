@@ -142,7 +142,7 @@ else
 $(LF_SLO) : $(LF_SLOFILES)
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(LINK) $(COMP_LINK_FLAGS) $(LINK_LIBS) -o $@ $^ \
-	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(STLPORTLIB)
+	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB)
 endif
 
 $(LF_OUTDIR)/pkg/META-INF/manifest.xml :

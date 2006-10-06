@@ -3,17 +3,17 @@
 # and hyphenation implementation.
 
 # Full human-readable name of the implementation
-LF_FULLNAME=Oo2-voikko
+LF_FULLNAME=openoffice.org-voikko
 
 # Short name of the implementation that will be used as a part
 # of file names etc.
-LF_SHORTNAME=oo2-voikko
+LF_SHORTNAME=openoffice.org-voikko
 
 # Implementation namespace
 LF_NAMESPACE=voikko
 
 # Version number
-LF_VERSION=1.1
+LF_VERSION=1.2
 
 # Name of the file containing the actual implementation
 # Note that this file must be released under the LGPL!
