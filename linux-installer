@@ -4,6 +4,9 @@
 # on Debian installation scripts by Teemu Likonen <tlikonen@iki.fi>.
 # Modifications by Harri Pitkänen <hatapitk@iki.fi>
 
+echo "WARNING: install-LF_SHORTNAME is deprecated and should not be used anymore!"
+echo "WARNING: It is unmaintained and will go away in the future versions."
+
 PATH=/sbin:$PATH
 
 # Directory containing the package to be installed:
