@@ -1,0 +1,70 @@
+What is this?
+=============
+This is openoffice.org-voikko, Finnish spellchecker and hyphenator extensions
+for OpenOffice.org based on libvoikko.
+
+
+License
+=======
+This package is distributed under the terms of GNU General Public License,
+version 2 or later (see COPYING).
+
+
+Authors
+=======
+2005 - 2007 Harri Pitkänen (hatapitk@iki.fi)
+
+
+Porting status
+==============
+- Linux: This is the primary development platform, and should always work
+- FreeBSD: Status unknown
+- Windows: Status unknown
+- Mac OS X: Status unknown
+
+
+Installation requirements
+=========================
+
+- OpenOffice.org (Office and SDK), version 2.0.4 or later.
+- Libvoikko version 1.0 or later, and compatible versions of Suomi-malaga and
+  malaga.
+- On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
+  needed for compilation are usually present in default setups of any
+  distribution.
+
+
+Instructions for compilation
+============================
+
+- Install all of the required software listed above.
+- Makefile contains some parameters that you may want to modify at this point.
+- In a shell, run the SDK setup script which is located in the SDK installation
+  directory. It is called setsdkenv_unix on Linux and setsdkenv_windows on
+  Windows. During the first run, this script will ask the location of certain
+  tools. You should answer the questions, although at least on Linux the
+  defaults are usually correct. Answers to these questions will be saved under
+  the home directory of the user (for example to a file
+  openoffice.org2.0_sdk/setsdkenv_unix.sh).
+- Run "make". This will build the extensions package voikko.oxt under
+  subdirectory build.
+
+
+Bug reports and patches
+=======================
+
+Patches and bug reports can be sent to the author (hatapitk@iki.fi). The web
+site for openoffice.org-voikko is located at http://voikko.sourceforge.net
+
+
+Change history
+==============
+
+Version 2.0 is an almost total rewrite of the previous version 1.2. This
+version is designed to work well with libvoikko and aims to use the best
+current practices for OpenOffice.org extension development. The old code
+was based on the internals of OpenOffice.org 1.0 and designed to work with
+a non-free Finnish spellchecking library.
+
+The license has been changed from LGPL to GPL to reflect the fact that this
+extension is useless without libvoikko, which is distributed under the GPL.
