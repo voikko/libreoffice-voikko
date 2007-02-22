@@ -25,6 +25,7 @@
 #include <com/sun/star/beans/XPropertySet.hpp>
 #include <com/sun/star/beans/PropertyValue.hpp>
 #include <com/sun/star/linguistic2/XLinguServiceEventListener.hpp>
+#include <com/sun/star/uno/XComponentContext.hpp>
 
 #include "macros.hxx"
 
