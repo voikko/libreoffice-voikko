@@ -60,10 +60,11 @@ class PropertyManager:
 	sal_Bool removeLinguServiceEventListener(
 		const uno::Reference<linguistic2::XLinguServiceEventListener> & xLstnr)
 		throw (uno::RuntimeException);
+	void setValues(const uno::Sequence<beans::PropertyValue> & values);
+	void resetValues(const uno::Sequence<beans::PropertyValue> & values);
 	
 	private:
 	void setProperties(const uno::Reference<beans::XPropertySet> & properties);
-	void setValues(const uno::Sequence<beans::PropertyValue> & values);
 	void setValue(const beans::PropertyValue & value);
 	void syncHyphenatorSettings();
 	void sendLinguEvent(const linguistic2::LinguServiceEvent & event);

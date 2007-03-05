@@ -137,55 +137,68 @@ void PropertyManager::setValues(const uno::Sequence<beans::PropertyValue> & valu
 	for (sal_Int32 i = 0; i < values.getLength(); i++) setValue(values[i]);
 }
 
+void PropertyManager::resetValues(const uno::Sequence<beans::PropertyValue> & values) {
+	beans::PropertyValue globalValue;
+	for (sal_Int32 i = 0; i < values.getLength(); i++) {
+		globalValue.Name = values[i].Name;
+		globalValue.Value = linguPropSet->getPropertyValue(values[i].Name);
+		setValue(globalValue);
+	}
+}
+
 void PropertyManager::setValue(const beans::PropertyValue & value) {
 	sal_Bool bValue = sal_False;
 	sal_Int16 iValue = 0;
 	int vbValue = 0;
-	VOIKKO_DEBUG_2("PropertyManager::setValue: name %s", OU2DEBUG(value.Name));
+	// VOIKKO_DEBUG_2("PropertyManager::setValue: name %s", OU2DEBUG(value.Name));
 	if (value.Name == A2OU("IsSpellWithDigits")) {
 		value.Value >>= bValue;
 		if (!bValue) vbValue = 1;
-		VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
+		// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, vbValue);
 	}
 	else if (value.Name == A2OU("IsSpellUpperCase")) {
 		value.Value >>= bValue;
 		if (!bValue) vbValue = 1;
-		VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
+		// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, vbValue);
 	}
 	else if (value.Name == A2OU("IsSpellCapitalization")) {
 		// FIXME: should ignore ALL errors in capitalization
 		value.Value >>= bValue;
 		if (!bValue) vbValue = 1;
-		VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
+		// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, vbValue);
 	}
 	else if (value.Name == A2OU("HyphMinLeading")) {
 		if (value.Value >>= iValue) {
 			hyphMinLeading = iValue;
-			VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", iValue);
+			// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", iValue);
 			syncHyphenatorSettings();
 		}
 	}
 	else if (value.Name == A2OU("HyphMinTrailing")) {
 		if (value.Value >>= iValue) {
 			hyphMinTrailing = iValue;
-			VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", iValue);
+			// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", iValue);
 			syncHyphenatorSettings();
 		}
 	}
 	else if (value.Name == A2OU("HyphMinWordLength")) {
 		if (value.Value >>= iValue) {
 			hyphMinWordLength = iValue;
-			VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", iValue);
+			// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", iValue);
 			syncHyphenatorSettings();
 		}
 	}
 }
 
 void PropertyManager::syncHyphenatorSettings() {
-	// Not currently needed
+	// Uncomment the following if you want to apply HypMinWordLength to the
+	// components of compound words, not just whole words.
+
+	// voikko_set_int_option(voikko_handle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH,
+	//                       hyphMinWordLength);
 }
 
 void PropertyManager::sendLinguEvent(const linguistic2::LinguServiceEvent & event) {

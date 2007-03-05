@@ -68,17 +68,11 @@ sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Loca
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
 	const char * c_str = oWord.getStr();
 
-	// TODO: settings
-	/*if (isSpellWithDigits) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, 0);
-	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, 1);
-	if (isSpellUpperCase) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 0);
-	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 1);
-	if (isSpellCapitalization) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, 0);
-	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, 1);*/
-
+	thePropertyManager->setValues(aProperties);
 	// VOIKKO_DEBUG_2("SpellChecker::isValid: c_str: '%s'\n", c_str);
 	int result = voikko_spell_cstr(voikko_handle, c_str);
 	// VOIKKO_DEBUG_2("SpellChecker::isValid: result = %i\n", result);
+	thePropertyManager->resetValues(aProperties);
 	if (result) return sal_True;
 	else return sal_False;
 }
@@ -100,8 +94,13 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	if (isSpellCapitalization) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, 0);
 	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, 1);*/
 
-	if (voikko_spell_cstr(voikko_handle, c_str)) return 0;
+	thePropertyManager->setValues(aProperties);
+	if (voikko_spell_cstr(voikko_handle, c_str)) {
+		thePropertyManager->resetValues(aProperties);
+		return 0;
+	}
 	char ** suggestions = voikko_suggest_cstr(voikko_handle, c_str);
+	thePropertyManager->resetValues(aProperties);
 	SpellAlternatives * alternatives = new SpellAlternatives();
 	alternatives->word = aWord;
 	if (suggestions == 0 || suggestions[0] == 0) return alternatives;

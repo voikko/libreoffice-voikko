@@ -72,13 +72,14 @@ all: $(VOIKKO_PACKAGE)
 # Create extension files
 MANIFEST_SEDSCRIPT="s/VOIKKO_EXTENSION_SHAREDLIB/$(VOIKKO_EXTENSION_SHAREDLIB)/g; \
 	s/UNOPKG_PLATFORM/$(UNOPKG_PLATFORM)/g"
+DESCRIPTION_SEDSCRIPT="s/VOIKKO_VERSION/$(VOIKKO_VERSION)/g"
 build/oxt/META-INF/manifest.xml: oxt/META-INF/manifest.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(SED) -e $(MANIFEST_SEDSCRIPT) < $^ > $@
 
 build/oxt/description.xml: oxt/description.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
-	$(COPY) $^ $@
+	$(SED) -e $(DESCRIPTION_SEDSCRIPT) < $^ > $@
 
 
 # Type library C++ headers

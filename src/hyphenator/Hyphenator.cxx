@@ -68,7 +68,8 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	                      const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
-	
+	thePropertyManager->setValues(aProperties);
+
 	sal_Int16 minLeading = thePropertyManager->getHyphMinLeading();
 	sal_Int16 minTrailing = thePropertyManager->getHyphMinTrailing();
 	sal_Int32 wlen = aWord.getLength();
@@ -76,6 +77,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	// If the word is too short to be hyphenated, return no hyphenation points
 	if (wlen < thePropertyManager->getHyphMinWordLength() ||
 	    wlen < minLeading + minTrailing) {
+		thePropertyManager->resetValues(aProperties);
 		return 0;
 	}
 	
@@ -95,6 +97,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 
 	// return the result
 	free(hyphenationPoints);
+	thePropertyManager->resetValues(aProperties);
 	if (hyphenPos != -1) return new HyphenatedWord(aWord, hyphenPos - 1);
 	else return 0;
 }
@@ -113,12 +116,14 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	                                  const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
-	
+	thePropertyManager->setValues(aProperties);
+
 	// If the word is too short to be hyphenated, return no hyphenation points
 	if (aWord.getLength() < thePropertyManager->getHyphMinWordLength()) {
+		thePropertyManager->resetValues(aProperties);
 		return 0;
 	}
-	
+
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
 	uno::Reference<linguistic2::XPossibleHyphens> xRes;	
 	char * hyphenationPoints = voikko_hyphenate_cstr(voikko_handle, oWord.getStr());
@@ -152,6 +157,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	xRes = new PossibleHyphens(aWord, hyphenatedWord, hyphenSeq);
 
 	free(hyphenationPoints);
+	thePropertyManager->resetValues(aProperties);
 	return xRes;
 }
 
