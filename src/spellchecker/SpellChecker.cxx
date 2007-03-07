@@ -86,14 +86,6 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
 	const char * c_str = oWord.getStr();
 
-	// TODO: settings
-	/*if (isSpellWithDigits) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, 0);
-	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, 1);
-	if (isSpellUpperCase) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 0);
-	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, 1);
-	if (isSpellCapitalization) voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, 0);
-	else voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, 1);*/
-
 	thePropertyManager->setValues(aProperties);
 	if (voikko_spell_cstr(voikko_handle, c_str)) {
 		thePropertyManager->resetValues(aProperties);
