@@ -34,8 +34,7 @@ VOIKKO_VERSION=1.9
 # package. Possible values are NO (creates an optimized build without any
 # debugging information), LOG (creates an optimized build with runtime debug
 # logging) and FULL (creates a build with full debugging symbols and logging).
-# Default is NO.
-VOIKKO_DEBUG=FULL
+VOIKKO_DEBUG=NO
 
 # === End build settings ===
 
@@ -46,9 +45,15 @@ endif
 
 # Set up some variables
 UNOPKG_EXT=oxt
-LINK_FLAGS=$(COMP_LINK_FLAGS) -Wl,--no-undefined -L"$(OFFICE_PROGRAM_PATH)" \
+ifeq "$(VOIKKO_DEBUG)" "FULL"
+	OPT_FLAGS=-O0 -g
+else
+	OPT_FLAGS=-O2 -fno-strict-aliasing
+endif
+WARNING_FLAGS=-Wall -Wno-non-virtual-dtor -Werror
+LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) -Wl,--no-undefined -L"$(OFFICE_PROGRAM_PATH)" \
            $(SALLIB) $(CPPULIB) $(CPPUHELPERLIB) -lvoikko
-VOIKKO_CC_FLAGS=-Wall -Wno-non-virtual-dtor -Werror -Ibuild/hpp -I$(PRJ)/include/stl -I$(PRJ)/include
+VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -I$(PRJ)/include
 VOIKKO_CC_DEFINES=
 ifeq "$(VOIKKO_DEBUG)" "NO"
         VOIKKO_PACKAGENAME=voikko
@@ -62,10 +67,13 @@ VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives sp
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
 VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
+SRCDIST=COPYING Makefile README $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS)) \
+        $(patsubst %,src/%.cxx,$(VOIKKO_OBJECTS)) oxt/description.xml.template \
+        oxt/META-INF/manifest.xml.template
 SED=sed
 
 # Targets
-.PHONY: all
+.PHONY: all clean dist-gzip
 all: $(VOIKKO_PACKAGE)
 
 
@@ -105,3 +113,21 @@ $(VOIKKO_PACKAGE) : build/oxt/META-INF/manifest.xml build/oxt/description.xml \
 	          build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB)
 	cd build/oxt && $(SDK_ZIP) ../$(VOIKKO_PACKAGENAME).$(UNOPKG_EXT) \
 	                           $(patsubst build/oxt/%,%,$^)
+
+
+# Rules for creating the source distribution
+dist-gzip: openoffice.org-voikko-$(VOIKKO_VERSION).tar.gz
+
+openoffice.org-voikko-$(VOIKKO_VERSION).tar.gz: $(patsubst %,openoffice.org-voikko-$(VOIKKO_VERSION)/%, \
+	                                      $(sort $(SRCDIST)))
+	tar czf $@ --group 0 --owner 0 openoffice.org-voikko-$(VOIKKO_VERSION)
+
+$(patsubst %,openoffice.org-voikko-$(VOIKKO_VERSION)/%, $(sort $(SRCDIST))): \
+	openoffice.org-voikko-$(VOIKKO_VERSION)/%: %
+	install --mode=644 -D $^ $@
+
+
+# The clean target
+clean:
+	rm -rf build openoffice.org-voikko-$(VOIKKO_VERSION)
+	rm -f openoffice.org-voikko-$(VOIKKO_VERSION).tar.gz
