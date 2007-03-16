@@ -27,6 +27,9 @@ using namespace ::rtl;
 
 namespace voikko {
 
+/** Implementation of interface com::sun::star::linguistic2::XHyphenatedWord. See
+ *  the interface documentation for more information.
+ */
 class HyphenatedWord : public cppu::WeakImplHelper1<linguistic2::XHyphenatedWord> {
 	public:
 	OUString word;

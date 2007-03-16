@@ -27,6 +27,9 @@ using namespace ::rtl;
 
 namespace voikko {
 
+/** Implementation of interface com::sun::star::linguistic2::XPossibleHyphens. See
+ *  the interface documentation for more information.
+ */
 class PossibleHyphens : public cppu::WeakImplHelper1<linguistic2::XPossibleHyphens> {
 	public:
 	OUString word;
