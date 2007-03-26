@@ -120,7 +120,7 @@ dist-gzip: openoffice.org-voikko-$(VOIKKO_VERSION).tar.gz
 
 openoffice.org-voikko-$(VOIKKO_VERSION).tar.gz: $(patsubst %,openoffice.org-voikko-$(VOIKKO_VERSION)/%, \
 	                                      $(sort $(SRCDIST)))
-	tar czf $@ --group 0 --owner 0 openoffice.org-voikko-$(VOIKKO_VERSION)
+	tar c --group 0 --owner 0 openoffice.org-voikko-$(VOIKKO_VERSION) | gzip -9 > $@
 
 $(patsubst %,openoffice.org-voikko-$(VOIKKO_VERSION)/%, $(sort $(SRCDIST))): \
 	openoffice.org-voikko-$(VOIKKO_VERSION)/%: %
