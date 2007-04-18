@@ -89,7 +89,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	sal_Int32 i = wlen - minTrailing; // The last generally allowed hyphenation point
 	if (i > nMaxLeading) i = nMaxLeading; // The last allowed point on this line
 	for (; i >= minLeading && hyphenPos == -1; i--) {
-		if (hyphenationPoints[i] == '-') {
+		if (hyphenationPoints[i] == '-' || hyphenationPoints[i] == '=') {
 			hyphenPos = i;
 			break;
 		}
@@ -144,7 +144,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	OUStringBuffer hyphenatedWordBuffer;
 	OUString hyphenatedWord;
 	sal_Int16 nHyphCount = 0;
-	for (sal_Int32 i = 0; i < oWord.getLength(); i++) {
+	for (sal_Int32 i = 0; i < aWord.getLength(); i++) {
 		hyphenatedWordBuffer.append(aWord[i]);
 		if (hyphenationPoints[i + 1] == '-') {
 			pPos[nHyphCount] = i;

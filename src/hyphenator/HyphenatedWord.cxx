@@ -24,6 +24,17 @@ namespace voikko {
 HyphenatedWord::HyphenatedWord(OUString wrd, sal_Int16 pos) {
 	word = wrd;
 	hyphenPos = pos;
+	if (wrd[pos+1] == '-') {
+		hyphenatedWord = wrd.replaceAt(pos+1, 1, A2OU(""));
+		isAlternative = sal_True;
+	}
+	else {
+		hyphenatedWord = wrd;
+		isAlternative = sal_False;
+	}
+	VOIKKO_DEBUG_2("%s", OU2DEBUG(wrd));
+	//VOIKKO_DEBUG_2("%s", OU2DEBUG(hyphenatedWord));
+	VOIKKO_DEBUG_2("%i", pos);
 }
 
 OUString SAL_CALL HyphenatedWord::getWord() throw (uno::RuntimeException) {
@@ -31,7 +42,7 @@ OUString SAL_CALL HyphenatedWord::getWord() throw (uno::RuntimeException) {
 }
 
 OUString SAL_CALL HyphenatedWord::getHyphenatedWord() throw (uno::RuntimeException) {
-	return word;
+	return hyphenatedWord;
 }
 
 lang::Locale SAL_CALL HyphenatedWord::getLocale() throw (uno::RuntimeException) {
@@ -47,7 +58,7 @@ sal_Int16 SAL_CALL HyphenatedWord::getHyphenPos() throw (uno::RuntimeException) 
 }
 
 sal_Bool SAL_CALL HyphenatedWord::isAlternativeSpelling() throw (uno::RuntimeException) {
-	return sal_False;
+	return isAlternative;
 }
 
 }

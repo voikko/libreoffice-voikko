@@ -33,7 +33,9 @@ namespace voikko {
 class HyphenatedWord : public cppu::WeakImplHelper1<linguistic2::XHyphenatedWord> {
 	public:
 	OUString word;
+	OUString hyphenatedWord;
 	sal_Int16 hyphenPos;
+	sal_Bool isAlternative;
 
 	HyphenatedWord(OUString wrd, sal_Int16 pos);
 	virtual OUString SAL_CALL getWord() throw (uno::RuntimeException);
