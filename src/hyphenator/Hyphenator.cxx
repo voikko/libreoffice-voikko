@@ -68,6 +68,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	                      const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
+	VOIKKO_DEBUG("Hyphenator::hyphenate");
 	thePropertyManager->setValues(aProperties);
 
 	sal_Int16 minLeading = thePropertyManager->getHyphMinLeading();
@@ -80,9 +81,13 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 		thePropertyManager->resetValues(aProperties);
 		return 0;
 	}
-	
+
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
 	char * hyphenationPoints = voikko_hyphenate_cstr(voikko_handle, oWord.getStr());
+	if (hyphenationPoints == 0) {
+		thePropertyManager->resetValues(aProperties);
+		return 0;
+	}
 
 	// find the hyphenation point
 	sal_Int16 hyphenPos = -1;
@@ -116,6 +121,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	                                  const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
+	VOIKKO_DEBUG("Hyphenator::createPossibleHyphens");
 	thePropertyManager->setValues(aProperties);
 
 	// If the word is too short to be hyphenated, return no hyphenation points
@@ -125,15 +131,19 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	}
 
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
-	uno::Reference<linguistic2::XPossibleHyphens> xRes;	
+	uno::Reference<linguistic2::XPossibleHyphens> xRes;
 	char * hyphenationPoints = voikko_hyphenate_cstr(voikko_handle, oWord.getStr());
+	if (hyphenationPoints == 0) {
+		thePropertyManager->resetValues(aProperties);
+		return 0;
+	}
 
 	/* Count the number of hyphenation points but remove the ones that correspond
 	 * to a real hyphen in the word. This is required to prevent adding extra
 	 * soft hyphen where it is not needed. FIXME: This check is no longer needed,
 	 * must check why. */
 	sal_Int16 hpcount = 0;
-	for (sal_Int32 i = 0; i < oWord.getLength(); i++) {
+	for (sal_Int32 i = 0; i < aWord.getLength(); i++) {
 		if (hyphenationPoints[i] == '-') {
 			hpcount++;
 		}
@@ -144,6 +154,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	OUStringBuffer hyphenatedWordBuffer;
 	OUString hyphenatedWord;
 	sal_Int16 nHyphCount = 0;
+
 	for (sal_Int32 i = 0; i < aWord.getLength(); i++) {
 		hyphenatedWordBuffer.append(aWord[i]);
 		if (hyphenationPoints[i + 1] == '-') {
