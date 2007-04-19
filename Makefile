@@ -36,6 +36,10 @@ VOIKKO_VERSION=2.0
 # logging) and FULL (creates a build with full debugging symbols and logging).
 VOIKKO_DEBUG=NO
 
+# If you have installed libvoikko to some non-standard location, uncomment the
+# following and adjust the path accordingly.
+# LIBVOIKKO_PATH=/usr/local/voikko
+
 # === End build settings ===
 
 # Fix for Linux/SPARC. Needed until OpenOffice.org issue 72679 is fixed
@@ -61,13 +65,17 @@ else
         VOIKKO_PACKAGENAME=voikko-dbg
         VOIKKO_CC_DEFINES+= -DVOIKKO_DEBUG_OUTPUT
 endif
+ifdef LIBVOIKKO_PATH
+	LINK_FLAGS+= -L$(LIBVOIKKO_PATH)/lib
+	VOIKKO_CC_FLAGS+= -I$(LIBVOIKKO_PATH)/include
+endif
 VOIKKO_PACKAGE=build/$(VOIKKO_PACKAGENAME).$(UNOPKG_EXT)
 VOIKKO_EXTENSION_SHAREDLIB=voikko.$(SHAREDLIB_EXT)
 VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
 VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
-SRCDIST=COPYING Makefile README $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS)) \
+SRCDIST=COPYING Makefile README ChangeLog $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS)) \
         $(patsubst %,src/%.cxx,$(VOIKKO_OBJECTS)) oxt/description.xml.template \
         oxt/META-INF/manifest.xml.template
 SED=sed
