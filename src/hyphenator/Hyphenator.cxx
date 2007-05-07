@@ -94,6 +94,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	sal_Int32 i = wlen - minTrailing; // The last generally allowed hyphenation point
 	if (i > nMaxLeading) i = nMaxLeading; // The last allowed point on this line
 	for (; i >= minLeading && hyphenPos == -1; i--) {
+		if (aWord[i] == '\'') continue;
 		if (hyphenationPoints[i] == '-' || hyphenationPoints[i] == '=') {
 			hyphenPos = i;
 			break;
@@ -138,10 +139,8 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 		return 0;
 	}
 
-	/* Count the number of hyphenation points but remove the ones that correspond
-	 * to a real hyphen in the word. This is required to prevent adding extra
-	 * soft hyphen where it is not needed. FIXME: This check is no longer needed,
-	 * must check why. */
+	/* Count the number of hyphenation points that do not correspond
+	 * to a real hyphen in the word. */
 	sal_Int16 hpcount = 0;
 	for (sal_Int32 i = 0; i < aWord.getLength(); i++) {
 		if (hyphenationPoints[i] == '-') {
