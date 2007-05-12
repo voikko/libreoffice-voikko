@@ -69,6 +69,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("Hyphenator::hyphenate");
+	if (!voikko_initialized) return 0;
 	thePropertyManager->setValues(aProperties);
 
 	sal_Int16 minLeading = thePropertyManager->getHyphMinLeading();
@@ -114,6 +115,8 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	                                     const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	VOIKKO_DEBUG("Hyphenator::queryAlternativeSpelling");
+	// FIXME: Implementing this might be necessary, although everything seems to work
+	// fine without it.
 	return 0;
 }
 
@@ -123,6 +126,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("Hyphenator::createPossibleHyphens");
+	if (!voikko_initialized) return 0;
 	thePropertyManager->setValues(aProperties);
 
 	// If the word is too short to be hyphenated, return no hyphenation points

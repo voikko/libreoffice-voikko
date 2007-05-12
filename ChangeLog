@@ -1,3 +1,9 @@
+2007-05-12 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Return immediately from Hyphenator::hyphenate and
+	  Hyphenator::createPossibleHyphens if initialization has
+	  not been done.
+
 2007-05-07 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Do not hyphenate at '
