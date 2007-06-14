@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #################################################################################
 
+
 # Check that build environment is properly set up
 ifndef OO_SDK_HOME
 $(error You must run setsdkenv before running make)
@@ -39,6 +40,12 @@ VOIKKO_DEBUG=NO
 # If you have installed libvoikko to some non-standard location, uncomment the
 # following and adjust the path accordingly.
 # LIBVOIKKO_PATH=/usr/local/voikko
+# LIBVOIKKO_PATH=c:/msys/1.0/inst
+
+# If you want to have all of the library and dictionary files included within
+# the extension package, uncomment the following and adjust the path to point
+# to a directory containing the required files.
+# STANDALONE_EXTENSION_PATH=extras
 
 # === End build settings ===
 
@@ -47,18 +54,43 @@ ifeq "$(PROCTYPE)" "sparc"
 	UNOPKG_PLATFORM=Linux_SPARC
 endif
 
-# Set up some variables
+# Platform specific variables
+ifeq "$(PLATFORM)" "windows"
+	WARNING_FLAGS=-Wall -WX -wd4061 -wd4365 -wd4514 -wd4625 -wd4626 -wd4668 -wd4820
+	# The following warnings should be fixed in the future
+	WARNING_FLAGS+= -wd4640
+else
+	WARNING_FLAGS=-Wall -Wno-non-virtual-dtor -Werror
+endif
+
+
+# General variables
 UNOPKG_EXT=oxt
 ifeq "$(VOIKKO_DEBUG)" "FULL"
-	OPT_FLAGS=-O0 -g
+	ifeq "$(PLATFORM)" "windows"
+		OPT_FLAGS=-Od -Z7
+	else
+		OPT_FLAGS=-O0 -g
+	endif
 else
-	OPT_FLAGS=-O2 -fno-strict-aliasing
+	OPT_FLAGS=-O2
+	ifneq "$(PLATFORM)" "windows"
+		WARNING_FLAGS+= -fno-strict-aliasing
+	endif
 endif
-WARNING_FLAGS=-Wall -Wno-non-virtual-dtor -Werror
 LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) -Wl,--no-undefined -L"$(OFFICE_PROGRAM_PATH)" \
            $(SALLIB) $(CPPULIB) $(CPPUHELPERLIB) -lvoikko
 VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -I$(PRJ)/include
-VOIKKO_CC_DEFINES=
+
+ifdef STANDALONE_EXTENSION_PATH
+	VOIKKO_CC_DEFINES= -DVOIKKO_STANDALONE_EXTENSION
+	STANDALONE_EXTENSION_FILES=mingwm10.dll iconv.dll intl.dll libglib-2.0-0.dll malaga.dll \
+		libvoikko-1.dll voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+else
+	VOIKKO_CC_DEFINES=
+	STANDALONE_EXTENSION_FILES=
+endif
+
 ifeq "$(VOIKKO_DEBUG)" "NO"
         VOIKKO_PACKAGENAME=voikko
 else
@@ -97,6 +129,9 @@ build/oxt/description.xml: oxt/description.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(SED) -e $(DESCRIPTION_SEDSCRIPT) < $^ > $@
 
+$(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)): build/oxt/%: $(STANDALONE_EXTENSION_PATH)/%
+	-$(MKDIR) $(subst /,$(PS),$(@D))
+	$(COPY) "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
 
 # Type library C++ headers
 build/hpp.flag:
@@ -108,18 +143,28 @@ build/hpp.flag:
 # Compile the C++ source files
 build/src/%.$(OBJ_EXT): src/%.cxx build/hpp.flag $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS))
 	-$(MKDIR) $(subst /,$(PS),$(@D))
-	$(CC) $(CC_FLAGS) $(VOIKKO_CC_FLAGS) $(CC_DEFINES) $(VOIKKO_CC_DEFINES) $(CC_OUTPUT_SWITCH) $@ $<
+	$(CC) $(CC_FLAGS) $(VOIKKO_CC_FLAGS) $(CC_DEFINES) $(VOIKKO_CC_DEFINES) $(CC_OUTPUT_SWITCH)$@ $<
 
 
 # Link the shared library
 build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB): $(patsubst %,build/src/%.$(OBJ_EXT),$(VOIKKO_OBJECTS))
+ifeq "$(PLATFORM)" "windows"
+	cd build && lib /machine:i386 /def:$(LIBVOIKKO_PATH)\bin\libvoikko-1.def
+	$(LINK) $(COMP_LINK_FLAGS) /OUT:$@ \
+	/MAP:build/voikko.map $^ \
+	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(STLPORTLIB) msvcrt.lib kernel32.lib build\libvoikko-1.lib
+	mt -manifest build/oxt/voikko.dll.manifest -outputresource:build/oxt/voikko.dll;2
+else
 	$(LINK) $(LINK_FLAGS) -o $@ $^
+endif
+		
 
 
 # Assemble the oxt extension under build/oxt
 $(VOIKKO_PACKAGE) : build/oxt/META-INF/manifest.xml build/oxt/description.xml \
-	          build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB)
-	cd build/oxt && $(SDK_ZIP) ../$(VOIKKO_PACKAGENAME).$(UNOPKG_EXT) \
+	          build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
+			  $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES))
+	cd build/oxt && $(SDK_ZIP) -9 ../$(VOIKKO_PACKAGENAME).$(UNOPKG_EXT) \
 	                           $(patsubst build/oxt/%,%,$^)
 
 

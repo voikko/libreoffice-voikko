@@ -60,7 +60,7 @@ sal_Bool SAL_CALL SpellChecker::hasLocale(const lang::Locale & aLocale) throw (u
 	else return sal_False;
 }
 
-sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Locale & aLocale,
+sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Locale &,
 	                              const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
@@ -78,7 +78,7 @@ sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Loca
 }
 
 uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
-	const OUString & aWord, const lang::Locale & aLocale,
+	const OUString & aWord, const lang::Locale &,
 	const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
@@ -133,7 +133,7 @@ sal_Bool SAL_CALL SpellChecker::removeLinguServiceEventListener(
 	else return sal_False;
 }
 
-void SAL_CALL SpellChecker::initialize(const uno::Sequence<uno::Any> & aArguments)
+void SAL_CALL SpellChecker::initialize(const uno::Sequence<uno::Any> &)
 	throw (uno::RuntimeException, uno::Exception) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("SpellChecker::initialize");

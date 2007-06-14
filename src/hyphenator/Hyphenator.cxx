@@ -63,18 +63,19 @@ sal_Bool SAL_CALL Hyphenator::hasLocale(const lang::Locale & aLocale) throw (uno
 }
 
 uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
-	Hyphenator::hyphenate(const OUString & aWord, const lang::Locale & aLocale,
+	Hyphenator::hyphenate(const OUString & aWord, const lang::Locale &,
 	                      sal_Int16 nMaxLeading,
 	                      const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("Hyphenator::hyphenate");
 	if (!voikko_initialized) return 0;
+	if (aWord.getLength() > 10000) return 0;
 	thePropertyManager->setValues(aProperties);
 
 	sal_Int16 minLeading = thePropertyManager->getHyphMinLeading();
 	sal_Int16 minTrailing = thePropertyManager->getHyphMinTrailing();
-	sal_Int32 wlen = aWord.getLength();
+	sal_Int16 wlen = (sal_Int16) aWord.getLength();
 	
 	// If the word is too short to be hyphenated, return no hyphenation points
 	if (wlen < thePropertyManager->getHyphMinWordLength() ||
@@ -92,7 +93,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 
 	// find the hyphenation point
 	sal_Int16 hyphenPos = -1;
-	sal_Int32 i = wlen - minTrailing; // The last generally allowed hyphenation point
+	sal_Int16 i = wlen - minTrailing; // The last generally allowed hyphenation point
 	if (i > nMaxLeading) i = nMaxLeading; // The last allowed point on this line
 	for (; i >= minLeading && hyphenPos == -1; i--) {
 		if (aWord[i] == '\'') continue;
@@ -110,9 +111,9 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 }
 
 uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
-	Hyphenator::queryAlternativeSpelling(const OUString & aWord, const lang::Locale & aLocale,
-	                                     sal_Int16 nIndex,
-	                                     const uno::Sequence<beans::PropertyValue> & aProperties)
+	Hyphenator::queryAlternativeSpelling(const OUString &, const lang::Locale &,
+	                                     sal_Int16,
+	                                     const uno::Sequence<beans::PropertyValue> &)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	VOIKKO_DEBUG("Hyphenator::queryAlternativeSpelling");
 	// FIXME: Implementing this might be necessary, although everything seems to work
@@ -121,12 +122,13 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 }
 
 uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
-	Hyphenator::createPossibleHyphens(const OUString & aWord, const lang::Locale & aLocale,
+	Hyphenator::createPossibleHyphens(const OUString & aWord, const lang::Locale &,
 	                                  const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("Hyphenator::createPossibleHyphens");
 	if (!voikko_initialized) return 0;
+	if (aWord.getLength() > 10000) return 0;
 	thePropertyManager->setValues(aProperties);
 
 	// If the word is too short to be hyphenated, return no hyphenation points
@@ -146,7 +148,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	/* Count the number of hyphenation points that do not correspond
 	 * to a real hyphen in the word. */
 	sal_Int16 hpcount = 0;
-	for (sal_Int32 i = 0; i < aWord.getLength(); i++) {
+	for (sal_Int16 i = 0; i < aWord.getLength(); i++) {
 		if (hyphenationPoints[i] == '-') {
 			hpcount++;
 		}
@@ -158,7 +160,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	OUString hyphenatedWord;
 	sal_Int16 nHyphCount = 0;
 
-	for (sal_Int32 i = 0; i < aWord.getLength(); i++) {
+	for (sal_Int16 i = 0; i < aWord.getLength(); i++) {
 		hyphenatedWordBuffer.append(aWord[i]);
 		if (hyphenationPoints[i + 1] == '-') {
 			pPos[nHyphCount] = i;
@@ -195,7 +197,7 @@ sal_Bool SAL_CALL Hyphenator::removeLinguServiceEventListener(
 	else return sal_False;
 }
 
-void SAL_CALL Hyphenator::initialize(const uno::Sequence<uno::Any> & aArguments)
+void SAL_CALL Hyphenator::initialize(const uno::Sequence<uno::Any> &)
 	throw (uno::RuntimeException, uno::Exception) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("Hyphenator::initialize");

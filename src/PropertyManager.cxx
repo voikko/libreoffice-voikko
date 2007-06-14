@@ -46,13 +46,13 @@ PropertyManager::~PropertyManager() {
 	}
 }
 
-void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent & pce)
+void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent &)
 	throw (uno::RuntimeException) {
 	// FIXME: property change notifications are not being received
-	VOIKKO_DEBUG_2("PropertyManager::propertyChange: %s", OU2DEBUG(pce.PropertyName));
+	// VOIKKO_DEBUG_2("PropertyManager::propertyChange: %s", OU2DEBUG(pce.PropertyName));
 }
 
-void SAL_CALL PropertyManager::disposing(const lang::EventObject & source)
+void SAL_CALL PropertyManager::disposing(const lang::EventObject &)
 	throw (uno::RuntimeException){
 	VOIKKO_DEBUG("PropertyManager::disposing");
 }
@@ -193,7 +193,7 @@ void PropertyManager::setValue(const beans::PropertyValue & value) {
 	}
 }
 
-void PropertyManager::syncHyphenatorSettings() {
+inline void PropertyManager::syncHyphenatorSettings() {
 	// Uncomment the following if you want to apply HypMinWordLength to the
 	// components of compound words, not just whole words.
 

@@ -19,7 +19,7 @@ Porting status
 ==============
 - Linux: This is the primary development platform, and should always work
 - FreeBSD: Status unknown
-- Windows: Status unknown
+- Windows: Porting started
 - Mac OS X: Status unknown
 
 
@@ -79,3 +79,6 @@ a non-free Finnish spellchecking library.
 
 The license has been changed from LGPL to GPL to reflect the fact that this
 extension is useless without libvoikko, which is distributed under the GPL.
+
+For changes since 2.0 see ChangeLog.
+

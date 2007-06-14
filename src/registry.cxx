@@ -34,7 +34,7 @@ namespace voikko {
 
 extern "C" void SAL_CALL
 	component_getImplementationEnvironment(sal_Char const ** ppEnvTypeName,
-	                                       uno_Environment ** ppEnv) {
+	                                       uno_Environment **) {
 	VOIKKO_DEBUG("component_getImplementationEnvironment");
 	// FIXME: Voikko is not thread safe, so this component should be
 	// declared thread unsafe: CPPU_CURRENT_LANGUAGE_BINDING_NAME ":unsafe"
