@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oor:component-data
+ oor:name="Config"
+ oor:package="org.puimula.ooovoikko"
+ xmlns:oor="http://openoffice.org/2001/registry"
+ xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <group oor:name="internal">
+    <prop oor:name="location" oor:type="xs:string">
+      <value>%origin%</value>
+    </prop>
+  </group>
+</oor:component-data>

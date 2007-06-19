@@ -26,6 +26,8 @@ namespace voikko {
 
 osl::Mutex & getVoikkoMutex();
 
+OUString getInstallationPath();
+
 extern sal_Bool voikko_initialized;
 
 extern int voikko_handle;

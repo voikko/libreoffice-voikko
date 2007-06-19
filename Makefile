@@ -84,8 +84,13 @@ VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -
 
 ifdef STANDALONE_EXTENSION_PATH
 	VOIKKO_CC_DEFINES= -DVOIKKO_STANDALONE_EXTENSION
-	STANDALONE_EXTENSION_FILES=mingwm10.dll iconv.dll intl.dll libglib-2.0-0.dll malaga.dll \
+	ifeq "$(PLATFORM)" "windows"
+		STANDALONE_EXTENSION_FILES=mingwm10.dll iconv.dll intl.dll libglib-2.0-0.dll malaga.dll \
 		libvoikko-1.dll voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+	else
+		STANDALONE_EXTENSION_FILES=libmalaga.so.7 libvoikko.so.1 \
+		voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+	endif
 else
 	VOIKKO_CC_DEFINES=
 	STANDALONE_EXTENSION_FILES=
@@ -129,6 +134,11 @@ build/oxt/description.xml: oxt/description.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(SED) -e $(DESCRIPTION_SEDSCRIPT) < $^ > $@
 
+COPY_TEMPLATES=config.xcu config.xcs
+$(patsubst %,build/oxt/%,$(COPY_TEMPLATES)): build/oxt/%: oxt/%.template
+	-$(MKDIR) $(subst /,$(PS),$(@D))
+	$(COPY) "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
+
 $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)): build/oxt/%: $(STANDALONE_EXTENSION_PATH)/%
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(COPY) "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
@@ -162,8 +172,9 @@ endif
 
 # Assemble the oxt extension under build/oxt
 $(VOIKKO_PACKAGE) : build/oxt/META-INF/manifest.xml build/oxt/description.xml \
-	          build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
-			  $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES))
+	            build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
+	            $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
+	            $(patsubst %,build/oxt/%,$(COPY_TEMPLATES))
 	cd build/oxt && $(SDK_ZIP) -9 ../$(VOIKKO_PACKAGENAME).$(UNOPKG_EXT) \
 	                           $(patsubst build/oxt/%,%,$^)
 

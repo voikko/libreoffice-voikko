@@ -2,6 +2,8 @@
 
 	* Adapt for libvoikko 1.5
 	* Increase version number to 2.1
+	* Use private vocabulary files when building as
+	  standalone extension
 
 2007-06-14 Harri Pitkänen <hatapitk@iki.fi>
 

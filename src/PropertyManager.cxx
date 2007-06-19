@@ -61,7 +61,12 @@ void PropertyManager::initialize() throw (uno::Exception) {
 	VOIKKO_DEBUG("PropertyManager::initialize: starting");
 	if (!voikko_initialized) {
 		isInitialized = sal_False;
+		#ifdef VOIKKO_STANDALONE_EXTENSION
+		const char * initerror = voikko_init_with_path(&voikko_handle, "fi_FI", 0,
+			OUStringToOString(getInstallationPath(), RTL_TEXTENCODING_UTF8).getStr());
+		#else
 		const char * initerror = voikko_init(&voikko_handle, "fi_FI", 0);
+		#endif
 		if (initerror) {
 			VOIKKO_DEBUG_2("Failed to initialize voikko: %s", initerror);
 			return;

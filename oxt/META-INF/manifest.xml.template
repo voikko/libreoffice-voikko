@@ -5,4 +5,10 @@
   <manifest:file-entry
    manifest:media-type="application/vnd.sun.star.uno-component;type=native;platform=UNOPKG_PLATFORM"
    manifest:full-path="VOIKKO_EXTENSION_SHAREDLIB"/>
+  <manifest:file-entry
+   manifest:media-type="application/vnd.sun.star.configuration-data"
+   manifest:full-path="config.xcu"/>
+  <manifest:file-entry
+   manifest:media-type="application/vnd.sun.star.configuration-schema"
+   manifest:full-path="config.xcs"/>
 </manifest:manifest>
