@@ -104,10 +104,9 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	OString ostr;
 	for (int i = 0; i < scount; i++) {
 		ostr = OString(suggestions[i]);
-		free(suggestions[i]);
 		suggStrings[i] = OStringToOUString(ostr, RTL_TEXTENCODING_UTF8);
 	}
-	free(suggestions);
+	voikko_free_suggest_cstr(suggestions);
 
 	alternatives->alternatives = suggSeq;
 	return alternatives;

@@ -1,3 +1,8 @@
+2007-06-19 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Adapt for libvoikko 1.5
+	* Increase version number to 2.1
+
 2007-06-14 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Add support for building on Windows with Microsoft

@@ -27,7 +27,7 @@ Installation requirements
 =========================
 
 - OpenOffice.org (Office and SDK), version 2.0.4 or later.
-- Libvoikko version 1.0 or later, and compatible versions of Suomi-malaga and
+- Libvoikko version 1.5 or later, and compatible versions of Suomi-malaga and
   malaga.
 - On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
   needed for compilation are usually present in default setups of any
