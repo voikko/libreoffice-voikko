@@ -4,6 +4,8 @@
 	* Increase version number to 2.1
 	* Use private vocabulary files when building as
 	  standalone extension
+	* Add support for displaying license text upon
+	  extension installation (not enabled by default)
 
 2007-06-14 Harri Pitkänen <hatapitk@iki.fi>
 

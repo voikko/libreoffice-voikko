@@ -47,6 +47,10 @@ VOIKKO_DEBUG=NO
 # to a directory containing the required files.
 # STANDALONE_EXTENSION_PATH=extras
 
+# If you want to have a license text to be displayed upon the installation
+# of this extension, uncomment the following.
+# SHOW_LICENSE=1
+
 # === End build settings ===
 
 # Fix for Linux/SPARC. Needed until OpenOffice.org issue 72679 is fixed
@@ -112,8 +116,14 @@ VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives sp
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
 VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
+COPY_TEMPLATES=config.xcu config.xcs
+ifdef SHOW_LICENSE
+	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
+endif
 SRCDIST=COPYING Makefile README ChangeLog $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS)) \
         $(patsubst %,src/%.cxx,$(VOIKKO_OBJECTS)) oxt/description.xml.template \
+        oxt/config.xcs.template oxt/config.xcu.template \
+        oxt/license_fi.txt.template oxt/license_en-US.txt.template \
         oxt/META-INF/manifest.xml.template
 SED=sed
 
@@ -125,7 +135,10 @@ all: $(VOIKKO_PACKAGE)
 # Create extension files
 MANIFEST_SEDSCRIPT="s/VOIKKO_EXTENSION_SHAREDLIB/$(VOIKKO_EXTENSION_SHAREDLIB)/g; \
 	s/UNOPKG_PLATFORM/$(UNOPKG_PLATFORM)/g"
-DESCRIPTION_SEDSCRIPT="s/VOIKKO_VERSION/$(VOIKKO_VERSION)/g"
+DESCRIPTION_SEDSCRIPT:="s/VOIKKO_VERSION/$(VOIKKO_VERSION)/g"
+ifdef SHOW_LICENSE
+	DESCRIPTION_SEDSCRIPT:="$(DESCRIPTION_SEDSCRIPT);/SHOW_LICENSE/d"
+endif
 build/oxt/META-INF/manifest.xml: oxt/META-INF/manifest.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(SED) -e $(MANIFEST_SEDSCRIPT) < $^ > $@
@@ -134,7 +147,6 @@ build/oxt/description.xml: oxt/description.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(SED) -e $(DESCRIPTION_SEDSCRIPT) < $^ > $@
 
-COPY_TEMPLATES=config.xcu config.xcs
 $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)): build/oxt/%: oxt/%.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(COPY) "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
