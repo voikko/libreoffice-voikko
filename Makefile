@@ -69,7 +69,6 @@ endif
 
 
 # General variables
-UNOPKG_EXT=oxt
 ifeq "$(VOIKKO_DEBUG)" "FULL"
 	ifeq "$(PLATFORM)" "windows"
 		OPT_FLAGS=-Od -Z7
@@ -110,7 +109,7 @@ ifdef LIBVOIKKO_PATH
 	LINK_FLAGS+= -L$(LIBVOIKKO_PATH)/lib
 	VOIKKO_CC_FLAGS+= -I$(LIBVOIKKO_PATH)/include
 endif
-VOIKKO_PACKAGE=build/$(VOIKKO_PACKAGENAME).$(UNOPKG_EXT)
+VOIKKO_PACKAGE=build/$(VOIKKO_PACKAGENAME).oxt
 VOIKKO_EXTENSION_SHAREDLIB=voikko.$(SHAREDLIB_EXT)
 VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
@@ -187,7 +186,7 @@ $(VOIKKO_PACKAGE) : build/oxt/META-INF/manifest.xml build/oxt/description.xml \
 	            build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
 	            $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
 	            $(patsubst %,build/oxt/%,$(COPY_TEMPLATES))
-	cd build/oxt && $(SDK_ZIP) -9 ../$(VOIKKO_PACKAGENAME).$(UNOPKG_EXT) \
+	cd build/oxt && $(SDK_ZIP) -9 ../$(VOIKKO_PACKAGENAME).oxt \
 	                           $(patsubst build/oxt/%,%,$^)
 
 

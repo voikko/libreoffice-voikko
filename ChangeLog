@@ -1,3 +1,8 @@
+2007-08-19 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Update README
+	* Makefile cleanup
+
 2007-06-19 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Adapt for libvoikko 1.5
