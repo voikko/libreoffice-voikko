@@ -62,13 +62,13 @@ void PropertyManager::initialize() throw (uno::Exception) {
 	if (!voikko_initialized) {
 		isInitialized = sal_False;
 		#ifdef VOIKKO_STANDALONE_EXTENSION
-		const char * initerror = voikko_init_with_path(&voikko_handle, "fi_FI", 0,
+		voikkoErrorString = voikko_init_with_path(&voikko_handle, "fi_FI", 0,
 			OUStringToOString(getInstallationPath(), RTL_TEXTENCODING_UTF8).getStr());
 		#else
-		const char * initerror = voikko_init(&voikko_handle, "fi_FI", 0);
+		voikkoErrorString = voikko_init(&voikko_handle, "fi_FI", 0);
 		#endif
-		if (initerror) {
-			VOIKKO_DEBUG_2("Failed to initialize voikko: %s", initerror);
+		if (voikkoErrorString) {
+			VOIKKO_DEBUG_2("Failed to initialize voikko: %s", voikkoErrorString);
 			return;
 		}
 		voikko_set_string_option(voikko_handle, VOIKKO_OPT_ENCODING, "UTF-8");
@@ -127,6 +127,10 @@ sal_Bool PropertyManager::removeLinguServiceEventListener(
 	else return sal_False;
 }
 
+OUString PropertyManager::getInitializationStatus() {
+	if (isInitialized) return A2OU("OK");
+	else return A2OU(voikkoErrorString);
+}
 
 void PropertyManager::setProperties(const uno::Reference<beans::XPropertySet> & properties) {
 	beans::PropertyValue pValue;

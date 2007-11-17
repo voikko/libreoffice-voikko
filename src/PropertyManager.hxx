@@ -63,6 +63,9 @@ class PropertyManager:
 	void setValues(const uno::Sequence<beans::PropertyValue> & values);
 	void resetValues(const uno::Sequence<beans::PropertyValue> & values);
 	
+	/** Returns initialization status diagnostics */
+	OUString getInitializationStatus();
+	
 	private:
 	void setProperties(const uno::Reference<beans::XPropertySet> & properties);
 	void setValue(const beans::PropertyValue & value);
@@ -78,6 +81,9 @@ class PropertyManager:
 	sal_Int16 hyphMinLeading;
 	sal_Int16 hyphMinTrailing;
 	sal_Int16 hyphMinWordLength;
+	
+	/** Error message from libvoikko initialization function */
+	const char * voikkoErrorString;
 };
 
 }

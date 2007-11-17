@@ -81,6 +81,20 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	const OUString & aWord, const lang::Locale &,
 	const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
+	
+	// Check if diagnostic message should be returned
+	if (aWord.equals(A2OU("VoikkoGetStatusInformation"))) {
+		SpellAlternatives * alternatives = new SpellAlternatives();
+		alternatives->word = aWord;
+		uno::Sequence<OUString> suggSeq(1);
+		if (thePropertyManager != 0)
+			suggSeq.getArray()[0] = thePropertyManager->getInitializationStatus();
+		else
+			suggSeq.getArray()[0] = A2OU("PropertyManager does not exist");
+		alternatives->alternatives = suggSeq;
+		return alternatives;
+	}
+	
 	osl::MutexGuard vmg(getVoikkoMutex());
 	if (!voikko_initialized) return 0;
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
