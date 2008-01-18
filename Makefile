@@ -41,6 +41,7 @@ VOIKKO_DEBUG=NO
 # following and adjust the path accordingly.
 # LIBVOIKKO_PATH=/usr/local/voikko
 # LIBVOIKKO_PATH=c:/msys/1.0/inst
+# LIBVOIKKO_PATH=/Users/paakayttaja/voikko
 
 # If you want to have all of the library and dictionary files included within
 # the extension package, uncomment the following and adjust the path to point
@@ -57,6 +58,13 @@ VOIKKO_DEBUG=NO
 ifeq "$(PROCTYPE)" "sparc"
 	UNOPKG_PLATFORM=Linux_SPARC
 endif
+# same for Intel OS X
+ifeq "$(PLATFORM)" "macosx"
+	PROCTYPE=$(shell $(PRJ)/config.guess | cut -d "-" -f1)
+	ifeq "$(PROCTYPE)" "i686"
+		UNOPKG_PLATFORM=MacOSX_x86
+	endif
+endif
 
 # Platform specific variables
 ifeq "$(PLATFORM)" "windows"
@@ -65,6 +73,9 @@ ifeq "$(PLATFORM)" "windows"
 	WARNING_FLAGS+= -wd4640
 else
 	WARNING_FLAGS=-Wall -Wno-non-virtual-dtor -Werror
+endif
+ifeq "$(PLATFORM)" "linux"
+	LINKER_FLAGS=-Wl,--no-undefined
 endif
 
 
@@ -81,7 +92,7 @@ else
 		WARNING_FLAGS+= -fno-strict-aliasing
 	endif
 endif
-LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) -Wl,--no-undefined -L"$(OFFICE_PROGRAM_PATH)" \
+LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) $(LINKER_FLAGS) -L"$(OFFICE_PROGRAM_PATH)" \
            $(SALLIB) $(CPPULIB) $(CPPUHELPERLIB) -lvoikko
 VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -I$(PRJ)/include
 
