@@ -38,7 +38,8 @@ VOIKKO_VERSION=2.2
 VOIKKO_DEBUG=NO
 
 # If you have installed libvoikko to some non-standard location, uncomment the
-# following and adjust the path accordingly.
+# following and adjust the path accordingly. For OS X this must be set if
+# a standalone extension is to be built.
 # LIBVOIKKO_PATH=/usr/local/voikko
 # LIBVOIKKO_PATH=c:/msys/1.0/inst
 # LIBVOIKKO_PATH=/Users/paakayttaja/voikko
@@ -47,6 +48,7 @@ VOIKKO_DEBUG=NO
 # the extension package, uncomment the following and adjust the path to point
 # to a directory containing the required files.
 # STANDALONE_EXTENSION_PATH=extras
+# STANDALONE_EXTENSION_PATH=/Users/paakayttaja/voikko/lib/voikko
 
 # If you want to have a license text to be displayed upon the installation
 # of this extension, uncomment the following.
@@ -93,7 +95,7 @@ else
 	endif
 endif
 LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) $(LINKER_FLAGS) -L"$(OFFICE_PROGRAM_PATH)" \
-           $(SALLIB) $(CPPULIB) $(CPPUHELPERLIB) -lvoikko
+           $(SALLIB) $(CPPULIB) $(CPPUHELPERLIB)
 VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -I$(PRJ)/include
 
 ifdef STANDALONE_EXTENSION_PATH
@@ -101,13 +103,21 @@ ifdef STANDALONE_EXTENSION_PATH
 	ifeq "$(PLATFORM)" "windows"
 		STANDALONE_EXTENSION_FILES=mingwm10.dll iconv.dll intl.dll libglib-2.0-0.dll malaga.dll \
 		libvoikko-1.dll voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+		LINK_FLAGS += -lvoikko
+	else ifeq "$(PLATFORM)" "macosx"
+		STANDALONE_EXTENSION_FILES=voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+		LINK_FLAGS += $(LIBVOIKKO_PATH)/lib/libvoikko.a $(LIBVOIKKO_PATH)/lib/libmalaga.a \
+		              $(LIBVOIKKO_PATH)/lib/libiconv.a $(LIBVOIKKO_PATH)/lib/libglib-2.0.a \
+					  $(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation
 	else
 		STANDALONE_EXTENSION_FILES=libmalaga.so.7 libvoikko.so.1 \
 		voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+		LINK_FLAGS += -lvoikko
 	endif
 else
 	VOIKKO_CC_DEFINES=
 	STANDALONE_EXTENSION_FILES=
+	LINK_FLAGS += -lvoikko
 endif
 
 ifeq "$(VOIKKO_DEBUG)" "NO"
