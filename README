@@ -12,7 +12,7 @@ version 2 or later (see COPYING).
 
 Authors
 =======
-2005 - 2007 Harri Pitkänen (hatapitk@iki.fi)
+2005 - 2008 Harri Pitkänen (hatapitk@iki.fi)
 
 
 Porting status
@@ -20,7 +20,7 @@ Porting status
 - Linux: This is the primary development platform, and should always work
 - FreeBSD: Status unknown
 - Windows: Supported with some limitations
-- Mac OS X: Status unknown
+- Mac OS X: Version 10.5 (Intel) with X11 is supported
 
 
 Build requirements
@@ -34,6 +34,9 @@ Build requirements
   distribution.
 - On Windows: Microsoft Visual C++ 2005 (the Express Edition is sufficient),
   GNU make, GNU sed and Info-Zip zip
+- On OS X: Xcode tools from the operating system installation CD, and OpenOffice.org
+  version 2.3 or later and SDK. Static versions of libvoikko and its dependencies
+  are needed to build a standalone extension.
 
 
 Instructions for compilation
@@ -41,12 +44,16 @@ Instructions for compilation
 
 - Install all of the required software listed above.
 - In a shell, run the SDK setup script which is located in the SDK installation
-  directory. It is called setsdkenv_unix on Linux and setsdkenv_windows on
+  directory. It is called setsdkenv_unix on Linux and OS X, and setsdkenv_windows on
   Windows. During the first run, this script will ask the location of certain
   tools. You should answer the questions, although at least on Linux the
   defaults are usually correct. Answers to these questions will be saved under
   the home directory of the user (for example to a file
   openoffice.org2.0_sdk/setsdkenv_unix.sh).
+  * On OS X and Windows you must make sure that neither OpenOffice.org nor its
+    SDK do not have spaces in their installation path. If detection of office
+	installation fails on OS X, add symolic link "program -> MacOS" under the
+	directory "Contents" of the office installation.
 - Run "make". This will build the extensions package voikko.oxt under
   subdirectory build.
   * There are some settings available that can be used to customize the build.
