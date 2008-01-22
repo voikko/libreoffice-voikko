@@ -60,7 +60,7 @@ VOIKKO_DEBUG=NO
 ifeq "$(PROCTYPE)" "sparc"
 	UNOPKG_PLATFORM=Linux_SPARC
 endif
-# same for Intel OS X
+# Same for Intel OS X, see issue 69944.
 ifeq "$(PLATFORM)" "macosx"
 	PROCTYPE=$(shell $(PRJ)/config.guess | cut -d "-" -f1)
 	ifeq "$(PROCTYPE)" "i686"

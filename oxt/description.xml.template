@@ -6,6 +6,11 @@
   <version value="VOIKKO_VERSION" />
   <identifier value="org.puimula.ooovoikko" />
 
+  <display-name>
+    <name lang="en-US">Voikko - Finnish spellchecking and hyphenation</name>
+    <name lang="fi">Voikko - suomen oikoluku ja tavutus</name>
+  </display-name>
+
   <!-- SHOW_LICENSE
   <registration>
     <simple-license accept-by="admin" default-license-id="en-US">

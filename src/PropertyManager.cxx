@@ -17,6 +17,7 @@
  *********************************************************************************/
 
 #include <com/sun/star/linguistic2/LinguServiceEventFlags.hpp>
+#include <osl/nlsupport.h>
 #include <libvoikko/voikko.h>
 
 #include "PropertyManager.hxx"
@@ -62,10 +63,13 @@ void PropertyManager::initialize() throw (uno::Exception) {
 	if (!voikko_initialized) {
 		isInitialized = sal_False;
 		#ifdef VOIKKO_STANDALONE_EXTENSION
-		voikkoErrorString = voikko_init_with_path(&voikko_handle, "fi_FI", 0,
-			OUStringToOString(getInstallationPath(), RTL_TEXTENCODING_UTF8).getStr());
+			rtl_TextEncoding encoding = osl_getTextEncodingFromLocale(0);
+			if (encoding == RTL_TEXTENCODING_DONTKNOW)
+				encoding = RTL_TEXTENCODING_UTF8;
+			voikkoErrorString = voikko_init_with_path(&voikko_handle, "fi_FI", 0,
+				OUStringToOString(getInstallationPath(), encoding).getStr());
 		#else
-		voikkoErrorString = voikko_init(&voikko_handle, "fi_FI", 0);
+			voikkoErrorString = voikko_init(&voikko_handle, "fi_FI", 0);
 		#endif
 		if (voikkoErrorString) {
 			VOIKKO_DEBUG_2("Failed to initialize voikko: %s", voikkoErrorString);
