@@ -1,5 +1,5 @@
-/* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 Harri Pitkänen <hatapitk@iki.fi>
+/* Openoffice.org-hspell: Hebrew spellchecker for OpenOffice.org
+ * Copyright (C) 2007 - 2008 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,21 +23,18 @@
 
 #include "macros.hxx"
 #include "spellchecker/SpellChecker.hxx"
-#include "hyphenator/Hyphenator.hxx"
 
 using namespace ::com::sun::star::registry;
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::lang;
 using namespace ::rtl;
 
-namespace voikko {
+namespace hspell {
 
 extern "C" void SAL_CALL
 	component_getImplementationEnvironment(sal_Char const ** ppEnvTypeName,
 	                                       uno_Environment **) {
 	VOIKKO_DEBUG("component_getImplementationEnvironment");
-	// FIXME: Voikko is not thread safe, so this component should be
-	// declared thread unsafe: CPPU_CURRENT_LANGUAGE_BINDING_NAME ":unsafe"
 	*ppEnvTypeName = CPPU_CURRENT_LANGUAGE_BINDING_NAME;
 } 
 
@@ -46,19 +43,9 @@ OUString SAL_CALL regGetSpellImplementationName() {
 	return SpellChecker::getImplementationName_static();
 }
 
-OUString SAL_CALL regGetHyphenImplementationName() {
-	return Hyphenator::getImplementationName_static();
-}
-
 Sequence<OUString> SAL_CALL regSpellSupportedServiceNames() {
 	Sequence<OUString> s(1);
 	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.linguistic2.SpellChecker"));
-	return s;
-}
-
-Sequence<OUString> SAL_CALL regHyphenSupportedServiceNames() {
-	Sequence<OUString> s(1);
-	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.linguistic2.Hyphenator"));
 	return s;
 }
 
@@ -67,19 +54,10 @@ Reference<XInterface> SAL_CALL regSpellCreate(const Reference<XComponentContext>
 	return static_cast< ::cppu::OWeakObject * > (new SpellChecker(context));
 }
 
-Reference<XInterface> SAL_CALL regHyphenCreate(const Reference<XComponentContext> & context)
-	SAL_THROW((Exception)) {
-	return static_cast< ::cppu::OWeakObject * >(new Hyphenator(context));
-}
-
 static ::cppu::ImplementationEntry const regEntries[] = {
 	{ &regSpellCreate,
 	  &regGetSpellImplementationName,
 	  &regSpellSupportedServiceNames,
-	  &::cppu::createSingleComponentFactory, 0, 0 },
-	{ &regHyphenCreate,
-	  &regGetHyphenImplementationName,
-	  &regHyphenSupportedServiceNames,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0 }
 };

@@ -1,4 +1,4 @@
-# Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
+# Openoffice.org-hspell: Hebrew spellchecker for OpenOffice.org
 # Copyright (C) 2005-2008 Harri Pitkänen <hatapitk@iki.fi>
 #
 # This program is free software; you can redistribute it and/or
@@ -105,29 +105,27 @@ VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -
 ifdef STANDALONE_EXTENSION_PATH
 	VOIKKO_CC_DEFINES= -DVOIKKO_STANDALONE_EXTENSION
 	ifeq "$(PLATFORM)" "windows"
-		STANDALONE_EXTENSION_FILES=mingwm10.dll iconv.dll intl.dll libglib-2.0-0.dll malaga.dll \
-		libvoikko-1.dll voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
-		LINK_FLAGS += -lvoikko
+		STANDALONE_EXTENSION_FILES=mingwm10.dll iconv.dll intl.dll libglib-2.0-0.dll malaga.dll
 	else ifeq "$(PLATFORM)" "macosx"
-		STANDALONE_EXTENSION_FILES=voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+		STANDALONE_EXTENSION_FILES=
 		LINK_FLAGS += $(LIBVOIKKO_PATH)/lib/libvoikko.a $(LIBVOIKKO_PATH)/lib/libmalaga.a \
 		              $(LIBVOIKKO_PATH)/lib/libiconv.a $(LIBVOIKKO_PATH)/lib/libglib-2.0.a \
 					  $(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation
 	else
 		STANDALONE_EXTENSION_FILES=libmalaga.so.7 libvoikko.so.1 \
 		voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
-		LINK_FLAGS += -lvoikko
+		LINK_FLAGS += /usr/lib/libhspell.a
 	endif
 else
 	VOIKKO_CC_DEFINES=
 	STANDALONE_EXTENSION_FILES=
-	LINK_FLAGS += -lvoikko
+	LINK_FLAGS += /usr/lib/libhspell.a
 endif
 
 ifeq "$(VOIKKO_DEBUG)" "NO"
-        VOIKKO_PACKAGENAME=voikko
+        VOIKKO_PACKAGENAME=hspell
 else
-        VOIKKO_PACKAGENAME=voikko-dbg
+        VOIKKO_PACKAGENAME=hspell-dbg
         VOIKKO_CC_DEFINES+= -DVOIKKO_DEBUG_OUTPUT
 endif
 ifdef LIBVOIKKO_PATH
@@ -135,11 +133,9 @@ ifdef LIBVOIKKO_PATH
 	VOIKKO_CC_FLAGS+= -I$(LIBVOIKKO_PATH)/include
 endif
 
-VOIKKO_EXTENSION_SHAREDLIB=voikko.$(SHAREDLIB_EXT)
-VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
-               hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
-VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
-               hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
+VOIKKO_EXTENSION_SHAREDLIB=hspell.$(SHAREDLIB_EXT)
+VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker
+VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker
 COPY_TEMPLATES=config.xcu config.xcs
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
@@ -226,18 +222,18 @@ endif
 
 
 # Rules for creating the source distribution
-dist-gzip: openoffice.org-voikko-$(VOIKKO_VERSION).tar.gz
+dist-gzip: openoffice.org-hspell-$(VOIKKO_VERSION).tar.gz
 
-openoffice.org-voikko-$(VOIKKO_VERSION).tar.gz: $(patsubst %,openoffice.org-voikko-$(VOIKKO_VERSION)/%, \
+openoffice.org-hspell-$(VOIKKO_VERSION).tar.gz: $(patsubst %,openoffice.org-hspell-$(VOIKKO_VERSION)/%, \
 	                                      $(sort $(SRCDIST)))
-	tar c --group 0 --owner 0 openoffice.org-voikko-$(VOIKKO_VERSION) | gzip -9 > $@
+	tar c --group 0 --owner 0 openoffice.org-hspell-$(VOIKKO_VERSION) | gzip -9 > $@
 
-$(patsubst %,openoffice.org-voikko-$(VOIKKO_VERSION)/%, $(sort $(SRCDIST))): \
-	openoffice.org-voikko-$(VOIKKO_VERSION)/%: %
+$(patsubst %,openoffice.org-hspell-$(VOIKKO_VERSION)/%, $(sort $(SRCDIST))): \
+	openoffice.org-hspell-$(VOIKKO_VERSION)/%: %
 	install --mode=644 -D $^ $@
 
 
 # The clean target
 clean:
-	rm -rf build openoffice.org-voikko-$(VOIKKO_VERSION)
-	rm -f openoffice.org-voikko-$(VOIKKO_VERSION).tar.gz
+	rm -rf build openoffice.org-hspell-$(VOIKKO_VERSION)
+	rm -f openoffice.org-hspell-$(VOIKKO_VERSION).tar.gz

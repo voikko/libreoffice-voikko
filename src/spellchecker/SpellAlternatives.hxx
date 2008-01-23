@@ -26,7 +26,7 @@
 using namespace ::com::sun::star;
 using namespace ::rtl;
 
-namespace voikko {
+namespace hspell {
 
 class SpellAlternatives : public cppu::WeakImplHelper1<linguistic2::XSpellAlternatives> {
 	public:

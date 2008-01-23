@@ -29,7 +29,7 @@
 
 #include "macros.hxx"
 
-namespace voikko {
+namespace hspell {
 
 using namespace ::com::sun::star;
 using namespace ::rtl;
@@ -51,9 +51,6 @@ class PropertyManager:
 	void initialize() throw (uno::Exception);
 	
 	// Functions to be used by the linguistic tool implementations
-	sal_Int16 getHyphMinLeading();
-	sal_Int16 getHyphMinTrailing();
-	sal_Int16 getHyphMinWordLength();
 	sal_Bool addLinguServiceEventListener(
 		const uno::Reference<linguistic2::XLinguServiceEventListener> & xLstnr)
 		throw (uno::RuntimeException);
@@ -69,18 +66,12 @@ class PropertyManager:
 	private:
 	void setProperties(const uno::Reference<beans::XPropertySet> & properties);
 	void setValue(const beans::PropertyValue & value);
-	void syncHyphenatorSettings();
 	void sendLinguEvent(const linguistic2::LinguServiceEvent & event);
 	
 	sal_Bool isInitialized;
 	uno::Reference<beans::XPropertySet> linguPropSet;
 	uno::Reference<uno::XComponentContext> compContext;
 	::cppu::OInterfaceContainerHelper linguEventListeners;
-	
-	// Active values
-	sal_Int16 hyphMinLeading;
-	sal_Int16 hyphMinTrailing;
-	sal_Int16 hyphMinWordLength;
 	
 	/** Error message from libvoikko initialization function */
 	const char * voikkoErrorString;

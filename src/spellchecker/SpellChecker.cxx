@@ -16,13 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *********************************************************************************/
 
-#include <libvoikko/voikko.h>
+#include <hspell.h>
 
 #include "SpellChecker.hxx"
 #include "SpellAlternatives.hxx"
 #include "../common.hxx"
 
-namespace voikko {
+namespace hspell {
 
 SpellChecker::SpellChecker(uno::Reference<uno::XComponentContext> const & context) :
 	cppu::WeakComponentImplHelper5
@@ -51,12 +51,12 @@ uno::Sequence<OUString> SAL_CALL SpellChecker::getSupportedServiceNames() throw 
 
 uno::Sequence<lang::Locale> SAL_CALL SpellChecker::getLocales() throw (uno::RuntimeException) {
 	uno::Sequence<lang::Locale> locales(1);
-	locales.getArray()[0] = lang::Locale(A2OU("fi"), A2OU("FI"), OUString());
+	locales.getArray()[0] = lang::Locale(A2OU("he"), A2OU("IL"), OUString());
 	return locales;
 }
 
 sal_Bool SAL_CALL SpellChecker::hasLocale(const lang::Locale & aLocale) throw (uno::RuntimeException) {
-	if (aLocale.Language == A2OU("fi")) return sal_True;
+	if (aLocale.Language == A2OU("he")) return sal_True;
 	else return sal_False;
 }
 
@@ -156,10 +156,7 @@ void SAL_CALL SpellChecker::initialize(const uno::Sequence<uno::Any> &)
 
 OUString SAL_CALL SpellChecker::getServiceDisplayName(const lang::Locale & aLocale)
 	throw (uno::RuntimeException) {
-	if (aLocale.Language == A2OU("fi"))
-		return A2OU("Suomen kielen oikoluku (Voikko)");
-	else
-		return A2OU("Finnish spellchecker (Voikko)");
+	return A2OU("Hebrew spellchecker (Hspell)");
 }
 
 void SAL_CALL SpellChecker::disposing() {

@@ -19,14 +19,14 @@
 #include "SpellAlternatives.hxx"
 #include "../macros.hxx"
 
-namespace voikko {
+namespace hspell {
 
 OUString SAL_CALL SpellAlternatives::getWord() throw (uno::RuntimeException) {
 	return word;
 }
 
 lang::Locale SAL_CALL SpellAlternatives::getLocale() throw (uno::RuntimeException) {
-	return lang::Locale(A2OU("fi"), A2OU("FI"), A2OU(""));
+	return lang::Locale(A2OU("he"), A2OU("IL"), A2OU(""));
 }
 
 sal_Int16 SAL_CALL SpellAlternatives::getFailureType() throw (uno::RuntimeException) {
