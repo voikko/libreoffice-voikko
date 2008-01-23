@@ -1,5 +1,5 @@
 # Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
-# Copyright (C) 2005-2007 Harri Pitkänen <hatapitk@iki.fi>
+# Copyright (C) 2005-2008 Harri Pitkänen <hatapitk@iki.fi>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -53,6 +53,10 @@ VOIKKO_DEBUG=NO
 # If you want to have a license text to be displayed upon the installation
 # of this extension, uncomment the following.
 # SHOW_LICENSE=1
+
+# Destination directory when installing unpacked extension with
+# make install-unpacked
+DESTDIR=/usr/lib/openoffice.org-voikko
 
 # === End build settings ===
 
@@ -130,7 +134,7 @@ ifdef LIBVOIKKO_PATH
 	LINK_FLAGS+= -L$(LIBVOIKKO_PATH)/lib
 	VOIKKO_CC_FLAGS+= -I$(LIBVOIKKO_PATH)/include
 endif
-VOIKKO_PACKAGE=build/$(VOIKKO_PACKAGENAME).oxt
+
 VOIKKO_EXTENSION_SHAREDLIB=voikko.$(SHAREDLIB_EXT)
 VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
@@ -147,10 +151,29 @@ SRCDIST=COPYING Makefile README ChangeLog $(patsubst %,src/%.hxx,$(VOIKKO_HEADER
         oxt/META-INF/manifest.xml.template
 SED=sed
 
-# Targets
-.PHONY: all clean dist-gzip
-all: $(VOIKKO_PACKAGE)
+EXTENSION_FILES=build/oxt/META-INF/manifest.xml build/oxt/description.xml \
+	      build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
+	      $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
+	      $(patsubst %,build/oxt/%,$(COPY_TEMPLATES))
 
+# Targets
+.PHONY: extension-files oxt install-unpacked all clean dist-gzip
+
+extension-files : $(EXTENSION_FILES)
+
+oxt: $(EXTENSION_FILES)
+	cd build/oxt && $(SDK_ZIP) -9 ../$(VOIKKO_PACKAGENAME).oxt \
+	   $(patsubst build/oxt/%,%,$^)
+
+all: oxt
+
+install-unpacked: extension-files
+	install -m 755 -d "$(DESTDIR)" "$(DESTDIR)/META-INF"
+	install -m 644 build/oxt/META-INF/manifest.xml "$(DESTDIR)/META-INF"
+	install -m 644 build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
+	               build/oxt/description.xml \
+	               $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
+	               $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)) $(DESTDIR)
 
 # Create extension files
 MANIFEST_SEDSCRIPT="s/VOIKKO_EXTENSION_SHAREDLIB/$(VOIKKO_EXTENSION_SHAREDLIB)/g; \
@@ -200,15 +223,6 @@ else
 	$(LINK) $(LINK_FLAGS) -o $@ $^
 endif
 		
-
-
-# Assemble the oxt extension under build/oxt
-$(VOIKKO_PACKAGE) : build/oxt/META-INF/manifest.xml build/oxt/description.xml \
-	            build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
-	            $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
-	            $(patsubst %,build/oxt/%,$(COPY_TEMPLATES))
-	cd build/oxt && $(SDK_ZIP) -9 ../$(VOIKKO_PACKAGENAME).oxt \
-	                           $(patsubst build/oxt/%,%,$^)
 
 
 # Rules for creating the source distribution

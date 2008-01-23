@@ -33,7 +33,7 @@ Build requirements
   needed for compilation are usually present in default setups of any
   distribution.
 - On Windows: Microsoft Visual C++ 2005 (the Express Edition is sufficient),
-  GNU make, GNU sed and Info-Zip zip
+  GNU make, GNU sed and Info-Zip zip.
 - On OS X: Xcode tools from the operating system installation CD, and OpenOffice.org
   version 2.3 or later and SDK. Static versions of libvoikko and its dependencies
   are needed to build a standalone extension.
@@ -51,10 +51,10 @@ Instructions for compilation
   the home directory of the user (for example to a file
   openoffice.org2.0_sdk/setsdkenv_unix.sh).
   * On OS X and Windows you must make sure that neither OpenOffice.org nor its
-    SDK do not have spaces in their installation path. If detection of office
-	installation fails on OS X, add symolic link "program -> MacOS" under the
-	directory "Contents" of the office installation.
-- Run "make". This will build the extensions package voikko.oxt under
+    SDK have spaces in their installation path. If detection of office
+    installation fails on OS X, add symolic link "program -> MacOS" under the
+    directory "Contents" of the office installation.
+- Run "make oxt". This will build the extensions package voikko.oxt under
   subdirectory build.
   * There are some settings available that can be used to customize the build.
     Please see "build settings" in Makefile. You may use any of these settings
@@ -64,8 +64,15 @@ Instructions for compilation
 Supported Make targets
 ======================
 
-- all (default)
+- extension-files
+    Builds the extension files under build/oxt.
+- oxt
     Builds the extensions package voikko.oxt under subdirectory build.
+- all
+    Same as 'oxt'.
+- install-unpacked DESTDIR=some_directory
+    Installs the unpacked extension under directory DESTDIR. Default
+    for DESTDIR is /usr/lib/openoffice.org-voikko.
 - dist-gzip
     Builds the source package.
 - clean
