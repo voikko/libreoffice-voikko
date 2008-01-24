@@ -35,7 +35,7 @@
 using namespace ::com::sun::star;
 using namespace ::rtl;
 
-namespace voikko {
+namespace hspell {
 
 class SpellChecker:
 	private cppu::BaseMutex,

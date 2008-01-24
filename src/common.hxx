@@ -20,9 +20,10 @@
 #define _COMMON_HXX_
 
 #include <osl/mutex.hxx>
+#include <hspell.h>
 #include "PropertyManager.hxx"
 
-namespace voikko {
+namespace hspell {
 
 osl::Mutex & getVoikkoMutex();
 
@@ -30,9 +31,9 @@ OUString getInstallationPath();
 
 extern sal_Bool voikko_initialized;
 
-extern int voikko_handle;
+extern struct dict_radix *dict;
 
-extern uno::Reference<voikko::PropertyManager> thePropertyManager;
+extern uno::Reference<hspell::PropertyManager> thePropertyManager;
 
 }
 

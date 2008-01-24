@@ -65,12 +65,13 @@ sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Loca
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	if (!voikko_initialized) return sal_False;
-	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
+	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_ISO_8859_8);
 	const char * c_str = oWord.getStr();
 
 	thePropertyManager->setValues(aProperties);
 	// VOIKKO_DEBUG_2("SpellChecker::isValid: c_str: '%s'\n", c_str);
-	int result = voikko_spell_cstr(voikko_handle, c_str);
+	int preflen;
+	int result = hspell_check_word(dict, c_str, &preflen);
 	// VOIKKO_DEBUG_2("SpellChecker::isValid: result = %i\n", result);
 	thePropertyManager->resetValues(aProperties);
 	if (result) return sal_True;
@@ -97,30 +98,32 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	
 	osl::MutexGuard vmg(getVoikkoMutex());
 	if (!voikko_initialized) return 0;
-	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
+	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_ISO_8859_8);
 	const char * c_str = oWord.getStr();
 
 	thePropertyManager->setValues(aProperties);
-	if (voikko_spell_cstr(voikko_handle, c_str)) {
+	int preflen;
+	if (hspell_check_word(dict, c_str, &preflen)) {
 		thePropertyManager->resetValues(aProperties);
 		return 0;
 	}
-	char ** suggestions = voikko_suggest_cstr(voikko_handle, c_str);
+
+	struct corlist cl;
+	corlist_init(&cl);
+	hspell_trycorrect(dict, c_str, &cl);
 	thePropertyManager->resetValues(aProperties);
 	SpellAlternatives * alternatives = new SpellAlternatives();
 	alternatives->word = aWord;
-	if (suggestions == 0 || suggestions[0] == 0) return alternatives;
-	int scount = 0;
-	while (suggestions[scount] != 0) scount++;
+	int scount = corlist_n(&cl);
+	if (scount == 0) return alternatives;
 	uno::Sequence<OUString> suggSeq(scount);
 	OUString * suggStrings = suggSeq.getArray();
-
 	OString ostr;
 	for (int i = 0; i < scount; i++) {
-		ostr = OString(suggestions[i]);
-		suggStrings[i] = OStringToOUString(ostr, RTL_TEXTENCODING_UTF8);
+		ostr = OString(corlist_str(&cl, i));
+		suggStrings[i] = OStringToOUString(ostr, RTL_TEXTENCODING_ISO_8859_8);
 	}
-	voikko_free_suggest_cstr(suggestions);
+	corlist_free(&cl);
 
 	alternatives->alternatives = suggSeq;
 	return alternatives;

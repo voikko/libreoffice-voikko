@@ -25,7 +25,7 @@
 
 #include "common.hxx"
 
-namespace voikko {
+namespace hspell {
 
 osl::Mutex & getVoikkoMutex() {
 	static osl::Mutex voikkoMutex;
@@ -73,8 +73,8 @@ OUString getInstallationPath() {
 
 sal_Bool voikko_initialized = sal_False;
 
-int voikko_handle = 0;
+struct dict_radix *dict = 0;
 
-uno::Reference<voikko::PropertyManager> thePropertyManager = 0;
+uno::Reference<hspell::PropertyManager> thePropertyManager = 0;
 
 }

@@ -31,19 +31,13 @@ PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext
 	VOIKKO_DEBUG("PropertyManager created");
 	isInitialized = sal_False;
 	linguPropSet = 0;
-	hyphMinLeading = 2;
-	hyphMinTrailing = 2;
-	hyphMinWordLength = 5;
 }
 
 PropertyManager::~PropertyManager() {
 	VOIKKO_DEBUG("PropertyManager: running destructor");
-	/* This might need locking, but since the property manager is never destroyed
-	 * before the office shutdown, there should be no other sources for calls to
-	 * libvoikko at this time. */
-	if (voikko_initialized) {
-		voikko_terminate(voikko_handle);
-		voikko_initialized = sal_False;
+	if (dict) {
+		hspell_uninit(dict);
+		dict = 0;
 	}
 }
 
@@ -69,17 +63,14 @@ void PropertyManager::initialize() throw (uno::Exception) {
 			voikkoErrorString = voikko_init_with_path(&voikko_handle, "fi_FI", 0,
 				OUStringToOString(getInstallationPath(), encoding).getStr());
 		#else
-			voikkoErrorString = voikko_init(&voikko_handle, "fi_FI", 0);
+			int hspellInitError = hspell_init(&dict, HSPELL_OPT_DEFAULT);
 		#endif
-		if (voikkoErrorString) {
-			VOIKKO_DEBUG_2("Failed to initialize voikko: %s", voikkoErrorString);
+		if (hspellInitError) {
+			VOIKKO_DEBUG("Failed to initialize hspell");
 			return;
 		}
-		voikko_set_string_option(voikko_handle, VOIKKO_OPT_ENCODING, "UTF-8");
-		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_DOT, 1);
-		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
 		voikko_initialized = sal_True;
-		VOIKKO_DEBUG("PropertyManager::initialize: libvoikko initalized");
+		VOIKKO_DEBUG("PropertyManager::initialize: hspell initalized");
 	}
 	if (!isInitialized) {
 		uno::Reference<lang::XMultiComponentFactory> servManager =
@@ -156,7 +147,6 @@ void PropertyManager::resetValues(const uno::Sequence<beans::PropertyValue> & va
 
 void PropertyManager::setValue(const beans::PropertyValue & value) {
 	sal_Bool bValue = sal_False;
-	sal_Int16 iValue = 0;
 	int vbValue = 0;
 	// VOIKKO_DEBUG_2("PropertyManager::setValue: name %s", OU2DEBUG(value.Name));
 	if (value.Name == A2OU("IsSpellWithDigits")) {
