@@ -214,7 +214,7 @@ ifeq "$(PLATFORM)" "windows"
 	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(STLPORTLIB) msvcrt.lib kernel32.lib build\libvoikko-1.lib
 	mt -manifest build/oxt/voikko.dll.manifest -outputresource:build/oxt/voikko.dll;2
 else
-	$(LINK) $(LINK_FLAGS) -o $@ $^ /usr/lib/libhspell.a -lz
+	$(LINK) $(LINK_FLAGS) -o $@ $^ -lhspell -lz
 endif
 		
 
