@@ -4,11 +4,10 @@
              xmlns:xlink="http://www.w3.org/1999/xlink">
 
   <version value="VOIKKO_VERSION" />
-  <identifier value="org.puimula.ooovoikko" />
+  <identifier value="org.puimula.ooohspell" />
 
   <display-name>
-    <name lang="en-US">Voikko - Finnish spellchecking and hyphenation</name>
-    <name lang="fi">Voikko - suomen oikoluku ja tavutus</name>
+    <name lang="en-US">Hspell - Hebrew spellchecker</name>
   </display-name>
 
   <!-- SHOW_LICENSE

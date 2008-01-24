@@ -114,12 +114,10 @@ ifdef STANDALONE_EXTENSION_PATH
 	else
 		STANDALONE_EXTENSION_FILES=libmalaga.so.7 libvoikko.so.1 \
 		voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
-		LINK_FLAGS += /usr/lib/libhspell.a
 	endif
 else
 	VOIKKO_CC_DEFINES=
 	STANDALONE_EXTENSION_FILES=
-	LINK_FLAGS += /usr/lib/libhspell.a
 endif
 
 ifeq "$(VOIKKO_DEBUG)" "NO"
@@ -216,7 +214,7 @@ ifeq "$(PLATFORM)" "windows"
 	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(STLPORTLIB) msvcrt.lib kernel32.lib build\libvoikko-1.lib
 	mt -manifest build/oxt/voikko.dll.manifest -outputresource:build/oxt/voikko.dll;2
 else
-	$(LINK) $(LINK_FLAGS) -o $@ $^
+	$(LINK) $(LINK_FLAGS) -o $@ $^ /usr/lib/libhspell.a -lz
 endif
 		
 

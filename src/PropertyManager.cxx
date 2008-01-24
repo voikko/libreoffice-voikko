@@ -18,7 +18,9 @@
 
 #include <com/sun/star/linguistic2/LinguServiceEventFlags.hpp>
 #include <osl/nlsupport.h>
+extern "C" {
 #include <hspell.h>
+}
 
 #include "PropertyManager.hxx"
 #include "common.hxx"

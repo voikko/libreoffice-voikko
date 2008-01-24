@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <oor:component-schema
  oor:name="Config"
- oor:package="org.puimula.ooovoikko"
+ oor:package="org.puimula.ooohspell"
  xml:lang="en-US"
  xmlns:oor="http://openoffice.org/2001/registry"
  xmlns:xs="http://www.w3.org/2001/XMLSchema"

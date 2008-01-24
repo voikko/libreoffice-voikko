@@ -20,7 +20,9 @@
 #define _COMMON_HXX_
 
 #include <osl/mutex.hxx>
+extern "C" {
 #include <hspell.h>
+}
 #include "PropertyManager.hxx"
 
 namespace hspell {

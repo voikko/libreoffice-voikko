@@ -108,7 +108,7 @@ class SpellChecker:
 
 // Static method implementations
 inline OUString SpellChecker::getImplementationName_static() {
-	return A2OU("voikko.SpellChecker");
+	return A2OU("hspell.SpellChecker");
 }
 inline uno::Sequence<OUString> SpellChecker::getSupportedServiceNames_static() {
 	uno::Sequence<OUString> snames(1);

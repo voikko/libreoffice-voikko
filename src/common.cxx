@@ -40,7 +40,7 @@ OUString getInstallationPath() {
 		A2OU("com.sun.star.configuration.ConfigurationProvider"), compContext);
 	uno::Reference<lang::XMultiServiceFactory> provider(iFace, uno::UNO_QUERY);
 	beans::PropertyValue pathArgument(A2OU("nodepath"), 0,
-		(uno::Any) A2OU("/org.puimula.ooovoikko.Config/internal"), beans::PropertyState_DIRECT_VALUE);
+		(uno::Any) A2OU("/org.puimula.ooohspell.Config/internal"), beans::PropertyState_DIRECT_VALUE);
 	uno::Sequence<uno::Any> aArguments(1);
 	aArguments.getArray()[0] = (uno::Any) pathArgument;
 	VOIKKO_DEBUG("getInstallationPath() - 1");
