@@ -20,13 +20,13 @@ Porting status
 - Linux: This is the primary development platform, and should always work
 - FreeBSD: Status unknown
 - Windows: Supported with some limitations
-- Mac OS X: Version 10.5 (Intel) with X11 is supported
+- Mac OS X: Version 10.5 (Intel) is supported
 
 
 Build requirements
 ==================
 
-- OpenOffice.org (Office and SDK), version 2.0.4 or later.
+- OpenOffice.org (Office and SDK), version 3.0 or later.
 - Libvoikko version 1.5 or later, and compatible versions of Suomi-malaga and
   malaga.
 - On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools

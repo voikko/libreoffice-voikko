@@ -1,6 +1,8 @@
 2008-03-23 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Update license to GPL v3 or later.
+	* Use PackageInformationProvider to get the extension installation
+	  path.
 
 2008-01-23 Harri Pitkänen <hatapitk@iki.fi>
 

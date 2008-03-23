@@ -17,8 +17,7 @@
 
 #include <com/sun/star/uno/XComponentContext.hpp>
 #include <com/sun/star/uno/XInterface.hpp>
-#include <com/sun/star/beans/XHierarchicalPropertySet.hpp>
-#include <com/sun/star/util/XMacroExpander.hpp>
+#include <com/sun/star/deployment/XPackageInformationProvider.hpp>
 #include <cppuhelper/bootstrap.hxx>
 #include <osl/file.hxx>
 
@@ -36,29 +35,11 @@ OUString getInstallationPath() {
 	uno::Reference<uno::XComponentContext> compContext = cppu::defaultBootstrap_InitialComponentContext();
 	uno::Reference<lang::XMultiComponentFactory> servManager = compContext->getServiceManager();
 	uno::Reference<uno::XInterface> iFace = servManager->createInstanceWithContext(
-		A2OU("com.sun.star.configuration.ConfigurationProvider"), compContext);
-	uno::Reference<lang::XMultiServiceFactory> provider(iFace, uno::UNO_QUERY);
-	beans::PropertyValue pathArgument(A2OU("nodepath"), 0,
-		(uno::Any) A2OU("/org.puimula.ooovoikko.Config/internal"), beans::PropertyState_DIRECT_VALUE);
-	uno::Sequence<uno::Any> aArguments(1);
-	aArguments.getArray()[0] = (uno::Any) pathArgument;
-	VOIKKO_DEBUG("getInstallationPath() - 1");
-	uno::Reference<uno::XInterface> rootView = provider->createInstanceWithArguments(
-		A2OU("com.sun.star.configuration.ConfigurationAccess"), aArguments);
-	VOIKKO_DEBUG("getInstallationPath() - 2");
-	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
-	uno::Any locationProp = propSet->getHierarchicalPropertyValue(A2OU("location"));
-	OUString locationVal;
-	locationProp >>= locationVal;
-	// Cut the "vnd.sun.star.expand:" part
-	OUString locationFileURL = locationVal.replaceAt(0, 20, A2OU(""));
-	uno::Reference<util::XMacroExpander> expander(
-		compContext->getValueByName(
-		A2OU("/singletons/com.sun.star.util.theMacroExpander")), uno::UNO_QUERY);
-	OUString expandedLocation = expander->expandMacros(locationFileURL);
-	VOIKKO_DEBUG_2("%s", OU2DEBUG(expandedLocation));
+		A2OU("com.sun.star.deployment.PackageInformationProvider"), compContext);
+	uno::Reference<deployment::XPackageInformationProvider> provider(iFace, uno::UNO_QUERY);
+	OUString locationFileURL = provider->getPackageLocation(A2OU("org.puimula.ooovoikko"));
 	OUString locationSystemPath;
-	osl::FileBase::getSystemPathFromFileURL(expandedLocation, locationSystemPath);
+	osl::FileBase::getSystemPathFromFileURL(locationFileURL, locationSystemPath);
 	VOIKKO_DEBUG_2("%s", OU2DEBUG(locationSystemPath));
 	return locationSystemPath;
 	}
