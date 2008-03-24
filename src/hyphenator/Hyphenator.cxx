@@ -127,11 +127,15 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("Hyphenator::createPossibleHyphens");
 	if (!voikko_initialized) return 0;
-	if (aWord.getLength() > 10000) return 0;
+	sal_Int16 len = aWord.getLength();
+	if (len > 10000) return 0;
 	thePropertyManager->setValues(aProperties);
 
 	// If the word is too short to be hyphenated, return no hyphenation points
-	if (aWord.getLength() < thePropertyManager->getHyphMinWordLength()) {
+	sal_Int16 minLeading = thePropertyManager->getHyphMinLeading();
+	sal_Int16 minTrailing = thePropertyManager->getHyphMinTrailing();
+	if (len < thePropertyManager->getHyphMinWordLength() ||
+	    len < minLeading + minTrailing) {
 		thePropertyManager->resetValues(aProperties);
 		return 0;
 	}
@@ -144,27 +148,18 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 		return 0;
 	}
 
-	/* Count the number of hyphenation points that do not correspond
-	 * to a real hyphen in the word. */
-	sal_Int16 hpcount = 0;
-	for (sal_Int16 i = 0; i < aWord.getLength(); i++) {
-		if (hyphenationPoints[i] == '-') {
-			hpcount++;
-		}
-	}
-
-	uno::Sequence<sal_Int16> hyphenSeq(hpcount);
-	sal_Int16 *pPos = hyphenSeq.getArray();
+	uno::Sequence<sal_Int16> hyphenSeq(0);
 	OUStringBuffer hyphenatedWordBuffer;
 	OUString hyphenatedWord;
 	sal_Int16 nHyphCount = 0;
 
-	for (sal_Int16 i = 0; i < aWord.getLength(); i++) {
+	for (sal_Int16 i = 0; i < len; i++) {
 		hyphenatedWordBuffer.append(aWord[i]);
-		if (hyphenationPoints[i + 1] == '-') {
-			pPos[nHyphCount] = i;
+		if (i >= minLeading - 1 && i < len - minTrailing &&
+		    hyphenationPoints[i + 1] == '-') {
+			hyphenSeq.realloc(nHyphCount + 1);
+			hyphenSeq[nHyphCount++] = i;
 			hyphenatedWordBuffer.append(sal_Unicode('='));
-			nHyphCount++;
 		}
 	}
 
