@@ -1,7 +1,7 @@
 What is this?
 =============
-This is openoffice.org-voikko, Finnish spellchecker and hyphenator extensions
-for OpenOffice.org based on libvoikko.
+This is openoffice.org-voikko, Finnish spellchecker, grammar checker and
+hyphenator extension for OpenOffice.org based on libvoikko.
 
 
 License
@@ -34,8 +34,8 @@ Build requirements
   distribution.
 - On Windows: Microsoft Visual C++ 2005 (the Express Edition is sufficient),
   GNU make, GNU sed and Info-Zip zip.
-- On OS X: Xcode tools from the operating system installation CD, and OpenOffice.org
-  version 2.3 or later and SDK. Static versions of libvoikko and its dependencies
+- On OS X: Xcode tools from the operating system installation CD.
+  Static versions of libvoikko and its dependencies
   are needed to build a standalone extension.
 
 

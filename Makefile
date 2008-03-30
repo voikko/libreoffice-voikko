@@ -59,11 +59,7 @@ DESTDIR=/usr/lib/openoffice.org-voikko
 
 # === End build settings ===
 
-# Fix for Linux/SPARC. Needed until OpenOffice.org issue 72679 is fixed
-ifeq "$(PROCTYPE)" "sparc"
-	UNOPKG_PLATFORM=Linux_SPARC
-endif
-# Same for Intel OS X, see issue 69944.
+# Fix for Intel OS X, see issues 69944 and 86121.
 ifeq "$(PLATFORM)" "macosx"
 	PROCTYPE=$(shell $(PRJ)/config.guess | cut -d "-" -f1)
 	ifeq "$(PROCTYPE)" "i686"
@@ -111,7 +107,7 @@ ifdef STANDALONE_EXTENSION_PATH
 		STANDALONE_EXTENSION_FILES=voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
 		LINK_FLAGS += $(LIBVOIKKO_PATH)/lib/libvoikko.a $(LIBVOIKKO_PATH)/lib/libmalaga.a \
 		              $(LIBVOIKKO_PATH)/lib/libiconv.a $(LIBVOIKKO_PATH)/lib/libglib-2.0.a \
-					  $(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation
+		              $(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation
 	else
 		STANDALONE_EXTENSION_FILES=libmalaga.so.7 libvoikko.so.1 \
 		voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
@@ -136,9 +132,11 @@ endif
 
 VOIKKO_EXTENSION_SHAREDLIB=voikko.$(SHAREDLIB_EXT)
 VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
-               hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
+               hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
+               grammar/GrammarChecker
 VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
-               hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens
+               hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
+               grammar/GrammarChecker
 COPY_TEMPLATES=config.xcu config.xcs
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
