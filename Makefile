@@ -108,15 +108,17 @@ ifdef STANDALONE_EXTENSION_PATH
 		STANDALONE_EXTENSION_FILES=mingwm10.dll iconv.dll intl.dll libglib-2.0-0.dll malaga.dll \
 		libvoikko-1.dll voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
 		LINK_FLAGS += -lvoikko
-	else ifeq "$(PLATFORM)" "macosx"
-		STANDALONE_EXTENSION_FILES=voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
-		LINK_FLAGS += $(LIBVOIKKO_PATH)/lib/libvoikko.a $(LIBVOIKKO_PATH)/lib/libmalaga.a \
-		              $(LIBVOIKKO_PATH)/lib/libiconv.a $(LIBVOIKKO_PATH)/lib/libglib-2.0.a \
-					  $(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation
 	else
-		STANDALONE_EXTENSION_FILES=libmalaga.so.7 libvoikko.so.1 \
-		voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
-		LINK_FLAGS += -lvoikko
+		ifeq "$(PLATFORM)" "macosx"
+			STANDALONE_EXTENSION_FILES=voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+			LINK_FLAGS += $(LIBVOIKKO_PATH)/lib/libvoikko.a $(LIBVOIKKO_PATH)/lib/libmalaga.a \
+			              $(LIBVOIKKO_PATH)/lib/libiconv.a $(LIBVOIKKO_PATH)/lib/libglib-2.0.a \
+						  $(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation
+		else
+			STANDALONE_EXTENSION_FILES=libmalaga.so.7 libvoikko.so.1 \
+			voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+			LINK_FLAGS += -lvoikko
+		endif
 	endif
 else
 	VOIKKO_CC_DEFINES=
