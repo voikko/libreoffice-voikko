@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2008 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "macros.hxx"
 #include "spellchecker/SpellChecker.hxx"
 #include "hyphenator/Hyphenator.hxx"
+#include "grammar/GrammarChecker.hxx"
 
 using namespace ::com::sun::star::registry;
 using namespace ::com::sun::star::uno;
@@ -47,6 +48,10 @@ OUString SAL_CALL regGetHyphenImplementationName() {
 	return Hyphenator::getImplementationName_static();
 }
 
+OUString SAL_CALL regGetGrammarImplementationName() {
+	return GrammarChecker::getImplementationName_static();
+}
+
 Sequence<OUString> SAL_CALL regSpellSupportedServiceNames() {
 	Sequence<OUString> s(1);
 	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.linguistic2.SpellChecker"));
@@ -56,6 +61,12 @@ Sequence<OUString> SAL_CALL regSpellSupportedServiceNames() {
 Sequence<OUString> SAL_CALL regHyphenSupportedServiceNames() {
 	Sequence<OUString> s(1);
 	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.linguistic2.Hyphenator"));
+	return s;
+}
+
+Sequence<OUString> SAL_CALL regGrammarSupportedServiceNames() {
+	Sequence<OUString> s(1);
+	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.linguistic2.GrammarChecker"));
 	return s;
 }
 
@@ -69,6 +80,11 @@ Reference<XInterface> SAL_CALL regHyphenCreate(const Reference<XComponentContext
 	return static_cast< ::cppu::OWeakObject * >(new Hyphenator(context));
 }
 
+Reference<XInterface> SAL_CALL regGrammarCreate(const Reference<XComponentContext> & context)
+	SAL_THROW((Exception)) {
+	return static_cast< ::cppu::OWeakObject * >(new GrammarChecker(context));
+}
+
 static ::cppu::ImplementationEntry const regEntries[] = {
 	{ &regSpellCreate,
 	  &regGetSpellImplementationName,
@@ -78,6 +94,10 @@ static ::cppu::ImplementationEntry const regEntries[] = {
 	  &regGetHyphenImplementationName,
 	  &regHyphenSupportedServiceNames,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
+	/*{ &regGrammarCreate,
+	  &regGetGrammarImplementationName,
+	  &regGrammarSupportedServiceNames,
+	  &::cppu::createSingleComponentFactory, 0, 0 },*/
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
