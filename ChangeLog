@@ -1,3 +1,7 @@
+2008-07-10 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Build fixes, thanks to Caolan McNamara from RedHat.
+
 2008-03-30 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Add stub for grammar checker implementation.

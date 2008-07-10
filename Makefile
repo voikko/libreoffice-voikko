@@ -34,7 +34,7 @@ VOIKKO_VERSION=3.0
 # package. Possible values are NO (creates an optimized build without any
 # debugging information), LOG (creates an optimized build with runtime debug
 # logging) and FULL (creates a build with full debugging symbols and logging).
-VOIKKO_DEBUG=LOG
+VOIKKO_DEBUG=NO
 
 # If you have installed libvoikko to some non-standard location, uncomment the
 # following and adjust the path accordingly. For OS X this must be set if
@@ -93,7 +93,7 @@ else
 		WARNING_FLAGS+= -fno-strict-aliasing
 	endif
 endif
-LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) $(LINKER_FLAGS) -L"$(OFFICE_PROGRAM_PATH)" \
+LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) $(LINKER_FLAGS) $(LINK_LIBS) \
            $(SALLIB) $(CPPULIB) $(CPPUHELPERLIB)
 VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -I$(PRJ)/include
 
@@ -196,10 +196,9 @@ $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)): build/oxt/%: $(STANDALO
 	$(COPY) "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
 
 # Type library C++ headers
-# FIXME: use hardcoded paths since SDK is broken at the moment (IZ #86121 and others)
 build/hpp.flag:
 	-$(MKDIR) build/hpp
-	$(CPPUMAKER) -Gc -BUCR -O./build/hpp /opt/openoffice.org/ure/share/misc/types.rdb /opt/openoffice.org/basis3.0/program/offapi.rdb
+	$(CPPUMAKER) -Gc -BUCR -O./build/hpp $(OFFICE_TYPE_LIBRARY)
 	echo flagged > $@
 
 
@@ -210,7 +209,6 @@ build/src/%.$(OBJ_EXT): src/%.cxx build/hpp.flag $(patsubst %,src/%.hxx,$(VOIKKO
 
 
 # Link the shared library
-# FIXME: hardcoded paths...
 build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB): $(patsubst %,build/src/%.$(OBJ_EXT),$(VOIKKO_OBJECTS))
 ifeq "$(PLATFORM)" "windows"
 	cd build && lib /machine:i386 /def:$(LIBVOIKKO_PATH)\bin\libvoikko-1.def
@@ -219,7 +217,7 @@ ifeq "$(PLATFORM)" "windows"
 	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(STLPORTLIB) msvcrt.lib kernel32.lib build\libvoikko-1.lib
 	mt -manifest build/oxt/voikko.dll.manifest -outputresource:build/oxt/voikko.dll;2
 else
-	$(LINK) -L/opt/openoffice.org/ure/lib $(LINK_FLAGS) -o $@ $^
+	$(LINK) $(LINK_FLAGS) -o $@ $^
 endif
 
 
