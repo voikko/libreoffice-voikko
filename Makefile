@@ -137,7 +137,7 @@ VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives sp
 VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
                grammar/GrammarChecker
-COPY_TEMPLATES=config.xcu config.xcs
+COPY_TEMPLATES=config.xcu config.xcs icon.png
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
 endif

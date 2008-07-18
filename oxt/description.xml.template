@@ -20,4 +20,13 @@
   </registration>
   SHOW_LICENSE -->
 
+  <publisher>
+    <name xlink:href="http://voikko.sourceforge.net" lang="fi">Voikon kehittäjäyhteisö</name>
+    <name xlink:href="http://voikko.sourceforge.net" lang="en">Voikko developement community</name>
+  </publisher>
+
+  <icon>
+    <default xlink:href="icon.png" />
+  </icon>
+
 </description>
