@@ -11,4 +11,7 @@
   <manifest:file-entry
    manifest:media-type="application/vnd.sun.star.configuration-schema"
    manifest:full-path="config.xcs"/>
+  <manifest:file-entry
+   manifest:media-type="application/vnd.sun.star.configuration-data"
+   manifest:full-path="OptionsDialog.xcu"/>
 </manifest:manifest>

@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE oor:component-data SYSTEM "../../../../component-update.dtd">
+<oor:component-data oor:name="OptionsDialog"
+  oor:package="org.openoffice.Office"
+  xmlns:oor="http://openoffice.org/2001/registry"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <node oor:name="Nodes">
+    <node oor:name="org.puimula.ooovoikko.Extensions" oor:op="fuse">
+      <prop oor:name="Label">
+        <value xml:lang="en-US">Voikko</value>
+        <value xml:lang="fi">Voikko</value>
+      </prop>
+      <prop oor:name="OptionsPage">
+        <value>%origin%/OptionsDialog.xcu</value>
+      </prop>
+      <prop oor:name="AllModules">
+        <value>true</value>
+      </prop>
+      <node oor:name="Leaves">
+        <node oor:name="org.puimula.ooovoikko.Extensions.Settings" oor:op="fuse">
+          <prop oor:name="Id">
+            <value>org.puimula.ooovoikko.Extensions.Settings</value>
+          </prop>
+          <prop oor:name="Label">
+            <value xml:lang="en-US">Settings</value>
+            <value xml:lang="fi">Asetukset</value>
+          </prop>
+          <prop oor:name="OptionsPage">
+           <value>%origin%/OptionsDialog.xcu</value>
+          </prop>
+        </node>
+      </node>
+    </node>
+  </node>
+</oor:component-data>
+
