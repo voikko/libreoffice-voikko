@@ -138,7 +138,7 @@ VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spel
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
                grammar/GrammarChecker
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
-               SettingsDialog_fi_FI.properties OptionsDialog.xcu
+               SettingsDialog_fi_FI.properties SettingsDialog.xcu
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
 endif
