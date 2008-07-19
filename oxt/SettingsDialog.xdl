@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dlg:window PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "dialog.dtd">
+<dlg:window xmlns:dlg="http://openoffice.org/2000/dialog" xmlns:script="http://openoffice.org/2000/script" dlg:id="voikkoasetukset" dlg:left="113" dlg:top="74" dlg:width="178" dlg:height="142" dlg:help-text="&amp;0.voikkoasetukset.HelpText" dlg:closeable="true" dlg:moveable="true" dlg:title="&amp;1.voikkoasetukset.Title" dlg:withtitlebar="false">
+ <dlg:bulletinboard>
+  <dlg:checkbox dlg:id="CheckBox1" dlg:tab-index="0" dlg:left="11" dlg:top="20" dlg:width="9" dlg:height="11" dlg:help-text="&amp;2.voikkoasetukset.CheckBox1.HelpText" dlg:value="&amp;3.voikkoasetukset.CheckBox1.Label" dlg:checked="false"/>
+  <dlg:text dlg:id="Label1" dlg:tab-index="1" dlg:left="26" dlg:top="16" dlg:width="127" dlg:height="11" dlg:help-text="&amp;4.voikkoasetukset.Label1.HelpText" dlg:value="&amp;5.voikkoasetukset.Label1.Label"/>
+ </dlg:bulletinboard>
+</dlg:window>

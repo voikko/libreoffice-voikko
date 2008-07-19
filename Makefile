@@ -137,14 +137,14 @@ VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives sp
 VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
                grammar/GrammarChecker
-COPY_TEMPLATES=config.xcu config.xcs icon.png
+COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
+               SettingsDialog_fi_FI.properties
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
 endif
 SRCDIST=COPYING Makefile README ChangeLog $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS)) \
         $(patsubst %,src/%.cxx,$(VOIKKO_OBJECTS)) oxt/description.xml.template \
-        oxt/config.xcs.template oxt/config.xcu.template \
-        oxt/license_fi.txt.template oxt/license_en-US.txt.template \
+        $(patsubst %,oxt/%,$(COPY_TEMPLATES)) \
         oxt/META-INF/manifest.xml.template
 SED=sed
 
@@ -187,7 +187,7 @@ build/oxt/description.xml: oxt/description.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(SED) -e $(DESCRIPTION_SEDSCRIPT) < $^ > $@
 
-$(patsubst %,build/oxt/%,$(COPY_TEMPLATES)): build/oxt/%: oxt/%.template
+$(patsubst %,build/oxt/%,$(COPY_TEMPLATES)): build/oxt/%: oxt/%
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(COPY) "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
 
