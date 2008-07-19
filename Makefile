@@ -140,10 +140,10 @@ endif
 VOIKKO_EXTENSION_SHAREDLIB=voikko.$(SHAREDLIB_EXT)
 VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
-               grammar/GrammarChecker
+               grammar/GrammarChecker settings/SettingsEventHandler
 VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
-               grammar/GrammarChecker
+               grammar/GrammarChecker settings/SettingsEventHandler
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
                SettingsDialog_fi_FI.properties SettingsDialog.xcu
 ifdef SHOW_LICENSE
