@@ -53,6 +53,9 @@ VOIKKO_DEBUG=NO
 # of this extension, uncomment the following.
 # SHOW_LICENSE=1
 
+# If you want to disable the grammar checker, set this option to 1
+DISABLE_GRAMMAR_CHECKER=1
+
 # Destination directory when installing unpacked extension with
 # make install-unpacked
 DESTDIR=/usr/lib/openoffice.org-voikko
@@ -117,6 +120,10 @@ else
 	VOIKKO_CC_DEFINES=
 	STANDALONE_EXTENSION_FILES=
 	LINK_FLAGS += -lvoikko
+endif
+
+ifeq "$(DISABLE_GRAMMAR_CHECKER)" "1"
+	VOIKKO_CC_DEFINES += -DDISABLE_GRAMMAR_CHECKER
 endif
 
 ifeq "$(VOIKKO_DEBUG)" "NO"

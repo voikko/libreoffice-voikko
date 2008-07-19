@@ -94,10 +94,12 @@ static ::cppu::ImplementationEntry const regEntries[] = {
 	  &regGetHyphenImplementationName,
 	  &regHyphenSupportedServiceNames,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
-	/*{ &regGrammarCreate,
+#ifndef DISABLE_GRAMMAR_CHECKER
+	{ &regGrammarCreate,
 	  &regGetGrammarImplementationName,
 	  &regGrammarSupportedServiceNames,
-	  &::cppu::createSingleComponentFactory, 0, 0 },*/
+	  &::cppu::createSingleComponentFactory, 0, 0 },
+#endif
 	{ 0, 0, 0, 0, 0, 0 }
 };
 

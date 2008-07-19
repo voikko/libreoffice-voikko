@@ -1,6 +1,7 @@
 2008-07-19 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Add settings dialog.
+	* Add build option for disabling the grammar checker.
 
 2008-07-18 Harri Pitkänen <hatapitk@iki.fi>
 
