@@ -18,6 +18,9 @@
           <prop oor:name="OptionsPage">
             <value>%origin%/SettingsDialog.xdl</value>
           </prop>
+          <prop oor:name="EventHandlerService">
+            <value>org.puimula.ooovoikko.SettingsEventHandlerImplementation</value>
+          </prop>
         </node>
       </node>
     </node>

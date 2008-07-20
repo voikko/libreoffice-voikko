@@ -61,6 +61,12 @@ class SettingsEventHandler:
 	static inline uno::Sequence<OUString> getSupportedServiceNames_static();
 
 	private:
+	/** Initialize options window from registry */
+	void initOptionsWindowFromRegistry();
+
+	/** Save options from options window to registry */
+	void saveOptionsFromWindowToRegistry();
+
 	uno::Reference<uno::XComponentContext> compContext;
 };
 

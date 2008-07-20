@@ -44,6 +44,17 @@ uno::Sequence<OUString> SAL_CALL SettingsEventHandler::getSupportedServiceNames(
 sal_Bool SAL_CALL SettingsEventHandler::callHandlerMethod(const uno::Reference<awt::XWindow> & xWindow,
 	const uno::Any & EventObject, const OUString & MethodName)
 	throw (lang::WrappedTargetException, uno::RuntimeException) {
+	if (MethodName != A2OU("external_event")) return sal_False;
+	OUString eventS;
+	EventObject >>= eventS;
+	if (eventS == A2OU("ok")) {
+		saveOptionsFromWindowToRegistry();
+		return sal_True;
+	}
+	if (eventS == A2OU("back") || eventS == A2OU("initialize")) {
+		initOptionsWindowFromRegistry();
+		return sal_True;
+	}
 	return sal_False;
 }
 
@@ -52,6 +63,14 @@ uno::Sequence<OUString> SAL_CALL SettingsEventHandler::getSupportedMethodNames()
 	uno::Sequence<OUString> methodNames(1);
 	methodNames.getArray()[0] = A2OU("external_event");
 	return methodNames;
+}
+
+void SettingsEventHandler::initOptionsWindowFromRegistry() {
+	VOIKKO_DEBUG("initOptionsWindowFromRegistry()");
+}
+
+void SettingsEventHandler::saveOptionsFromWindowToRegistry() {
+	VOIKKO_DEBUG("saveOptionsFromWindowToRegistry()");
 }
 
 }
