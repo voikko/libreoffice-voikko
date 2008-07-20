@@ -62,10 +62,10 @@ class SettingsEventHandler:
 
 	private:
 	/** Initialize options window from registry */
-	void initOptionsWindowFromRegistry();
+	void initOptionsWindowFromRegistry(const uno::Reference<awt::XWindow> & window);
 
 	/** Save options from options window to registry */
-	void saveOptionsFromWindowToRegistry();
+	void saveOptionsFromWindowToRegistry(const uno::Reference<awt::XWindow> & window);
 
 	uno::Reference<uno::XComponentContext> compContext;
 };

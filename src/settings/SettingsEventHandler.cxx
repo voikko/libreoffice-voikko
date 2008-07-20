@@ -16,6 +16,9 @@
  ***************************************************************************/
 
 #include "SettingsEventHandler.hxx"
+#include <com/sun/star/awt/XControl.hpp>
+#include <com/sun/star/awt/XControlContainer.hpp>
+#include <com/sun/star/beans/XPropertySet.hpp>
 
 namespace voikko {
 
@@ -48,11 +51,11 @@ sal_Bool SAL_CALL SettingsEventHandler::callHandlerMethod(const uno::Reference<a
 	OUString eventS;
 	EventObject >>= eventS;
 	if (eventS == A2OU("ok")) {
-		saveOptionsFromWindowToRegistry();
+		saveOptionsFromWindowToRegistry(xWindow);
 		return sal_True;
 	}
 	if (eventS == A2OU("back") || eventS == A2OU("initialize")) {
-		initOptionsWindowFromRegistry();
+		initOptionsWindowFromRegistry(xWindow);
 		return sal_True;
 	}
 	return sal_False;
@@ -65,12 +68,36 @@ uno::Sequence<OUString> SAL_CALL SettingsEventHandler::getSupportedMethodNames()
 	return methodNames;
 }
 
-void SettingsEventHandler::initOptionsWindowFromRegistry() {
+void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<awt::XWindow> & window) {
 	VOIKKO_DEBUG("initOptionsWindowFromRegistry()");
 }
 
-void SettingsEventHandler::saveOptionsFromWindowToRegistry() {
+void SettingsEventHandler::saveOptionsFromWindowToRegistry(const uno::Reference<awt::XWindow> & window) {
 	VOIKKO_DEBUG("saveOptionsFromWindowToRegistry()");
+	if (!window.is()) {
+		VOIKKO_DEBUG("ERROR: window is null");
+		return;
+	}
+	uno::Reference<awt::XControlContainer> windowContainer =
+		uno::Reference<awt::XControlContainer>(window, uno::UNO_QUERY);
+	if (!windowContainer.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain windowContainer");
+		return;
+        }
+	uno::Reference<awt::XControl> hyphWordParts = windowContainer->getControl(A2OU("hyphWordParts"));
+	if (!hyphWordParts.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain hyphWordParts");
+		return;
+	}
+	uno::Reference<beans::XPropertySet> hyphWordPartsProps =
+		uno::Reference<beans::XPropertySet>(hyphWordParts->getModel(), uno::UNO_QUERY);
+	if (!hyphWordPartsProps.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain hyphWordPartsProps");
+		return;
+	}
+	uno::Any hyphWordPartsAValue = hyphWordPartsProps->getPropertyValue(A2OU("State"));
+	sal_Int16 hyphWordPartsValue = 0;
+	hyphWordPartsAValue >>= hyphWordPartsValue; // 0 = unchecked, 1 = checked
 }
 
 }
