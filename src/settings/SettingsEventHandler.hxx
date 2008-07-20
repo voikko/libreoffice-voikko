@@ -55,7 +55,25 @@ class SettingsEventHandler:
 	        throw (lang::WrappedTargetException, uno::RuntimeException);
 	virtual uno::Sequence<OUString> SAL_CALL getSupportedMethodNames()
 	        throw (uno::RuntimeException);
+
+	// Static methods
+	static inline OUString getImplementationName_static();
+	static inline uno::Sequence<OUString> getSupportedServiceNames_static();
+
+	private:
+	uno::Reference<uno::XComponentContext> compContext;
 };
+
+// Static method implementations
+inline OUString SettingsEventHandler::getImplementationName_static() {
+        return A2OU("org.puimula.ooovoikko.SettingsEventHandlerImplementation");
+}
+inline uno::Sequence<OUString> SettingsEventHandler::getSupportedServiceNames_static() {
+        uno::Sequence<OUString> snames(1);
+        snames.getArray()[0] = A2OU("org.puimula.ooovoikko.SettingsEventHandlerService");
+        return snames;
+}
+
 }
 #endif
 

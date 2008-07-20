@@ -24,6 +24,7 @@
 #include "spellchecker/SpellChecker.hxx"
 #include "hyphenator/Hyphenator.hxx"
 #include "grammar/GrammarChecker.hxx"
+#include "settings/SettingsEventHandler.hxx"
 
 using namespace ::com::sun::star::registry;
 using namespace ::com::sun::star::uno;
@@ -52,6 +53,10 @@ OUString SAL_CALL regGetGrammarImplementationName() {
 	return GrammarChecker::getImplementationName_static();
 }
 
+OUString SAL_CALL regGetSettingsImplementationName() {
+        return SettingsEventHandler::getImplementationName_static();
+}
+
 Sequence<OUString> SAL_CALL regSpellSupportedServiceNames() {
 	Sequence<OUString> s(1);
 	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.linguistic2.SpellChecker"));
@@ -70,6 +75,12 @@ Sequence<OUString> SAL_CALL regGrammarSupportedServiceNames() {
 	return s;
 }
 
+Sequence<OUString> SAL_CALL regSettingsSupportedServiceNames() {
+        Sequence<OUString> s(1);
+        s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("org.puimula.ooovoikko.SettingsEventHandlerService"));
+        return s;
+}
+
 Reference<XInterface> SAL_CALL regSpellCreate(const Reference<XComponentContext> & context)
 	SAL_THROW((Exception)) {
 	return static_cast< ::cppu::OWeakObject * > (new SpellChecker(context));
@@ -83,6 +94,11 @@ Reference<XInterface> SAL_CALL regHyphenCreate(const Reference<XComponentContext
 Reference<XInterface> SAL_CALL regGrammarCreate(const Reference<XComponentContext> & context)
 	SAL_THROW((Exception)) {
 	return static_cast< ::cppu::OWeakObject * >(new GrammarChecker(context));
+}
+
+Reference<XInterface> SAL_CALL regSettingsCreate(const Reference<XComponentContext> & context)
+        SAL_THROW((Exception)) {
+        return static_cast< ::cppu::OWeakObject * >(new SettingsEventHandler(context));
 }
 
 static ::cppu::ImplementationEntry const regEntries[] = {
@@ -100,6 +116,10 @@ static ::cppu::ImplementationEntry const regEntries[] = {
 	  &regGrammarSupportedServiceNames,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
 #endif
+        { &regSettingsCreate,
+          &regGetSettingsImplementationName,
+          &regSettingsSupportedServiceNames,
+          &::cppu::createSingleComponentFactory, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0 }
 };
 

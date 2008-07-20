@@ -19,6 +19,40 @@
 
 namespace voikko {
 
+SettingsEventHandler::SettingsEventHandler(uno::Reference<uno::XComponentContext> const & context) :
+        cppu::WeakComponentImplHelper2
+             <lang::XServiceInfo,
+              awt::XContainerWindowEventHandler>(m_aMutex),
+        compContext(context) { }
+
+OUString SAL_CALL SettingsEventHandler::getImplementationName() throw (uno::RuntimeException) {
+	return getImplementationName_static();
+}
+
+sal_Bool SAL_CALL SettingsEventHandler::supportsService(const OUString & serviceName)
+	throw (uno::RuntimeException) {
+	uno::Sequence<OUString> serviceNames = getSupportedServiceNames();
+	for (sal_Int32 i = 0; i < serviceNames.getLength(); i++)
+		if (serviceNames[i] == serviceName) return sal_True;
+	return sal_False;
+}
+
+uno::Sequence<OUString> SAL_CALL SettingsEventHandler::getSupportedServiceNames() throw (uno::RuntimeException) {
+	return getSupportedServiceNames_static();
+}
+
+sal_Bool SAL_CALL SettingsEventHandler::callHandlerMethod(const uno::Reference<awt::XWindow> & xWindow,
+	const uno::Any & EventObject, const OUString & MethodName)
+	throw (lang::WrappedTargetException, uno::RuntimeException) {
+	return sal_False;
+}
+
+uno::Sequence<OUString> SAL_CALL SettingsEventHandler::getSupportedMethodNames()
+	throw (uno::RuntimeException) {
+	uno::Sequence<OUString> methodNames(1);
+	methodNames.getArray()[0] = A2OU("external_event");
+	return methodNames;
+}
 
 }
 
