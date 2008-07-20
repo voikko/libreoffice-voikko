@@ -18,6 +18,8 @@
 #include "SettingsEventHandler.hxx"
 #include <com/sun/star/awt/XControl.hpp>
 #include <com/sun/star/awt/XControlContainer.hpp>
+#include <com/sun/star/beans/PropertyValue.hpp>
+#include <com/sun/star/beans/XHierarchicalPropertySet.hpp>
 #include <com/sun/star/beans/XPropertySet.hpp>
 
 namespace voikko {
@@ -70,6 +72,48 @@ uno::Sequence<OUString> SAL_CALL SettingsEventHandler::getSupportedMethodNames()
 
 void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<awt::XWindow> & window) {
 	VOIKKO_DEBUG("initOptionsWindowFromRegistry()");
+	uno::Reference<lang::XMultiComponentFactory> servManager = compContext->getServiceManager();
+	if (!servManager.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain servManager");
+		return;
+	}
+	uno::Reference<uno::XInterface> iFace = servManager->createInstanceWithContext(
+		A2OU("com.sun.star.configuration.ConfigurationProvider"), compContext);
+	if (!iFace.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain iFace");
+		return;
+	}
+	uno::Reference<lang::XMultiServiceFactory> provider(iFace, uno::UNO_QUERY);
+	if (!provider.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain provider");
+		return;
+	}
+	beans::PropertyValue pathArgument(A2OU("nodepath"), 0,
+		(uno::Any) A2OU("/org.puimula.ooovoikko.Config/hyphenator"), beans::PropertyState_DIRECT_VALUE);
+	uno::Sequence<uno::Any> aArguments(1);
+	aArguments.getArray()[0] = (uno::Any) pathArgument;
+	uno::Reference<uno::XInterface> rootView = provider->createInstanceWithArguments(
+		A2OU("com.sun.star.configuration.ConfigurationAccess"), aArguments);
+	if (!rootView.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain rootView");
+		return;
+	}
+	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
+	if (!propSet.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain propSet");
+		return;
+	}
+	sal_Bool hyphWordPartsValue = sal_False;
+	try {
+		uno::Any hyphWordPartsAValue = propSet->getHierarchicalPropertyValue(A2OU("hyphWordParts"));
+		hyphWordPartsAValue >>= hyphWordPartsValue;
+	}
+	catch (beans::UnknownPropertyException e) {
+		VOIKKO_DEBUG("ERROR: UnknownPropertyException");
+		return;
+	}
+	if (hyphWordPartsValue) VOIKKO_DEBUG("hyphWordParts = true");
+	else VOIKKO_DEBUG("hyphWordParts = false");
 }
 
 void SettingsEventHandler::saveOptionsFromWindowToRegistry(const uno::Reference<awt::XWindow> & window) {

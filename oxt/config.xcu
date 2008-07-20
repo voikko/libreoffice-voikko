@@ -9,4 +9,9 @@
       <value>%origin%</value>
     </prop>
   </group>
+  <group oor:name="hyphenator">
+    <prop oor:name="hyphWordParts" oor:type="xs:boolean">
+      <value>false</value>
+    </prop>
+  </group>
 </oor:component-data>

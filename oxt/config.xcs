@@ -10,5 +10,8 @@
     <group oor:name="internal">
       <prop oor:name="location" oor:type="xs:string"/>
     </group>
+    <group oor:name="hyphenator">
+      <prop oor:name="hyphWordParts" oor:type="xs:boolean"/>
+    </group>
   </component>
 </oor:component-schema>
