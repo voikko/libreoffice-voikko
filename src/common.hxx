@@ -27,6 +27,10 @@ osl::Mutex & getVoikkoMutex();
 
 OUString getInstallationPath();
 
+/** Get property set for given group from registry */
+uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
+	uno::Reference<uno::XComponentContext> compContext);
+
 extern sal_Bool voikko_initialized;
 
 extern int voikko_handle;

@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "SettingsEventHandler.hxx"
+#include "../common.hxx"
 #include <com/sun/star/awt/XControl.hpp>
 #include <com/sun/star/awt/XControlContainer.hpp>
 #include <com/sun/star/beans/PropertyValue.hpp>
@@ -71,43 +72,10 @@ uno::Sequence<OUString> SAL_CALL SettingsEventHandler::getSupportedMethodNames()
 	return methodNames;
 }
 
-uno::Reference<uno::XInterface> SettingsEventHandler::getRegistryProperties(const OUString & group) {
-	VOIKKO_DEBUG("getRegistryProperties");
-	uno::Reference<uno::XInterface> rootView;
-	uno::Reference<lang::XMultiComponentFactory> servManager = compContext->getServiceManager();
-	if (!servManager.is()) {
-		VOIKKO_DEBUG("ERROR: failed to obtain servManager");
-		return rootView;
-	}
-	uno::Reference<uno::XInterface> iFace = servManager->createInstanceWithContext(
-		A2OU("com.sun.star.configuration.ConfigurationProvider"), compContext);
-	if (!iFace.is()) {
-		VOIKKO_DEBUG("ERROR: failed to obtain iFace");
-		return rootView;
-	}
-	uno::Reference<lang::XMultiServiceFactory> provider(iFace, uno::UNO_QUERY);
-	if (!provider.is()) {
-		VOIKKO_DEBUG("ERROR: failed to obtain provider");
-		return rootView;
-	}
-	beans::PropertyValue pathArgument(A2OU("nodepath"), 0, (uno::Any) group,
-		beans::PropertyState_DIRECT_VALUE);
-	uno::Sequence<uno::Any> aArguments(1);
-	aArguments.getArray()[0] = (uno::Any) pathArgument;
-	rootView = provider->createInstanceWithArguments(
-		A2OU("com.sun.star.configuration.ConfigurationUpdateAccess"), aArguments);
-	if (!rootView.is()) {
-		VOIKKO_DEBUG("ERROR: failed to obtain rootView");
-	}
-	return rootView;
-	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
-	return propSet;
-}
-
 void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<awt::XWindow> & window) {
 	VOIKKO_DEBUG("initOptionsWindowFromRegistry()");
 	uno::Reference<uno::XInterface> rootView =
-		getRegistryProperties(A2OU("/org.puimula.ooovoikko.Config/hyphenator"));
+		getRegistryProperties(A2OU("/org.puimula.ooovoikko.Config/hyphenator"), compContext);
 	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
 	if (!propSet.is()) {
 		VOIKKO_DEBUG("ERROR: failed to obtain propSet");
@@ -176,7 +144,7 @@ void SettingsEventHandler::saveOptionsFromWindowToRegistry(const uno::Reference<
 	hyphWordPartsAValue >>= hyphWordPartsValue; // 0 = unchecked, 1 = checked
 
 	uno::Reference<uno::XInterface> rootView =
-		getRegistryProperties(A2OU("/org.puimula.ooovoikko.Config/hyphenator"));
+		getRegistryProperties(A2OU("/org.puimula.ooovoikko.Config/hyphenator"), compContext);
 	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
 	if (!propSet.is()) {
 		VOIKKO_DEBUG("ERROR: failed to obtain propSet");

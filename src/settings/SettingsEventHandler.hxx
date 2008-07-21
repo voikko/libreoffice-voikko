@@ -62,9 +62,6 @@ class SettingsEventHandler:
 
 	private:
 
-	/** Get property set for given group from registry */
-	uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group);
-
 	/** Initialize options window from registry */
 	void initOptionsWindowFromRegistry(const uno::Reference<awt::XWindow> & window);
 

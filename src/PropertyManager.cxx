@@ -33,6 +33,7 @@ PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext
 	hyphMinLeading = 2;
 	hyphMinTrailing = 2;
 	hyphMinWordLength = 5;
+	hyphWordParts = sal_False;
 }
 
 PropertyManager::~PropertyManager() {
@@ -94,6 +95,7 @@ void PropertyManager::initialize() throw (uno::Exception) {
 	}
 	// synchronize the local settings from global preferences
 	setProperties(linguPropSet);
+	syncHyphenatorSettings();
 	// request that all users of linguistic services run the spellchecker and hyphenator
 	// again with updated settings
 	linguistic2::LinguServiceEvent event;
@@ -128,6 +130,16 @@ sal_Bool PropertyManager::removeLinguServiceEventListener(
 		return (linguEventListeners.removeInterface(xLstnr) != listenerCount);
 	}
 	else return sal_False;
+}
+
+void PropertyManager::setHyphWordParts(sal_Bool value) {
+	hyphWordParts = value;
+	syncHyphenatorSettings();
+}
+
+uno::Any PropertyManager::readFromRegistry(const OUString & key) {
+	uno::Any value;
+	return value;
 }
 
 OUString PropertyManager::getInitializationStatus() {
@@ -206,11 +218,11 @@ void PropertyManager::setValue(const beans::PropertyValue & value) {
 }
 
 inline void PropertyManager::syncHyphenatorSettings() {
-	// Uncomment the following if you want to apply HypMinWordLength to the
-	// components of compound words, not just whole words.
-
-	// voikko_set_int_option(voikko_handle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH,
-	//                       hyphMinWordLength);
+	if (hyphWordParts)
+		voikko_set_int_option(voikko_handle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH,
+		                      hyphMinWordLength);
+	else
+		voikko_set_int_option(voikko_handle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH, 2);
 }
 
 void PropertyManager::sendLinguEvent(const linguistic2::LinguServiceEvent & event) {

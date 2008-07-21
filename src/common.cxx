@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
+#include <com/sun/star/beans/XHierarchicalPropertySet.hpp>
 #include <com/sun/star/uno/XComponentContext.hpp>
 #include <com/sun/star/uno/XInterface.hpp>
 #include <com/sun/star/deployment/XPackageInformationProvider.hpp>
@@ -50,6 +51,39 @@ OUString getInstallationPath() {
 	}
 }
 
+uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
+	uno::Reference<uno::XComponentContext> compContext) {
+	VOIKKO_DEBUG("getRegistryProperties");
+	uno::Reference<uno::XInterface> rootView;
+	uno::Reference<lang::XMultiComponentFactory> servManager = compContext->getServiceManager();
+	if (!servManager.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain servManager");
+		return rootView;
+	}
+	uno::Reference<uno::XInterface> iFace = servManager->createInstanceWithContext(
+		A2OU("com.sun.star.configuration.ConfigurationProvider"), compContext);
+	if (!iFace.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain iFace");
+		return rootView;
+	}
+	uno::Reference<lang::XMultiServiceFactory> provider(iFace, uno::UNO_QUERY);
+	if (!provider.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain provider");
+		return rootView;
+	}
+	beans::PropertyValue pathArgument(A2OU("nodepath"), 0, (uno::Any) group,
+		beans::PropertyState_DIRECT_VALUE);
+	uno::Sequence<uno::Any> aArguments(1);
+	aArguments.getArray()[0] = (uno::Any) pathArgument;
+	rootView = provider->createInstanceWithArguments(
+		A2OU("com.sun.star.configuration.ConfigurationUpdateAccess"), aArguments);
+	if (!rootView.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain rootView");
+	}
+	return rootView;
+	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
+	return propSet;
+}
 
 sal_Bool voikko_initialized = sal_False;
 
