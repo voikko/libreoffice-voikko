@@ -75,8 +75,14 @@ uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
 		beans::PropertyState_DIRECT_VALUE);
 	uno::Sequence<uno::Any> aArguments(1);
 	aArguments.getArray()[0] = (uno::Any) pathArgument;
-	rootView = provider->createInstanceWithArguments(
-		A2OU("com.sun.star.configuration.ConfigurationUpdateAccess"), aArguments);
+	try {
+		rootView = provider->createInstanceWithArguments(
+			A2OU("com.sun.star.configuration.ConfigurationUpdateAccess"), aArguments);
+	}
+	catch (uno::Exception e) {
+		VOIKKO_DEBUG_2("ERROR: exception while trying to obtain rootView for '%s'", OU2DEBUG(group));
+		return rootView;
+	}
 	if (!rootView.is()) {
 		VOIKKO_DEBUG("ERROR: failed to obtain rootView");
 	}

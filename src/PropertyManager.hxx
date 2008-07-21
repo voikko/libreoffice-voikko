@@ -66,6 +66,7 @@ class PropertyManager:
 	void setHyphWordParts(sal_Bool value);
 	uno::Any readFromRegistry(const OUString group, const OUString & key)
 		throw (beans::UnknownPropertyException);
+	void readVoikkoSettings();
 	
 	/** Returns initialization status diagnostics */
 	OUString getInitializationStatus();

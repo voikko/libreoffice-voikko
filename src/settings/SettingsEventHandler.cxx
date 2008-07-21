@@ -56,6 +56,7 @@ sal_Bool SAL_CALL SettingsEventHandler::callHandlerMethod(const uno::Reference<a
 	EventObject >>= eventS;
 	if (eventS == A2OU("ok")) {
 		saveOptionsFromWindowToRegistry(xWindow);
+		if (thePropertyManager != 0) thePropertyManager->readVoikkoSettings();
 		return sal_True;
 	}
 	if (eventS == A2OU("back") || eventS == A2OU("initialize")) {

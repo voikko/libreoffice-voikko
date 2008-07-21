@@ -96,7 +96,7 @@ void PropertyManager::initialize() throw (uno::Exception) {
 	}
 	// synchronize the local settings from global preferences
 	setProperties(linguPropSet);
-	syncHyphenatorSettings();
+	readVoikkoSettings();
 	// request that all users of linguistic services run the spellchecker and hyphenator
 	// again with updated settings
 	linguistic2::LinguServiceEvent event;
@@ -151,6 +151,17 @@ uno::Any PropertyManager::readFromRegistry(const OUString group, const OUString 
 	}
 	uno::Any value = propSet->getHierarchicalPropertyValue(key);
 	return value;
+}
+
+void PropertyManager::readVoikkoSettings() {
+	try {
+		uno::Any hyphWordParts = readFromRegistry(A2OU("hyphenator"), A2OU("hyphWordParts"));
+		hyphWordParts >>= this->hyphWordParts;
+	}
+	catch (beans::UnknownPropertyException e) {
+		VOIKKO_DEBUG("ERROR: readVoikkoSettings: UnknownPropertyException");
+	}
+	syncHyphenatorSettings();
 }
 
 OUString PropertyManager::getInitializationStatus() {

@@ -2,6 +2,7 @@
 
 	* Add setting (checkbox) for compound word hyphenation and
 	  store the value to the registry.
+	* Use new compound word hyphenation setting when hyphenating.
 
 2008-07-19 Harri Pitkänen <hatapitk@iki.fi>
 
