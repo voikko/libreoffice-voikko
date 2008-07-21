@@ -56,6 +56,11 @@ VOIKKO_DEBUG=NO
 # If you want to disable the grammar checker, set this option to 1
 DISABLE_GRAMMAR_CHECKER=1
 
+# Setting this option to 1 causes ugly warnings to be added to visible places
+# in the extension without removing any functionality (codename "tekstintuho").
+# Useful for binary builds that are released for public testing.
+# SHOW_UGLY_WARNINGS=1
+
 # Destination directory when installing unpacked extension with
 # make install-unpacked
 DESTDIR=/usr/lib/openoffice.org-voikko
@@ -126,12 +131,17 @@ ifeq "$(DISABLE_GRAMMAR_CHECKER)" "1"
 	VOIKKO_CC_DEFINES += -DDISABLE_GRAMMAR_CHECKER
 endif
 
-ifeq "$(VOIKKO_DEBUG)" "NO"
-        VOIKKO_PACKAGENAME=voikko
+# Build extension package name
+ifdef SHOW_UGLY_WARNINGS
+        VOIKKO_PACKAGENAME:=tekstintuho
 else
-        VOIKKO_PACKAGENAME=voikko-dbg
+        VOIKKO_PACKAGENAME:=voikko
+endif
+ifneq "$(VOIKKO_DEBUG)" "NO"
+        VOIKKO_PACKAGENAME:=$(VOIKKO_PACKAGENAME)-dbg
         VOIKKO_CC_DEFINES+= -DVOIKKO_DEBUG_OUTPUT
 endif
+
 ifdef LIBVOIKKO_PATH
 	LINK_FLAGS+= -L$(LIBVOIKKO_PATH)/lib
 	VOIKKO_CC_FLAGS+= -I$(LIBVOIKKO_PATH)/include
@@ -185,6 +195,9 @@ MANIFEST_SEDSCRIPT="s/VOIKKO_EXTENSION_SHAREDLIB/$(VOIKKO_EXTENSION_SHAREDLIB)/g
 DESCRIPTION_SEDSCRIPT:="s/VOIKKO_VERSION/$(VOIKKO_VERSION)/g"
 ifdef SHOW_LICENSE
 	DESCRIPTION_SEDSCRIPT:="$(DESCRIPTION_SEDSCRIPT);/SHOW_LICENSE/d"
+endif
+ifdef SHOW_UGLY_WARNINGS
+	DESCRIPTION_SEDSCRIPT:="$(DESCRIPTION_SEDSCRIPT);s/Voikko/TEKSTINTUHO/g"
 endif
 build/oxt/META-INF/manifest.xml: oxt/META-INF/manifest.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))

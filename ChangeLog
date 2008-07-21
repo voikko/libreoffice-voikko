@@ -3,6 +3,8 @@
 	* Add setting (checkbox) for compound word hyphenation and
 	  store the value to the registry.
 	* Use new compound word hyphenation setting when hyphenating.
+	* Add build option SHOW_UGLY_WARNINGS to be used in binary
+	  test builds.
 
 2008-07-19 Harri Pitkänen <hatapitk@iki.fi>
 
