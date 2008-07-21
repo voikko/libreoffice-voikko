@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
+#include <com/sun/star/beans/XHierarchicalPropertySet.hpp>
 #include <com/sun/star/linguistic2/LinguServiceEventFlags.hpp>
 #include <osl/nlsupport.h>
 #include <libvoikko/voikko.h>
@@ -137,8 +138,18 @@ void PropertyManager::setHyphWordParts(sal_Bool value) {
 	syncHyphenatorSettings();
 }
 
-uno::Any PropertyManager::readFromRegistry(const OUString & key) {
-	uno::Any value;
+uno::Any PropertyManager::readFromRegistry(const OUString group, const OUString & key)
+	throw (beans::UnknownPropertyException) {
+	OUString regPath(A2OU("/org.puimula.ooovoikko.Config/"));
+	regPath += group;
+	uno::Reference<uno::XInterface> rootView =
+		getRegistryProperties(regPath, compContext);
+	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
+	if (!propSet.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain propSet");
+		throw new beans::UnknownPropertyException();
+	}
+	uno::Any value = propSet->getHierarchicalPropertyValue(key);
 	return value;
 }
 

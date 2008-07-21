@@ -64,7 +64,8 @@ class PropertyManager:
 	
 	// Functions for setting Voikko specific configuration
 	void setHyphWordParts(sal_Bool value);
-	uno::Any readFromRegistry(const OUString & key);
+	uno::Any readFromRegistry(const OUString group, const OUString & key)
+		throw (beans::UnknownPropertyException);
 	
 	/** Returns initialization status diagnostics */
 	OUString getInitializationStatus();

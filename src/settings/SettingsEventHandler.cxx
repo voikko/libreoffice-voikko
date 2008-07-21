@@ -74,16 +74,11 @@ uno::Sequence<OUString> SAL_CALL SettingsEventHandler::getSupportedMethodNames()
 
 void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<awt::XWindow> & window) {
 	VOIKKO_DEBUG("initOptionsWindowFromRegistry()");
-	uno::Reference<uno::XInterface> rootView =
-		getRegistryProperties(A2OU("/org.puimula.ooovoikko.Config/hyphenator"), compContext);
-	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
-	if (!propSet.is()) {
-		VOIKKO_DEBUG("ERROR: failed to obtain propSet");
-		return;
-	}
+	if (thePropertyManager == 0) thePropertyManager = new PropertyManager(compContext);
 	sal_Bool hyphWordPartsValue = sal_False;
+	uno::Any hyphWordPartsAValue;
 	try {
-		uno::Any hyphWordPartsAValue = propSet->getHierarchicalPropertyValue(A2OU("hyphWordParts"));
+		hyphWordPartsAValue = thePropertyManager->readFromRegistry(A2OU("hyphenator"), A2OU("hyphWordParts"));
 		hyphWordPartsAValue >>= hyphWordPartsValue;
 	}
 	catch (beans::UnknownPropertyException e) {
@@ -110,7 +105,6 @@ void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<aw
 		VOIKKO_DEBUG("ERROR: failed to obtain hyphWordPartsProps");
 		return;
 	}
-	uno::Any hyphWordPartsAValue;
 	if (hyphWordPartsValue) hyphWordPartsAValue <<= (sal_Int16) 1;
 	else hyphWordPartsAValue <<= (sal_Int16) 0;
 	hyphWordPartsProps->setPropertyValue(A2OU("State"), hyphWordPartsAValue);
