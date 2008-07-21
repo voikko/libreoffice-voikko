@@ -1,3 +1,8 @@
+2008-07-21 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Add setting (checkbox) for compound word hyphenation and
+	  store the value to the registry.
+
 2008-07-19 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Add settings dialog.

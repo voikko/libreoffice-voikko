@@ -124,6 +124,28 @@ void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<aw
 	}
 	if (hyphWordPartsValue) VOIKKO_DEBUG("hyphWordParts = true");
 	else VOIKKO_DEBUG("hyphWordParts = false");
+
+	uno::Reference<awt::XControlContainer> windowContainer =
+		uno::Reference<awt::XControlContainer>(window, uno::UNO_QUERY);
+	if (!windowContainer.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain windowContainer");
+		return;
+	}
+	uno::Reference<awt::XControl> hyphWordParts = windowContainer->getControl(A2OU("hyphWordParts"));
+	if (!hyphWordParts.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain hyphWordParts");
+		return;
+	}
+	uno::Reference<beans::XPropertySet> hyphWordPartsProps =
+		uno::Reference<beans::XPropertySet>(hyphWordParts->getModel(), uno::UNO_QUERY);
+	if (!hyphWordPartsProps.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain hyphWordPartsProps");
+		return;
+	}
+	uno::Any hyphWordPartsAValue;
+	if (hyphWordPartsValue) hyphWordPartsAValue <<= (sal_Int16) 1;
+	else hyphWordPartsAValue <<= (sal_Int16) 0;
+	hyphWordPartsProps->setPropertyValue(A2OU("State"), hyphWordPartsAValue);
 }
 
 void SettingsEventHandler::saveOptionsFromWindowToRegistry(const uno::Reference<awt::XWindow> & window) {
