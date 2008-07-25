@@ -55,7 +55,7 @@ sal_Bool SAL_CALL GrammarChecker::hasLocale(const lang::Locale & aLocale) throw 
 	else return sal_False;
 }
 
-sal_Bool SAL_CALL GrammarChecker::isSpellChecker(const lang::Locale & aLocale) throw (uno::RuntimeException) {
+sal_Bool SAL_CALL GrammarChecker::isSpellChecker() throw (uno::RuntimeException) {
 	return sal_False;
 }
 
@@ -79,46 +79,25 @@ void SAL_CALL GrammarChecker::endDocument(sal_Int32 nDocId)
 	// TODO
 }
 
-void SAL_CALL GrammarChecker::doGrammarChecking(sal_Int32 nDocId,
-	const uno::Reference<text::XFlatParagraph> & xFlatPara,
-	const lang::Locale & aLocale, sal_Int32 nStartOfSentencePos,
-	sal_Int32 nSuggestedSentenceEndPos)
-	throw (uno::RuntimeException, lang::IllegalArgumentException) {
-	// TODO
-}
-
-sal_Int32 SAL_CALL GrammarChecker::getEndOfSentencePos(sal_Int32 nDocId,
-	const OUString & aFlatParaText, const lang::Locale & aLocale,
-	sal_Int32 nStartOfSentencePos)
+linguistic2::GrammarCheckingResult SAL_CALL GrammarChecker::doGrammarChecking(
+	sal_Int32 nDocId,
+	const OUString & aText,
+	const lang::Locale & aLocale,
+	sal_Int32 nStartOfSentencePos, sal_Int32 nSuggestedSentenceEndPos,
+	const uno::Sequence<sal_Int32> & aLanguagePortions,
+	const uno::Sequence<lang::Locale> & aLanguagePortionsLocales)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	// FIXME
-	return 0;
-}
-
-sal_Int32 SAL_CALL GrammarChecker::getStartOfSentencePos(sal_Int32 nDocId,
-	const OUString & aFlatParaText, const lang::Locale & aLocale)
-	throw (uno::RuntimeException, lang::IllegalArgumentException) {
-	// FIXME
-	return 0;
-}
-
-sal_Bool SAL_CALL GrammarChecker::requiresPreviousText() throw (uno::RuntimeException) {
-	return sal_False;
-}
-
-sal_Bool SAL_CALL GrammarChecker::hasCheckingDialog() throw (uno::RuntimeException) {
-	return sal_False;
+	linguistic2::GrammarCheckingResult result;
+	return result;
 }
 
 sal_Bool SAL_CALL GrammarChecker::hasOptionsDialog() throw (uno::RuntimeException) {
 	return sal_False;
 }
 
-void SAL_CALL GrammarChecker::runCheckingDialog(sal_Int32 nDocId)
-	throw (uno::RuntimeException, lang::IllegalArgumentException) { }
-
-void SAL_CALL GrammarChecker::runOptionsDialog(sal_Int32 nDocId)
-	throw (uno::RuntimeException, lang::IllegalArgumentException) { }
+void SAL_CALL GrammarChecker::runOptionsDialog()
+	throw (uno::RuntimeException) { }
 
 void SAL_CALL GrammarChecker::initialize(const uno::Sequence<uno::Any> &)
 	throw (uno::RuntimeException, uno::Exception) {

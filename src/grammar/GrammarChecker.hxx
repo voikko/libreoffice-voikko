@@ -22,6 +22,7 @@
 #include <cppuhelper/basemutex.hxx>
 #include <com/sun/star/lang/XServiceInfo.hpp>
 #include <com/sun/star/linguistic2/XGrammarChecker.hpp>
+#include <com/sun/star/linguistic2/GrammarCheckingResult.hpp>
 #include <com/sun/star/lang/XInitialization.hpp>
 #include <com/sun/star/lang/XServiceDisplayName.hpp>
 #include <com/sun/star/uno/XComponentContext.hpp>
@@ -60,8 +61,7 @@ class GrammarChecker:
 		throw (uno::RuntimeException);
 
 	// linguistic2::XGrammarChecker:
-	virtual sal_Bool SAL_CALL isSpellChecker(const lang::Locale & aLocale)
-		throw (uno::RuntimeException);
+	virtual sal_Bool SAL_CALL isSpellChecker() throw (uno::RuntimeException);
 	virtual void SAL_CALL startDocument(sal_Int32 nDocId)
 		throw (uno::RuntimeException, lang::IllegalArgumentException);
 	virtual void SAL_CALL startParagraph(sal_Int32 nDocId)
@@ -70,25 +70,16 @@ class GrammarChecker:
 		throw (uno::RuntimeException, lang::IllegalArgumentException);
 	virtual void SAL_CALL endDocument(sal_Int32 nDocId)
 		throw (uno::RuntimeException, lang::IllegalArgumentException);
-	virtual void SAL_CALL doGrammarChecking(sal_Int32 nDocId,
-		const uno::Reference<text::XFlatParagraph> & xFlatPara,
-		const lang::Locale & aLocale, sal_Int32 nStartOfSentencePos,
-		sal_Int32 nSuggestedSentenceEndPos)
+	virtual linguistic2::GrammarCheckingResult SAL_CALL doGrammarChecking(sal_Int32 nDocId,
+		const OUString & aText,
+		const lang::Locale & aLocale,
+		sal_Int32 nStartOfSentencePos, sal_Int32 nSuggestedSentenceEndPos,
+		const uno::Sequence<sal_Int32> & aLanguagePortions,
+		const uno::Sequence<lang::Locale> & aLanguagePortionsLocales)
 		throw (uno::RuntimeException, lang::IllegalArgumentException);
-	virtual sal_Int32 SAL_CALL getEndOfSentencePos(sal_Int32 nDocId,
-		const OUString & aFlatParaText, const lang::Locale & aLocale,
-		sal_Int32 nStartOfSentencePos)
-		throw (uno::RuntimeException, lang::IllegalArgumentException);
-	virtual sal_Int32 SAL_CALL getStartOfSentencePos(sal_Int32 nDocId,
-		const OUString & aFlatParaText, const lang::Locale & aLocale)
-		throw (uno::RuntimeException, lang::IllegalArgumentException);
-	virtual sal_Bool SAL_CALL requiresPreviousText() throw (uno::RuntimeException);
-	virtual sal_Bool SAL_CALL hasCheckingDialog() throw (uno::RuntimeException);
 	virtual sal_Bool SAL_CALL hasOptionsDialog() throw (uno::RuntimeException);
-	virtual void SAL_CALL runCheckingDialog(sal_Int32 nDocId)
-		throw (uno::RuntimeException, lang::IllegalArgumentException);
-	virtual void SAL_CALL runOptionsDialog(sal_Int32 nDocId)
-		throw (uno::RuntimeException, lang::IllegalArgumentException);
+	virtual void SAL_CALL runOptionsDialog()
+		throw (uno::RuntimeException);
 
 	// ::com::sun::star::lang::XInitialization:
 	virtual void SAL_CALL initialize(const uno::Sequence<uno::Any> & aArguments)
