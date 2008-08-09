@@ -14,4 +14,7 @@
   <manifest:file-entry
    manifest:media-type="application/vnd.sun.star.configuration-data"
    manifest:full-path="SettingsDialog.xcu"/>
+  <manifest:file-entry
+   manifest:media-type="application/vnd.sun.star.configuration-data"
+   manifest:full-path="Linguistic.xcu"/>
 </manifest:manifest>

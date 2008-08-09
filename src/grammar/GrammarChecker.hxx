@@ -100,11 +100,14 @@ class GrammarChecker:
 
 // Static method implementations
 inline OUString GrammarChecker::getImplementationName_static() {
+	VOIKKO_DEBUG("GrammarChecker::getImplementationName_static");
 	return A2OU("voikko.GrammarChecker");
 }
 inline uno::Sequence<OUString> GrammarChecker::getSupportedServiceNames_static() {
 	uno::Sequence<OUString> snames(1);
+	VOIKKO_DEBUG("GrammarChecker::getSupportedServiceNames_static");
 	snames.getArray()[0] = A2OU("com.sun.star.linguistic2.GrammarChecker");
+	//snames.getArray()[1] = A2OU("voikko.GrammarChecker");
 	return snames;
 }
 

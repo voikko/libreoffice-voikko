@@ -26,7 +26,7 @@ GrammarChecker::GrammarChecker(uno::Reference<uno::XComponentContext> const & co
 	      linguistic2::XGrammarChecker,
 	      lang::XInitialization,
 	      lang::XServiceDisplayName>(m_aMutex),
-	compContext(context) { }
+	compContext(context) { VOIKKO_DEBUG("GrammarChecker:ctor"); }
 
 OUString SAL_CALL GrammarChecker::getImplementationName() throw (uno::RuntimeException) {
 	return getImplementationName_static();
@@ -34,6 +34,7 @@ OUString SAL_CALL GrammarChecker::getImplementationName() throw (uno::RuntimeExc
 
 sal_Bool SAL_CALL GrammarChecker::supportsService(const OUString & serviceName)
 	throw (uno::RuntimeException) {
+	VOIKKO_DEBUG("GrammarChecker::supportsService");
 	uno::Sequence<OUString> serviceNames = getSupportedServiceNames();
 	for (sal_Int32 i = 0; i < serviceNames.getLength(); i++)
 		if (serviceNames[i] == serviceName) return sal_True;
@@ -41,16 +42,19 @@ sal_Bool SAL_CALL GrammarChecker::supportsService(const OUString & serviceName)
 }
 
 uno::Sequence<OUString> SAL_CALL GrammarChecker::getSupportedServiceNames() throw (uno::RuntimeException) {
+	VOIKKO_DEBUG("GrammarChecker::getSupportedServiceNames");
 	return getSupportedServiceNames_static();
 }
 
 uno::Sequence<lang::Locale> SAL_CALL GrammarChecker::getLocales() throw (uno::RuntimeException) {
+	VOIKKO_DEBUG("GrammarChecker::getLocales");
 	uno::Sequence<lang::Locale> locales(1);
 	locales.getArray()[0] = lang::Locale(A2OU("fi"), A2OU("FI"), OUString());
 	return locales;
 }
 
 sal_Bool SAL_CALL GrammarChecker::hasLocale(const lang::Locale & aLocale) throw (uno::RuntimeException) {
+	VOIKKO_DEBUG("GrammarChecker::hasLocale");
 	if (aLocale.Language == A2OU("fi")) return sal_True;
 	else return sal_False;
 }
@@ -109,6 +113,7 @@ void SAL_CALL GrammarChecker::initialize(const uno::Sequence<uno::Any> &)
 
 OUString SAL_CALL GrammarChecker::getServiceDisplayName(const lang::Locale & aLocale)
 	throw (uno::RuntimeException) {
+	VOIKKO_DEBUG("GrammarChecker::getServiceDisplayName");
 	if (aLocale.Language == A2OU("fi"))
 		return A2OU("Suomen kieliopin tarkistus (Voikko)");
 	else

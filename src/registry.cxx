@@ -113,7 +113,7 @@ static ::cppu::ImplementationEntry const regEntries[] = {
 #ifndef DISABLE_GRAMMAR_CHECKER
 	{ &regGrammarCreate,
 	  &regGetGrammarImplementationName,
-	  &regGrammarSupportedServiceNames,
+	  &GrammarChecker::getSupportedServiceNames_static,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
 #endif
         { &regSettingsCreate,
