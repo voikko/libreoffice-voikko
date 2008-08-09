@@ -18,6 +18,7 @@
 #include <com/sun/star/beans/XHierarchicalPropertySet.hpp>
 #include <com/sun/star/uno/XComponentContext.hpp>
 #include <com/sun/star/uno/XInterface.hpp>
+#include <com/sun/star/deployment/PackageInformationProvider.hpp>
 #include <com/sun/star/deployment/XPackageInformationProvider.hpp>
 #include <cppuhelper/bootstrap.hxx>
 #include <osl/file.hxx>
@@ -33,11 +34,9 @@ osl::Mutex & getVoikkoMutex() {
 
 OUString getInstallationPath() {
 	try {
+	VOIKKO_DEBUG("getInstallationPath");
 	uno::Reference<uno::XComponentContext> compContext = cppu::defaultBootstrap_InitialComponentContext();
-	uno::Reference<lang::XMultiComponentFactory> servManager = compContext->getServiceManager();
-	uno::Reference<uno::XInterface> iFace = servManager->createInstanceWithContext(
-		A2OU("com.sun.star.deployment.PackageInformationProvider"), compContext);
-	uno::Reference<deployment::XPackageInformationProvider> provider(iFace, uno::UNO_QUERY);
+	uno::Reference<deployment::XPackageInformationProvider> provider(deployment::PackageInformationProvider::get(compContext));
 	OUString locationFileURL = provider->getPackageLocation(A2OU("org.puimula.ooovoikko"));
 	OUString locationSystemPath;
 	osl::FileBase::getSystemPathFromFileURL(locationFileURL, locationSystemPath);

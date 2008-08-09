@@ -113,9 +113,6 @@ ifdef STANDALONE_EXTENSION_PATH
 		LINK_FLAGS += -lvoikko
 	else ifeq "$(PLATFORM)" "macosx"
 		STANDALONE_EXTENSION_FILES=voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
-		LINK_FLAGS += $(LIBVOIKKO_PATH)/lib/libvoikko.a $(LIBVOIKKO_PATH)/lib/libmalaga.a \
-		              $(LIBVOIKKO_PATH)/lib/libiconv.a $(LIBVOIKKO_PATH)/lib/libglib-2.0.a \
-		              $(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation
 	else
 		STANDALONE_EXTENSION_FILES=libmalaga.so.7 libvoikko.so.1 \
 		voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
@@ -237,6 +234,15 @@ ifeq "$(PLATFORM)" "windows"
 	/MAP:build/voikko.map $^ \
 	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(STLPORTLIB) msvcrt.lib kernel32.lib build\libvoikko-1.lib
 	mt -manifest build/oxt/voikko.dll.manifest -outputresource:build/oxt/voikko.dll;2
+else ifeq "$(PLATFORM)" "macosx"
+	cat $(PRJ)/settings/component.uno.map > build/voikko.map
+	nm -gx $^ | $(ADDSYMBOLS) >> build/voikko.map
+	$(LINK) $(COMP_LINK_FLAGS) build/voikko.map $(LINK_LIBS) -o $@ $^ \
+	$(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(CPPUHELPERDYLIB) $(CPPUDYLIB) $(SALDYLIB) \
+	$(LIBVOIKKO_PATH)/lib/libvoikko.a $(LIBVOIKKO_PATH)/lib/libmalaga.a \
+	$(LIBVOIKKO_PATH)/lib/libiconv.a $(LIBVOIKKO_PATH)/lib/libglib-2.0.a \
+	$(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation -framework Carbon
+	$(INSTALL_NAME_URELIBS)  $@
 else
 	$(LINK) $(LINK_FLAGS) -o $@ $^
 endif

@@ -88,6 +88,7 @@ linguistic2::GrammarCheckingResult SAL_CALL GrammarChecker::doGrammarChecking(
 	const uno::Sequence<lang::Locale> & aLanguagePortionsLocales)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	// FIXME
+	VOIKKO_DEBUG("GrammarChecker::doGrammarChecking");
 	linguistic2::GrammarCheckingResult result;
 	return result;
 }

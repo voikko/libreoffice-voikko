@@ -33,7 +33,7 @@ using namespace ::rtl;
 
 namespace voikko {
 
-extern "C" void SAL_CALL
+extern "C" SAL_DLLPUBLIC_EXPORT void SAL_CALL
 	component_getImplementationEnvironment(sal_Char const ** ppEnvTypeName,
 	                                       uno_Environment **) {
 	VOIKKO_DEBUG("component_getImplementationEnvironment");
@@ -123,12 +123,12 @@ static ::cppu::ImplementationEntry const regEntries[] = {
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
-extern "C" sal_Bool SAL_CALL component_writeInfo(void * serviceManager, void * registryKey) {
+extern "C" SAL_DLLPUBLIC_EXPORT sal_Bool SAL_CALL component_writeInfo(void * serviceManager, void * registryKey) {
 	VOIKKO_DEBUG("component_writeInfo");
 	return ::cppu::component_writeInfoHelper(serviceManager, registryKey, regEntries);
 }
 
-extern "C" void * SAL_CALL
+extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
 	component_getFactory(const char * implName, void * serviceManager, void * registryKey) {
 	VOIKKO_DEBUG("component_getFactory");
 	return ::cppu::component_getFactoryHelper(implName, serviceManager, registryKey, regEntries);
