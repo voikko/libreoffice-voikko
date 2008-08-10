@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2008 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,8 +127,8 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("Hyphenator::createPossibleHyphens");
 	if (!voikko_initialized) return 0;
-	sal_Int16 len = aWord.getLength();
-	if (len > 10000) return 0;
+	if (aWord.getLength() > 10000) return 0;
+	sal_Int16 len = (sal_Int16) aWord.getLength();
 	thePropertyManager->setValues(aProperties);
 
 	// If the word is too short to be hyphenated, return no hyphenation points

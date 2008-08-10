@@ -25,7 +25,7 @@ namespace voikko {
 
 osl::Mutex & getVoikkoMutex();
 
-OUString getInstallationPath();
+OUString getInstallationPath(uno::Reference<uno::XComponentContext> & compContext);
 
 /** Get property set for given group from registry */
 uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,

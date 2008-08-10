@@ -51,9 +51,13 @@ Instructions for compilation
   the home directory of the user (for example to a file
   openoffice.org2.0_sdk/setsdkenv_unix.sh).
   * On OS X and Windows you must make sure that neither OpenOffice.org nor its
-    SDK have spaces in their installation path. If detection of office
-    installation fails on OS X, add symolic link "program -> MacOS" under the
-    directory "Contents" of the office installation.
+    SDK have spaces in their installation path. On Windows you can use spaces in
+    these paths if you replace the components containing spaces with the "8.3" name
+    during configuration of the SDK as follows:
+      SDK = C:\PROGRA~1\OpenOffice.org\BAS
+      Office = C:\PROGRA~1\OpenOffice.org
+      Office Base = C:\PROGRA~1\OpenOffice
+      URE = C:\PROGRA~1\OpenOffice.org\URE
 - Run "make oxt". This will build the extensions package voikko.oxt under
   subdirectory build.
   * There are some settings available that can be used to customize the build.

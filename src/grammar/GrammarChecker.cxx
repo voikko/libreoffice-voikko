@@ -63,33 +63,33 @@ sal_Bool SAL_CALL GrammarChecker::isSpellChecker() throw (uno::RuntimeException)
 	return sal_False;
 }
 
-void SAL_CALL GrammarChecker::startDocument(sal_Int32 nDocId)
+void SAL_CALL GrammarChecker::startDocument(sal_Int32 /*nDocId*/)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	// TODO
 }
 
-void SAL_CALL GrammarChecker::startParagraph(sal_Int32 nDocId)
+void SAL_CALL GrammarChecker::startParagraph(sal_Int32 /*nDocId*/)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	// TODO
 }
 
-void SAL_CALL GrammarChecker::endParagraph(sal_Int32 nDocId)
+void SAL_CALL GrammarChecker::endParagraph(sal_Int32 /*nDocId*/)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	// TODO
 }
 
-void SAL_CALL GrammarChecker::endDocument(sal_Int32 nDocId)
+void SAL_CALL GrammarChecker::endDocument(sal_Int32 /*nDocId*/)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	// TODO
 }
 
 linguistic2::GrammarCheckingResult SAL_CALL GrammarChecker::doGrammarChecking(
-	sal_Int32 nDocId,
-	const OUString & aText,
-	const lang::Locale & aLocale,
-	sal_Int32 nStartOfSentencePos, sal_Int32 nSuggestedSentenceEndPos,
-	const uno::Sequence<sal_Int32> & aLanguagePortions,
-	const uno::Sequence<lang::Locale> & aLanguagePortionsLocales)
+	sal_Int32 /*nDocId*/,
+	const OUString & /*aText*/,
+	const lang::Locale & /*aLocale*/,
+	sal_Int32 /*nStartOfSentencePos*/, sal_Int32 /*nSuggestedSentenceEndPos*/,
+	const uno::Sequence<sal_Int32> & /*aLanguagePortions*/,
+	const uno::Sequence<lang::Locale> & /*aLanguagePortionsLocales*/)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	// FIXME
 	VOIKKO_DEBUG("GrammarChecker::doGrammarChecking");

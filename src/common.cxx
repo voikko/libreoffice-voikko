@@ -32,12 +32,12 @@ osl::Mutex & getVoikkoMutex() {
 	return voikkoMutex;
 }
 
-OUString getInstallationPath() {
+OUString getInstallationPath(uno::Reference<uno::XComponentContext> & compContext) {
 	try {
 	VOIKKO_DEBUG("getInstallationPath");
-	uno::Reference<uno::XComponentContext> compContext = cppu::defaultBootstrap_InitialComponentContext();
 	uno::Reference<deployment::XPackageInformationProvider> provider(deployment::PackageInformationProvider::get(compContext));
 	OUString locationFileURL = provider->getPackageLocation(A2OU("org.puimula.ooovoikko"));
+	VOIKKO_DEBUG_2("%s", OU2DEBUG(locationFileURL));
 	OUString locationSystemPath;
 	osl::FileBase::getSystemPathFromFileURL(locationFileURL, locationSystemPath);
 	VOIKKO_DEBUG_2("%s", OU2DEBUG(locationSystemPath));

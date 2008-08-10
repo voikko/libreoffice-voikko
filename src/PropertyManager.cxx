@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2008 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ void PropertyManager::initialize() throw (uno::Exception) {
 			if (encoding == RTL_TEXTENCODING_DONTKNOW)
 				encoding = RTL_TEXTENCODING_UTF8;
 			voikkoErrorString = voikko_init_with_path(&voikko_handle, "fi_FI", 0,
-				OUStringToOString(getInstallationPath(), encoding).getStr());
+				OUStringToOString(getInstallationPath(compContext), encoding).getStr());
 		#else
 			voikkoErrorString = voikko_init(&voikko_handle, "fi_FI", 0);
 		#endif
