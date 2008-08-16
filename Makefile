@@ -154,7 +154,7 @@ VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spel
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
                grammar/GrammarChecker settings/SettingsEventHandler
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
-               SettingsDialog_fi_FI.properties SettingsDialog.xcu
+               SettingsDialog_fi_FI.properties SettingsDialog.xcu Linguistic.xcu
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
 endif
@@ -237,7 +237,7 @@ ifeq "$(PLATFORM)" "windows"
 	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(STLPORTLIB) msvcrt.lib kernel32.lib build\libvoikko-1.lib
 	mt -manifest build/oxt/voikko.dll.manifest -outputresource:build/oxt/voikko.dll;2
 else
-	ifeq "$(PLATFORM)" "macosx"
+ifeq "$(PLATFORM)" "macosx"
 		cat $(PRJ)/settings/component.uno.map > build/voikko.map
 		nm -gx $^ | $(ADDSYMBOLS) >> build/voikko.map
 		$(LINK) $(COMP_LINK_FLAGS) build/voikko.map $(LINK_LIBS) -o $@ $^ \
@@ -246,9 +246,9 @@ else
 		$(LIBVOIKKO_PATH)/lib/libiconv.a $(LIBVOIKKO_PATH)/lib/libglib-2.0.a \
 		$(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation -framework Carbon
 		$(INSTALL_NAME_URELIBS)  $@
-	else
+else
 		$(LINK) $(LINK_FLAGS) -o $@ $^
-	endif
+endif
 endif
 
 
