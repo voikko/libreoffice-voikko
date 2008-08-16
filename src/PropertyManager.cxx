@@ -80,6 +80,7 @@ void PropertyManager::initialize() throw (uno::Exception) {
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_DOT, 1);
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_TITLES_IN_GC, 1);
+		messageLanguage = "fi_FI";
 		voikko_initialized = sal_True;
 		VOIKKO_DEBUG("PropertyManager::initialize: libvoikko initalized");
 	}
@@ -168,6 +169,10 @@ void PropertyManager::readVoikkoSettings() {
 OUString PropertyManager::getInitializationStatus() {
 	if (isInitialized) return A2OU("OK");
 	else return A2OU(voikkoErrorString);
+}
+
+const char * PropertyManager::getMessageLanguage() {
+	return messageLanguage;
 }
 
 void PropertyManager::setProperties(const uno::Reference<beans::XPropertySet> & properties) {

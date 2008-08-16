@@ -70,6 +70,9 @@ class PropertyManager:
 	
 	/** Returns initialization status diagnostics */
 	OUString getInitializationStatus();
+
+	/** Returns the language code for user messages */
+	const char * getMessageLanguage();
 	
 	private:
 	void setProperties(const uno::Reference<beans::XPropertySet> & properties);
@@ -90,6 +93,9 @@ class PropertyManager:
 	
 	/** Error message from libvoikko initialization function */
 	const char * voikkoErrorString;
+
+	/** Language code for user messages */
+	const char * messageLanguage;
 };
 
 }

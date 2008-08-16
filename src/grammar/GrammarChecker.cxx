@@ -126,12 +126,23 @@ linguistic2::GrammarCheckingResult SAL_CALL GrammarChecker::doGrammarChecking(
 		gcErrors[gcI].nErrorLength = vError.errorlen;
 		gcErrors[gcI].nErrorLevel = vError.error_level;
 		gcErrors[gcI].nErrorType = text::TextMarkupType::GRAMMAR;
-		gcErrors[gcI].aShortComment = A2OU("Testi");
+		OString commentOString = OString(voikko_error_message_cstr(vError.error_code,
+			thePropertyManager->getMessageLanguage()));
+		gcErrors[gcI].aShortComment = OStringToOUString(commentOString, RTL_TEXTENCODING_UTF8);
 		gcErrors[gcI].aFullComment = gcErrors[gcI].aShortComment;
 		gcErrors[gcI].aNewLocale = aLocale;
 
-		uno::Sequence<OUString> gcSuggestions(0);
-		gcErrors[gcI].aSuggestions = gcSuggestions;
+		// add suggestions
+		int scount = 0;
+		while (vError.suggestions && vError.suggestions[scount] != 0) scount++;
+		uno::Sequence<OUString> suggSeq(scount);
+		for (int i = 0; i < scount; i++) {
+			OString ostr = OString(vError.suggestions[i]);
+			suggSeq[i] = OStringToOUString(ostr, RTL_TEXTENCODING_UTF8);
+		}
+		voikko_free_suggest_cstr(vError.suggestions);
+		gcErrors[gcI].aSuggestions = suggSeq;
+
 		gcI++;
 	}
 
