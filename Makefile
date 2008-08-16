@@ -53,8 +53,8 @@ VOIKKO_DEBUG=NO
 # of this extension, uncomment the following.
 # SHOW_LICENSE=1
 
-# If you want to disable the grammar checker, set this option to 1
-DISABLE_GRAMMAR_CHECKER=1
+# If you want to enable the grammar checker, set this option to 1
+# ENABLE_GRAMMAR_CHECKER=1
 
 # Setting this option to 1 causes ugly warnings to be added to visible places
 # in the extension without removing any functionality (codename "tekstintuho").
@@ -126,7 +126,7 @@ else
 	LINK_FLAGS += -lvoikko
 endif
 
-ifeq "$(DISABLE_GRAMMAR_CHECKER)" "1"
+ifndef ENABLE_GRAMMAR_CHECKER
 	VOIKKO_CC_DEFINES += -DDISABLE_GRAMMAR_CHECKER
 endif
 
@@ -188,17 +188,22 @@ install-unpacked: extension-files
 	               $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
 	               $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)) $(DESTDIR)
 
-# Create extension files
-MANIFEST_SEDSCRIPT="s/VOIKKO_EXTENSION_SHAREDLIB/$(VOIKKO_EXTENSION_SHAREDLIB)/g; \
-	s/UNOPKG_PLATFORM/$(UNOPKG_PLATFORM)/g"
+# Sed scripts for modifying templates
+MANIFEST_SEDSCRIPT:=s/VOIKKO_EXTENSION_SHAREDLIB/$(VOIKKO_EXTENSION_SHAREDLIB)/g;s/UNOPKG_PLATFORM/$(UNOPKG_PLATFORM)/g
 DESCRIPTION_SEDSCRIPT:=s/VOIKKO_VERSION/$(VOIKKO_VERSION)/g
+ifdef ENABLE_GRAMMAR_CHECKER
+	MANIFEST_SEDSCRIPT:=$(MANIFEST_SEDSCRIPT);/GRAMMAR_CHECKER_DISABLED/d
+endif
 ifdef SHOW_LICENSE
 	DESCRIPTION_SEDSCRIPT:=$(DESCRIPTION_SEDSCRIPT);/SHOW_LICENSE/d
 endif
 ifdef SHOW_UGLY_WARNINGS
 	DESCRIPTION_SEDSCRIPT:=$(DESCRIPTION_SEDSCRIPT);s/Voikko/TEKSTINTUHO/g
 endif
-DESCRIPTION_SEDSCRIPT:='$(DESCRIPTION_SEDSCRIPT)'
+MANIFEST_SEDSCRIPT:="$(MANIFEST_SEDSCRIPT)"
+DESCRIPTION_SEDSCRIPT:="$(DESCRIPTION_SEDSCRIPT)"
+
+# Create extension files
 build/oxt/META-INF/manifest.xml: oxt/META-INF/manifest.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(SED) -e $(MANIFEST_SEDSCRIPT) < $^ > $@
