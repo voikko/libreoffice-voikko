@@ -27,7 +27,7 @@ Build requirements
 ==================
 
 - OpenOffice.org (Office and SDK), version 3.0 or later.
-- Libvoikko version 1.5 or later, and compatible versions of Suomi-malaga and
+- Libvoikko version 2.0 or later, and compatible versions of Suomi-malaga and
   malaga.
 - On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
   needed for compilation are usually present in default setups of any
@@ -111,8 +111,9 @@ current practices for OpenOffice.org extension development. The old code
 was based on the internals of OpenOffice.org 1.0 and designed to work with
 a non-free Finnish spellchecking library.
 
-The license has been changed from LGPL to GPL to reflect the fact that this
-extension is useless without libvoikko, which is distributed under the GPL.
+In version 2.0 the license was changed from LGPL to GPL to reflect the fact
+that this extension is useless without libvoikko, which is distributed under
+the GPL.
 
 For changes since 2.0 see ChangeLog.
 

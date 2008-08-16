@@ -1,3 +1,7 @@
+2008-08-16 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Add grammar checker implementation.
+
 2008-08-10 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Adapt to SDK changes on Windows.

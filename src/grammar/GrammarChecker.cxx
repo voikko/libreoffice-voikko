@@ -15,6 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
+#include <com/sun/star/text/TextMarkupType.hpp>
+#include <libvoikko/voikko.h>
+
 #include "GrammarChecker.hxx"
 #include "../common.hxx"
 
@@ -65,35 +68,74 @@ sal_Bool SAL_CALL GrammarChecker::isSpellChecker() throw (uno::RuntimeException)
 
 void SAL_CALL GrammarChecker::startDocument(sal_Int32 /*nDocId*/)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
-	// TODO
+	// do nothing
 }
 
 void SAL_CALL GrammarChecker::startParagraph(sal_Int32 /*nDocId*/)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
-	// TODO
+	// do nothing
 }
 
 void SAL_CALL GrammarChecker::endParagraph(sal_Int32 /*nDocId*/)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
-	// TODO
+	// do nothing
 }
 
 void SAL_CALL GrammarChecker::endDocument(sal_Int32 /*nDocId*/)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
-	// TODO
+	// do nothing
 }
 
 linguistic2::GrammarCheckingResult SAL_CALL GrammarChecker::doGrammarChecking(
-	sal_Int32 /*nDocId*/,
-	const OUString & /*aText*/,
-	const lang::Locale & /*aLocale*/,
-	sal_Int32 /*nStartOfSentencePos*/, sal_Int32 /*nSuggestedSentenceEndPos*/,
+	sal_Int32 nDocId,
+	const OUString & aText,
+	const lang::Locale & aLocale,
+	sal_Int32 nStartOfSentencePos,
+	sal_Int32 nSuggestedSentenceEndPos,
 	const uno::Sequence<sal_Int32> & /*aLanguagePortions*/,
 	const uno::Sequence<lang::Locale> & /*aLanguagePortionsLocales*/)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
-	// FIXME
+	
 	VOIKKO_DEBUG("GrammarChecker::doGrammarChecking");
 	linguistic2::GrammarCheckingResult result;
+	result.nDocumentId = nDocId;
+	result.xFlatParagraph = 0;
+	result.aText = aText;
+	result.aLocale = aLocale;
+	result.nStartOfSentencePos = nStartOfSentencePos;
+	result.nEndOfSentencePos = nSuggestedSentenceEndPos;
+	result.xGrammarChecker = this;
+
+	OString textUtf8 = ::rtl::OUStringToOString(aText, RTL_TEXTENCODING_UTF8);
+	sal_Int32 paraLen = textUtf8.getLength();
+	uno::Sequence<linguistic2::SingleGrammarError> gcErrors(0);
+	sal_Int32 gcI = 0;
+	sal_Int32 vErrorCount = 0;
+	while (paraLen < 1000000) { // sanity check
+		voikko_grammar_error vError = voikko_next_grammar_error_cstr(
+			voikko_handle, textUtf8.getStr(), paraLen, 0, vErrorCount++);
+		if (vError.error_code == 0) break;
+		if ((sal_Int32) vError.startpos < result.nStartOfSentencePos) continue;
+		if ((sal_Int32) vError.startpos >= result.nEndOfSentencePos) break;
+		if ((sal_Int32) (vError.startpos + vError.errorlen) > result.nEndOfSentencePos)
+			result.nEndOfSentencePos = vError.startpos + vError.errorlen;
+		
+		// we have a real grammar error
+		gcErrors.realloc(gcI + 1);
+		gcErrors[gcI].nErrorStart = vError.startpos;
+		gcErrors[gcI].nErrorLength = vError.errorlen;
+		gcErrors[gcI].nErrorLevel = vError.error_level;
+		gcErrors[gcI].nErrorType = text::TextMarkupType::GRAMMAR;
+		gcErrors[gcI].aShortComment = A2OU("Testi");
+		gcErrors[gcI].aFullComment = gcErrors[gcI].aShortComment;
+		gcErrors[gcI].aNewLocale = aLocale;
+
+		uno::Sequence<OUString> gcSuggestions(0);
+		gcErrors[gcI].aSuggestions = gcSuggestions;
+		gcI++;
+	}
+
+	result.aGrammarErrors = gcErrors;
 	return result;
 }
 

@@ -79,6 +79,7 @@ void PropertyManager::initialize() throw (uno::Exception) {
 		voikko_set_string_option(voikko_handle, VOIKKO_OPT_ENCODING, "UTF-8");
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_DOT, 1);
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
+		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_TITLES_IN_GC, 1);
 		voikko_initialized = sal_True;
 		VOIKKO_DEBUG("PropertyManager::initialize: libvoikko initalized");
 	}
