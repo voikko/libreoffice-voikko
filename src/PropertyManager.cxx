@@ -18,6 +18,7 @@
 #include <com/sun/star/beans/XHierarchicalPropertySet.hpp>
 #include <com/sun/star/linguistic2/LinguServiceEventFlags.hpp>
 #include <osl/nlsupport.h>
+#include <rtl/process.h>
 #include <libvoikko/voikko.h>
 
 #include "PropertyManager.hxx"
@@ -80,7 +81,31 @@ void PropertyManager::initialize() throw (uno::Exception) {
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_DOT, 1);
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_TITLES_IN_GC, 1);
-		messageLanguage = "fi_FI";
+		
+		// Determine UI language
+		messageLanguage = "en_US";
+		try {
+			uno::Any langA = readFromRegistry(
+				A2OU("org.openoffice.Office.Linguistic/General"),
+				A2OU("UILocale"));
+			OUString lang;
+			langA >>= lang;
+			VOIKKO_DEBUG_2("Specified UI locale = '%s'", OU2DEBUG(lang));
+			if (lang.match(A2OU("fi"), 0)) messageLanguage = "fi_FI";
+			else if (lang.getLength() == 0) { // Use system default language
+				// FIXME: This does not check LC_MESSAGES. There is
+				// also GetSystemUILanguage but that cannot be used
+				// from extension.
+				rtl_Locale * rtlLocale;
+				osl_getProcessLocale(&rtlLocale);
+				OUString localeLang(rtlLocale->Language);
+				VOIKKO_DEBUG_2("Locale language = '%s'", OU2DEBUG(localeLang));
+				if (localeLang.match(A2OU("fi"), 0))
+					messageLanguage = "fi_FI";
+			}
+		}
+		catch (beans::UnknownPropertyException) { }
+		
 		voikko_initialized = sal_True;
 		VOIKKO_DEBUG("PropertyManager::initialize: libvoikko initalized");
 	}
@@ -142,10 +167,8 @@ void PropertyManager::setHyphWordParts(sal_Bool value) {
 
 uno::Any PropertyManager::readFromRegistry(const OUString group, const OUString & key)
 	throw (beans::UnknownPropertyException) {
-	OUString regPath(A2OU("/org.puimula.ooovoikko.Config/"));
-	regPath += group;
 	uno::Reference<uno::XInterface> rootView =
-		getRegistryProperties(regPath, compContext);
+		getRegistryProperties(group, compContext);
 	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
 	if (!propSet.is()) {
 		VOIKKO_DEBUG("ERROR: failed to obtain propSet");
@@ -157,7 +180,9 @@ uno::Any PropertyManager::readFromRegistry(const OUString group, const OUString 
 
 void PropertyManager::readVoikkoSettings() {
 	try {
-		uno::Any hyphWordParts = readFromRegistry(A2OU("hyphenator"), A2OU("hyphWordParts"));
+		uno::Any hyphWordParts = readFromRegistry(
+			A2OU("/org.puimula.ooovoikko.Config/hyphenator"),
+			A2OU("hyphWordParts"));
 		hyphWordParts >>= this->hyphWordParts;
 	}
 	catch (beans::UnknownPropertyException e) {

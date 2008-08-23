@@ -79,7 +79,9 @@ void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<aw
 	sal_Bool hyphWordPartsValue = sal_False;
 	uno::Any hyphWordPartsAValue;
 	try {
-		hyphWordPartsAValue = thePropertyManager->readFromRegistry(A2OU("hyphenator"), A2OU("hyphWordParts"));
+		hyphWordPartsAValue = thePropertyManager->readFromRegistry(
+			A2OU("/org.puimula.ooovoikko.Config/hyphenator"),
+			A2OU("hyphWordParts"));
 		hyphWordPartsAValue >>= hyphWordPartsValue;
 	}
 	catch (beans::UnknownPropertyException e) {

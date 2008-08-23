@@ -1,3 +1,8 @@
+2008-08-23 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Detect UI language and use that to offer grammar error
+	  explanations in correct language.
+
 2008-08-16 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Add grammar checker implementation.
