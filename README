@@ -27,7 +27,7 @@ Build requirements
 ==================
 
 - OpenOffice.org (Office and SDK), version 3.0 or later.
-- Libvoikko version 2.0 or later, and compatible versions of Suomi-malaga and
+- Libvoikko version 2.1 or later, and compatible versions of Suomi-malaga and
   malaga.
 - On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
   needed for compilation are usually present in default setups of any

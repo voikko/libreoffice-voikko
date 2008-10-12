@@ -28,7 +28,7 @@ include $(PRJ)/settings/std.mk
 # ===== Build settings =====
 
 # Version number of the openoffice.org-voikko extension
-VOIKKO_VERSION=3.0
+VOIKKO_VERSION=3.1
 
 # VOIKKO_DEBUG controls the amount of debugging information in the resulting UNO
 # package. Possible values are NO (creates an optimized build without any
@@ -54,7 +54,7 @@ VOIKKO_DEBUG=NO
 # SHOW_LICENSE=1
 
 # If you want to enable the grammar checker, set this option to 1
-# ENABLE_GRAMMAR_CHECKER=1
+ENABLE_GRAMMAR_CHECKER=1
 
 # Setting this option to 1 causes ugly warnings to be added to visible places
 # in the extension without removing any functionality (codename "tekstintuho").

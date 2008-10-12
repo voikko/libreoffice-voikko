@@ -77,10 +77,10 @@ void PropertyManager::initialize() throw (uno::Exception) {
 			VOIKKO_DEBUG_2("Failed to initialize voikko: %s", voikkoErrorString);
 			return;
 		}
-		voikko_set_string_option(voikko_handle, VOIKKO_OPT_ENCODING, "UTF-8");
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_DOT, 1);
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_TITLES_IN_GC, 1);
+		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, 1);
 		
 		// Determine UI language
 		messageLanguage = "en_US";
@@ -143,7 +143,7 @@ sal_Bool PropertyManager::addLinguServiceEventListener(
 	throw (uno::RuntimeException) {
 	VOIKKO_DEBUG("PropertyManager::addLinguServiceEventListener");
 	if (xLstnr.is()) {
-		sal_Int32	listenerCount = linguEventListeners.getLength();
+		sal_Int32 listenerCount = linguEventListeners.getLength();
 		return (linguEventListeners.addInterface(xLstnr) != listenerCount);
 	}
 	else return sal_False;
@@ -154,7 +154,7 @@ sal_Bool PropertyManager::removeLinguServiceEventListener(
 	throw (uno::RuntimeException) {
 	VOIKKO_DEBUG("PropertyManager::removeLinguServiceEventListener");
 	if (xLstnr.is()) {
-		sal_Int32	listenerCount = linguEventListeners.getLength();
+		sal_Int32 listenerCount = linguEventListeners.getLength();
 		return (linguEventListeners.removeInterface(xLstnr) != listenerCount);
 	}
 	else return sal_False;
