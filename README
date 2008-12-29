@@ -26,13 +26,13 @@ Porting status
 Build requirements
 ==================
 
-- OpenOffice.org (Office and SDK), version 3.0 or later.
+- OpenOffice.org (Office and SDK), version 3.0.1 or later.
 - Libvoikko version 2.0 or later, and compatible versions of Suomi-malaga and
   malaga.
 - On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
   needed for compilation are usually present in default setups of any
   distribution.
-- On Windows: Microsoft Visual C++ 2005 (the Express Edition is sufficient),
+- On Windows: Microsoft Visual C++ 2005 or 2008 (the Express Edition is sufficient),
   GNU make, GNU sed and Info-Zip zip.
 - On OS X: Xcode tools from the operating system installation CD.
   Static versions of libvoikko and its dependencies
@@ -54,9 +54,9 @@ Instructions for compilation
     SDK have spaces in their installation path. On Windows you can use spaces in
     these paths if you replace the components containing spaces with the "8.3" name
     during configuration of the SDK as follows:
-      Office = C:\PROGRA~1\OpenOffice.org
-      Office Base = C:\PROGRA~1\OpenOffice
-      URE = C:\PROGRA~1\OpenOffice.org\URE
+      Office =C:\PROGRA~1\OPENOF~1.ORG
+      Office Base = C:\PROGRA~1\OPENOF~1.ORG\Basis
+      URE = C:\PROGRA~1\OPENOF~1.ORG\URE
 - Run "make oxt". This will build the extensions package voikko.oxt under
   subdirectory build.
   * There are some settings available that can be used to customize the build.

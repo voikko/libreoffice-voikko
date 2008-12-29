@@ -71,7 +71,7 @@ Sequence<OUString> SAL_CALL regHyphenSupportedServiceNames() {
 
 Sequence<OUString> SAL_CALL regGrammarSupportedServiceNames() {
 	Sequence<OUString> s(1);
-	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.linguistic2.GrammarChecker"));
+	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.linguistic2.Proofreader"));
 	return s;
 }
 
