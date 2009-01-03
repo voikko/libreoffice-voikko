@@ -26,7 +26,7 @@ namespace voikko {
 GrammarChecker::GrammarChecker(uno::Reference<uno::XComponentContext> const & context) :
 	cppu::WeakComponentImplHelper4
 	     <lang::XServiceInfo,
-	      linguistic2::XGrammarChecker,
+	      linguistic2::XProofreader,
 	      lang::XInitialization,
 	      lang::XServiceDisplayName>(m_aMutex),
 	compContext(context) { VOIKKO_DEBUG("GrammarChecker:ctor"); }
@@ -66,71 +66,48 @@ sal_Bool SAL_CALL GrammarChecker::isSpellChecker() throw (uno::RuntimeException)
 	return sal_False;
 }
 
-void SAL_CALL GrammarChecker::startDocument(sal_Int32 /*nDocId*/)
-	throw (uno::RuntimeException, lang::IllegalArgumentException) {
-	// do nothing
-}
-
-void SAL_CALL GrammarChecker::startParagraph(sal_Int32 /*nDocId*/)
-	throw (uno::RuntimeException, lang::IllegalArgumentException) {
-	// do nothing
-}
-
-void SAL_CALL GrammarChecker::endParagraph(sal_Int32 /*nDocId*/)
-	throw (uno::RuntimeException, lang::IllegalArgumentException) {
-	// do nothing
-}
-
-void SAL_CALL GrammarChecker::endDocument(sal_Int32 /*nDocId*/)
-	throw (uno::RuntimeException, lang::IllegalArgumentException) {
-	// do nothing
-}
-
-linguistic2::GrammarCheckingResult SAL_CALL GrammarChecker::doGrammarChecking(
-	sal_Int32 nDocId,
+linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
+	const OUString & aDocumentIdentifier,
 	const OUString & aText,
 	const lang::Locale & aLocale,
 	sal_Int32 nStartOfSentencePos,
-	sal_Int32 nSuggestedSentenceEndPos,
-	const uno::Sequence<sal_Int32> & /*aLanguagePortions*/,
-	const uno::Sequence<lang::Locale> & /*aLanguagePortionsLocales*/)
+	sal_Int32 nSuggestedBehindEndOfSentencePosition,
+	const uno::Sequence<beans::PropertyValue> & /* aProperties */)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	
-	VOIKKO_DEBUG("GrammarChecker::doGrammarChecking");
-	linguistic2::GrammarCheckingResult result;
-	result.nDocumentId = nDocId;
+	VOIKKO_DEBUG("GrammarChecker::doProofreading");
+	linguistic2::ProofreadingResult result;
+	result.aDocumentIdentifier = aDocumentIdentifier;
 	result.xFlatParagraph = 0;
 	result.aText = aText;
 	result.aLocale = aLocale;
-	result.nStartOfSentencePos = nStartOfSentencePos;
-	result.nEndOfSentencePos = nSuggestedSentenceEndPos;
-	result.xGrammarChecker = this;
+	result.nStartOfSentencePosition = nStartOfSentencePos;
+	result.nBehindEndOfSentencePosition = nSuggestedBehindEndOfSentencePosition;
+	result.xProofreader = this;
 
 	OString textUtf8 = ::rtl::OUStringToOString(aText, RTL_TEXTENCODING_UTF8);
 	sal_Int32 paraLen = textUtf8.getLength();
-	uno::Sequence<linguistic2::SingleGrammarError> gcErrors(0);
+	uno::Sequence<linguistic2::SingleProofreadingError> gcErrors(0);
 	sal_Int32 gcI = 0;
 	sal_Int32 vErrorCount = 0;
 	while (paraLen < 1000000) { // sanity check
 		voikko_grammar_error vError = voikko_next_grammar_error_cstr(
 			voikko_handle, textUtf8.getStr(), paraLen, 0, vErrorCount++);
 		if (vError.error_code == 0) break;
-		if ((sal_Int32) vError.startpos < result.nStartOfSentencePos) continue;
-		if ((sal_Int32) vError.startpos >= result.nEndOfSentencePos) break;
-		if ((sal_Int32) (vError.startpos + vError.errorlen) > result.nEndOfSentencePos)
-			result.nEndOfSentencePos = vError.startpos + vError.errorlen;
+		if ((sal_Int32) vError.startpos < result.nStartOfSentencePosition) continue;
+		if ((sal_Int32) vError.startpos >= result.nBehindEndOfSentencePosition) break;
+		if ((sal_Int32) (vError.startpos + vError.errorlen) > result.nBehindEndOfSentencePosition)
+			result.nBehindEndOfSentencePosition = vError.startpos + vError.errorlen;
 		
 		// we have a real grammar error
 		gcErrors.realloc(gcI + 1);
 		gcErrors[gcI].nErrorStart = vError.startpos;
 		gcErrors[gcI].nErrorLength = vError.errorlen;
-		gcErrors[gcI].nErrorLevel = vError.error_level;
-		gcErrors[gcI].nErrorType = text::TextMarkupType::GRAMMAR;
+		gcErrors[gcI].nErrorType = text::TextMarkupType::PROOFREADING;
 		OString commentOString = OString(voikko_error_message_cstr(vError.error_code,
 			thePropertyManager->getMessageLanguage()));
 		gcErrors[gcI].aShortComment = OStringToOUString(commentOString, RTL_TEXTENCODING_UTF8);
 		gcErrors[gcI].aFullComment = gcErrors[gcI].aShortComment;
-		gcErrors[gcI].aNewLocale = aLocale;
 
 		// add suggestions
 		int scount = 0;
@@ -146,16 +123,19 @@ linguistic2::GrammarCheckingResult SAL_CALL GrammarChecker::doGrammarChecking(
 		gcI++;
 	}
 
-	result.aGrammarErrors = gcErrors;
+	result.aErrors = gcErrors;
+	result.nStartOfNextSentencePosition = result.nBehindEndOfSentencePosition;
 	return result;
 }
 
-sal_Bool SAL_CALL GrammarChecker::hasOptionsDialog() throw (uno::RuntimeException) {
-	return sal_False;
+void SAL_CALL GrammarChecker::ignoreRule(const OUString & /* aRuleIdentifier */, const lang::Locale & /* aLocale */)
+		throw (lang::IllegalArgumentException, uno::RuntimeException) {
+	// TODO: unimplemented
 }
 
-void SAL_CALL GrammarChecker::runOptionsDialog()
-	throw (uno::RuntimeException) { }
+void SAL_CALL GrammarChecker::resetIgnoreRules() throw (uno::RuntimeException) {
+	// TODO: unimplemented
+}
 
 void SAL_CALL GrammarChecker::initialize(const uno::Sequence<uno::Any> &)
 	throw (uno::RuntimeException, uno::Exception) {

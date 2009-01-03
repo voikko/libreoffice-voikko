@@ -1,3 +1,8 @@
+2008-12-29 Harri Pitkänen <hatapitk@iki.fi>
+
+        * Adapt to grammar checking framework API changes in
+          OOo 3.0.1.
+
 2008-10-12 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Use VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC from
