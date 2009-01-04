@@ -1,7 +1,12 @@
+2009-01-04 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Add option for preventing hyphenation of unknown
+	  or foreign words.
+
 2008-12-29 Harri Pitkänen <hatapitk@iki.fi>
 
-        * Adapt to grammar checking framework API changes in
-          OOo 3.0.1.
+	 * Adapt to grammar checking framework API changes in
+	   OOo 3.0.1.
 
 2008-10-12 Harri Pitkänen <hatapitk@iki.fi>
 

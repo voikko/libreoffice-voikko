@@ -13,5 +13,8 @@
     <prop oor:name="hyphWordParts" oor:type="xs:boolean">
       <value>false</value>
     </prop>
+    <prop oor:name="hyphUnknownWords" oor:type="xs:boolean">
+      <value>true</value>
+    </prop>
   </group>
 </oor:component-data>

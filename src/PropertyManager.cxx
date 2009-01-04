@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 - 2008 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2009 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,6 +184,11 @@ void PropertyManager::readVoikkoSettings() {
 			A2OU("/org.puimula.ooovoikko.Config/hyphenator"),
 			A2OU("hyphWordParts"));
 		hyphWordParts >>= this->hyphWordParts;
+		
+		uno::Any hyphUnknownWords = readFromRegistry(
+			A2OU("/org.puimula.ooovoikko.Config/hyphenator"),
+			A2OU("hyphUnknownWords"));
+		hyphUnknownWords >>= this->hyphUnknownWords;
 	}
 	catch (beans::UnknownPropertyException e) {
 		VOIKKO_DEBUG("ERROR: readVoikkoSettings: UnknownPropertyException");
@@ -271,11 +276,15 @@ void PropertyManager::setValue(const beans::PropertyValue & value) {
 }
 
 inline void PropertyManager::syncHyphenatorSettings() {
-	if (hyphWordParts)
+	if (hyphWordParts) {
 		voikko_set_int_option(voikko_handle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH,
 		                      hyphMinWordLength);
-	else
+	}
+	else {
 		voikko_set_int_option(voikko_handle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH, 2);
+	}
+	
+	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS, hyphUnknownWords);
 }
 
 void PropertyManager::sendLinguEvent(const linguistic2::LinguServiceEvent & event) {

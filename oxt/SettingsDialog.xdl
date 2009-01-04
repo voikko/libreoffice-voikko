@@ -6,5 +6,6 @@
    <dlg:title dlg:value="&amp;7.voikkoasetukset.FrameControl1.Label"/>
   </dlg:titledbox>
   <dlg:checkbox dlg:id="hyphWordParts" dlg:tab-index="0" dlg:left="17" dlg:top="23" dlg:width="218" dlg:height="11" dlg:help-text="&amp;8.voikkoasetukset.hyphWordParts.HelpText" dlg:value="&amp;9.voikkoasetukset.hyphWordParts.Label" dlg:checked="false"/>
+  <dlg:checkbox dlg:id="hyphUnknownWords" dlg:left="17" dlg:top="43" dlg:width="218" dlg:height="11" dlg:help-text="&amp;10.voikkoasetukset.hyphUnknownWords.HelpText" dlg:value="&amp;11.voikkoasetukset.hyphUnknownWords.Label" dlg:checked="false"/>
  </dlg:bulletinboard>
 </dlg:window>

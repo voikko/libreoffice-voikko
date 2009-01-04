@@ -90,6 +90,7 @@ class PropertyManager:
 	sal_Int16 hyphMinTrailing;
 	sal_Int16 hyphMinWordLength;
 	sal_Bool hyphWordParts;
+	sal_Bool hyphUnknownWords;
 	
 	/** Error message from libvoikko initialization function */
 	const char * voikkoErrorString;

@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2008 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2008 - 2009 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,12 +77,19 @@ void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<aw
 	VOIKKO_DEBUG("initOptionsWindowFromRegistry()");
 	if (thePropertyManager == 0) thePropertyManager = new PropertyManager(compContext);
 	sal_Bool hyphWordPartsValue = sal_False;
+	sal_Bool hyphUnknownWordsValue = sal_True;
 	uno::Any hyphWordPartsAValue;
+	uno::Any hyphUnknownWordsAValue;
 	try {
 		hyphWordPartsAValue = thePropertyManager->readFromRegistry(
 			A2OU("/org.puimula.ooovoikko.Config/hyphenator"),
 			A2OU("hyphWordParts"));
 		hyphWordPartsAValue >>= hyphWordPartsValue;
+		
+		hyphUnknownWordsAValue = thePropertyManager->readFromRegistry(
+			A2OU("/org.puimula.ooovoikko.Config/hyphenator"),
+			A2OU("hyphUnknownWords"));
+		hyphUnknownWordsAValue >>= hyphUnknownWordsValue;
 	}
 	catch (beans::UnknownPropertyException e) {
 		VOIKKO_DEBUG("ERROR: UnknownPropertyException");
@@ -97,6 +104,7 @@ void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<aw
 		VOIKKO_DEBUG("ERROR: failed to obtain windowContainer");
 		return;
 	}
+	
 	uno::Reference<awt::XControl> hyphWordParts = windowContainer->getControl(A2OU("hyphWordParts"));
 	if (!hyphWordParts.is()) {
 		VOIKKO_DEBUG("ERROR: failed to obtain hyphWordParts");
@@ -111,6 +119,21 @@ void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<aw
 	if (hyphWordPartsValue) hyphWordPartsAValue <<= (sal_Int16) 1;
 	else hyphWordPartsAValue <<= (sal_Int16) 0;
 	hyphWordPartsProps->setPropertyValue(A2OU("State"), hyphWordPartsAValue);
+	
+	uno::Reference<awt::XControl> hyphUnknownWords = windowContainer->getControl(A2OU("hyphUnknownWords"));
+	if (!hyphUnknownWords.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain hyphUnknownWords");
+		return;
+	}
+	uno::Reference<beans::XPropertySet> hyphUnknownWordsProps =
+		uno::Reference<beans::XPropertySet>(hyphUnknownWords->getModel(), uno::UNO_QUERY);
+	if (!hyphUnknownWordsProps.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain hyphUnknownWordsProps");
+		return;
+	}
+	if (hyphUnknownWordsValue) hyphUnknownWordsAValue <<= (sal_Int16) 1;
+	else hyphUnknownWordsAValue <<= (sal_Int16) 0;
+	hyphUnknownWordsProps->setPropertyValue(A2OU("State"), hyphUnknownWordsAValue);
 }
 
 void SettingsEventHandler::saveOptionsFromWindowToRegistry(const uno::Reference<awt::XWindow> & window) {
@@ -124,7 +147,8 @@ void SettingsEventHandler::saveOptionsFromWindowToRegistry(const uno::Reference<
 	if (!windowContainer.is()) {
 		VOIKKO_DEBUG("ERROR: failed to obtain windowContainer");
 		return;
-        }
+	}
+	
 	uno::Reference<awt::XControl> hyphWordParts = windowContainer->getControl(A2OU("hyphWordParts"));
 	if (!hyphWordParts.is()) {
 		VOIKKO_DEBUG("ERROR: failed to obtain hyphWordParts");
@@ -139,7 +163,22 @@ void SettingsEventHandler::saveOptionsFromWindowToRegistry(const uno::Reference<
 	uno::Any hyphWordPartsAValue = hyphWordPartsProps->getPropertyValue(A2OU("State"));
 	sal_Int16 hyphWordPartsValue = 0;
 	hyphWordPartsAValue >>= hyphWordPartsValue; // 0 = unchecked, 1 = checked
-
+	
+	uno::Reference<awt::XControl> hyphUnknownWords = windowContainer->getControl(A2OU("hyphUnknownWords"));
+	if (!hyphUnknownWords.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain hyphUnknownWords");
+		return;
+	}
+	uno::Reference<beans::XPropertySet> hyphUnknownWordsProps =
+		uno::Reference<beans::XPropertySet>(hyphUnknownWords->getModel(), uno::UNO_QUERY);
+	if (!hyphUnknownWordsProps.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain hyphUnknownWordsProps");
+		return;
+	}
+	uno::Any hyphUnknownWordsAValue = hyphUnknownWordsProps->getPropertyValue(A2OU("State"));
+	sal_Int16 hyphUnknownWordsValue = 0;
+	hyphUnknownWordsAValue >>= hyphUnknownWordsValue; // 0 = unchecked, 1 = checked
+	
 	uno::Reference<uno::XInterface> rootView =
 		getRegistryProperties(A2OU("/org.puimula.ooovoikko.Config/hyphenator"), compContext);
 	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
@@ -147,8 +186,13 @@ void SettingsEventHandler::saveOptionsFromWindowToRegistry(const uno::Reference<
 		VOIKKO_DEBUG("ERROR: failed to obtain propSet");
 		return;
 	}
+	
 	hyphWordPartsAValue <<= (hyphWordPartsValue == 1 ? sal_True : sal_False);
 	propSet->setHierarchicalPropertyValue(A2OU("hyphWordParts"), hyphWordPartsAValue);
+	
+	hyphUnknownWordsAValue <<= (hyphUnknownWordsValue == 1 ? sal_True : sal_False);
+	propSet->setHierarchicalPropertyValue(A2OU("hyphUnknownWords"), hyphUnknownWordsAValue);
+	
 	uno::Reference<util::XChangesBatch> updateCommit(rootView, uno::UNO_QUERY);
 	if (!updateCommit.is()) {
 		VOIKKO_DEBUG("ERROR: failed to obtain updateCommit");
