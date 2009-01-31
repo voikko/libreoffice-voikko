@@ -40,45 +40,10 @@ extern "C" SAL_DLLPUBLIC_EXPORT void SAL_CALL
 	*ppEnvTypeName = CPPU_CURRENT_LANGUAGE_BINDING_NAME ":unsafe";
 } 
 
-
-OUString SAL_CALL regGetSpellImplementationName() {
-	return SpellChecker::getImplementationName_static();
-}
-
-OUString SAL_CALL regGetHyphenImplementationName() {
-	return Hyphenator::getImplementationName_static();
-}
-
-OUString SAL_CALL regGetGrammarImplementationName() {
-	return GrammarChecker::getImplementationName_static();
-}
-
-OUString SAL_CALL regGetSettingsImplementationName() {
-        return SettingsEventHandler::getImplementationName_static();
-}
-
-Sequence<OUString> SAL_CALL regSpellSupportedServiceNames() {
-	Sequence<OUString> s(1);
-	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.linguistic2.SpellChecker"));
-	return s;
-}
-
-Sequence<OUString> SAL_CALL regHyphenSupportedServiceNames() {
-	Sequence<OUString> s(1);
-	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.linguistic2.Hyphenator"));
-	return s;
-}
-
-Sequence<OUString> SAL_CALL regGrammarSupportedServiceNames() {
-	Sequence<OUString> s(1);
-	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.linguistic2.Proofreader"));
-	return s;
-}
-
 Sequence<OUString> SAL_CALL regSettingsSupportedServiceNames() {
-        Sequence<OUString> s(1);
-        s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("org.puimula.ooovoikko.SettingsEventHandlerService"));
-        return s;
+	Sequence<OUString> s(1);
+	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("org.puimula.ooovoikko.SettingsEventHandlerService"));
+	return s;
 }
 
 Reference<XInterface> SAL_CALL regSpellCreate(const Reference<XComponentContext> & context)
@@ -97,29 +62,29 @@ Reference<XInterface> SAL_CALL regGrammarCreate(const Reference<XComponentContex
 }
 
 Reference<XInterface> SAL_CALL regSettingsCreate(const Reference<XComponentContext> & context)
-        SAL_THROW((Exception)) {
-        return static_cast< ::cppu::OWeakObject * >(new SettingsEventHandler(context));
+	SAL_THROW((Exception)) {
+	return static_cast< ::cppu::OWeakObject * >(new SettingsEventHandler(context));
 }
 
 static ::cppu::ImplementationEntry const regEntries[] = {
 	{ &regSpellCreate,
-	  &regGetSpellImplementationName,
-	  &regSpellSupportedServiceNames,
+	  &SpellChecker::getImplementationName_static,
+	  &SpellChecker::getSupportedServiceNames_static,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
 	{ &regHyphenCreate,
-	  &regGetHyphenImplementationName,
-	  &regHyphenSupportedServiceNames,
+	  &Hyphenator::getImplementationName_static,
+	  &Hyphenator::getSupportedServiceNames_static,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
 #ifndef DISABLE_GRAMMAR_CHECKER
 	{ &regGrammarCreate,
-	  &regGetGrammarImplementationName,
+	  &GrammarChecker::getImplementationName_static,
 	  &GrammarChecker::getSupportedServiceNames_static,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
 #endif
-        { &regSettingsCreate,
-          &regGetSettingsImplementationName,
-          &regSettingsSupportedServiceNames,
-          &::cppu::createSingleComponentFactory, 0, 0 },
+	{ &regSettingsCreate,
+	  &SettingsEventHandler::getImplementationName_static,
+	  &regSettingsSupportedServiceNames,
+	  &::cppu::createSingleComponentFactory, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
