@@ -45,9 +45,6 @@ class Hyphenator:
 	             lang::XServiceDisplayName> {
 
 	public:
-	explicit Hyphenator(uno::Reference<uno::XComponentContext> const & context);
-	virtual ~Hyphenator() {}
-
 	// ::com::sun::star::lang::XServiceInfo:
 	virtual OUString SAL_CALL getImplementationName()
 		throw (uno::RuntimeException);
@@ -97,20 +94,23 @@ class Hyphenator:
 		throw (uno::RuntimeException);
 
 	// Static methods
-	static inline OUString getImplementationName_static();
-	static inline uno::Sequence<OUString> getSupportedServiceNames_static();
+	static inline SAL_CALL OUString getImplementationName_static();
+	static inline SAL_CALL uno::Sequence<OUString> getSupportedServiceNames_static();
+	static SAL_CALL uno::Reference<XInterface> get(uno::Reference<uno::XComponentContext> const & context);
 
 	private:
+	explicit Hyphenator(uno::Reference<uno::XComponentContext> const & context);
+	virtual ~Hyphenator() {}
 	virtual void SAL_CALL disposing();
 
 	uno::Reference<uno::XComponentContext> compContext;
 };
 
 // Static method implementations
-inline OUString Hyphenator::getImplementationName_static() {
+inline OUString SAL_CALL Hyphenator::getImplementationName_static() {
 	return A2OU("voikko.Hyphenator");
 }
-inline uno::Sequence<OUString> Hyphenator::getSupportedServiceNames_static() {
+inline uno::Sequence<OUString> SAL_CALL Hyphenator::getSupportedServiceNames_static() {
 	uno::Sequence<OUString> snames(1);
 	snames.getArray()[0] = A2OU("com.sun.star.linguistic2.Hyphenator");
 	return snames;

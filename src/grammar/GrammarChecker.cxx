@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2008 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2008 - 2009 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ GrammarChecker::GrammarChecker(uno::Reference<uno::XComponentContext> const & co
 	      linguistic2::XProofreader,
 	      lang::XInitialization,
 	      lang::XServiceDisplayName>(m_aMutex),
-	compContext(context) { VOIKKO_DEBUG("GrammarChecker:ctor"); }
+	compContext(context) { VOIKKO_DEBUG("GrammarChecker:CTOR"); }
 
 OUString SAL_CALL GrammarChecker::getImplementationName() throw (uno::RuntimeException) {
 	return getImplementationName_static();
@@ -153,8 +153,19 @@ OUString SAL_CALL GrammarChecker::getServiceDisplayName(const lang::Locale & aLo
 		return A2OU("Finnish grammar checker (Voikko)");
 }
 
+static uno::Reference<uno::XInterface> theGrammarChecker;
+
 void SAL_CALL GrammarChecker::disposing() {
-	VOIKKO_DEBUG("GrammarChecker::disposing");
+	VOIKKO_DEBUG("GrammarChecker:DISPOSING");
+	theGrammarChecker = 0;
+}
+
+uno::Reference<uno::XInterface> SAL_CALL GrammarChecker::get(uno::Reference<uno::XComponentContext> const & context) {
+	VOIKKO_DEBUG("GrammarChecker::get");
+	if (!theGrammarChecker.is()) {
+		theGrammarChecker = static_cast< ::cppu::OWeakObject * >(new GrammarChecker(context));
+	}
+	return theGrammarChecker;
 }
 
 }

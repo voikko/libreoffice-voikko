@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2008 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2008 - 2009 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,6 @@ class GrammarChecker:
 	             lang::XServiceDisplayName> {
 
 	public:
-	explicit GrammarChecker(uno::Reference<uno::XComponentContext> const & context);
-	virtual ~GrammarChecker() {}
-
 	// ::com::sun::star::lang::XServiceInfo:
 	virtual OUString SAL_CALL getImplementationName()
 		throw (uno::RuntimeException);
@@ -82,20 +79,23 @@ class GrammarChecker:
 		throw (uno::RuntimeException);
 
 	// Static methods
-	static inline OUString getImplementationName_static();
-	static inline uno::Sequence<OUString> getSupportedServiceNames_static();
+	static inline OUString SAL_CALL getImplementationName_static();
+	static inline uno::Sequence<OUString> SAL_CALL getSupportedServiceNames_static();
+	static uno::Reference<XInterface> SAL_CALL get(uno::Reference<uno::XComponentContext> const & context);
 
 	private:
+	explicit GrammarChecker(uno::Reference<uno::XComponentContext> const & context);
+	virtual ~GrammarChecker() {}
 	virtual void SAL_CALL disposing();
 	uno::Reference<uno::XComponentContext> compContext;
 };
 
 // Static method implementations
-inline OUString GrammarChecker::getImplementationName_static() {
+inline OUString SAL_CALL GrammarChecker::getImplementationName_static() {
 	VOIKKO_DEBUG("GrammarChecker::getImplementationName_static");
 	return A2OU("voikko.GrammarChecker");
 }
-inline uno::Sequence<OUString> GrammarChecker::getSupportedServiceNames_static() {
+inline uno::Sequence<OUString> SAL_CALL GrammarChecker::getSupportedServiceNames_static() {
 	uno::Sequence<OUString> snames(1);
 	VOIKKO_DEBUG("GrammarChecker::getSupportedServiceNames_static");
 	snames.getArray()[0] = A2OU("com.sun.star.linguistic2.Proofreader");

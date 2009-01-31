@@ -30,7 +30,7 @@ SettingsEventHandler::SettingsEventHandler(uno::Reference<uno::XComponentContext
         cppu::WeakComponentImplHelper2
              <lang::XServiceInfo,
               awt::XContainerWindowEventHandler>(m_aMutex),
-        compContext(context) { }
+        compContext(context) { VOIKKO_DEBUG("SettingsEventHandler:CTOR"); }
 
 OUString SAL_CALL SettingsEventHandler::getImplementationName() throw (uno::RuntimeException) {
 	return getImplementationName_static();

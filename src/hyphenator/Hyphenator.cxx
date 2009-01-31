@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 - 2008 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2009 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ Hyphenator::Hyphenator(uno::Reference<uno::XComponentContext> const & context) :
 	      linguistic2::XLinguServiceEventBroadcaster,
 	      lang::XInitialization,
 	      lang::XServiceDisplayName>(m_aMutex),
-	compContext(context) { }
+	compContext(context) { VOIKKO_DEBUG("Hyphenator:CTOR"); }
 
 OUString SAL_CALL Hyphenator::getImplementationName() throw (uno::RuntimeException) {
 	return getImplementationName_static();
@@ -207,8 +207,19 @@ OUString SAL_CALL Hyphenator::getServiceDisplayName(const lang::Locale & aLocale
 		return A2OU("Finnish hyphenator (Voikko)");
 }
 
+static uno::Reference<uno::XInterface> theHyphenator;
+
 void SAL_CALL Hyphenator::disposing() {
-	VOIKKO_DEBUG("Hyphenator::disposing");
+	VOIKKO_DEBUG("Hyphenator:DISPOSING");
+	theHyphenator = 0;
+}
+
+uno::Reference<uno::XInterface> SAL_CALL Hyphenator::get(uno::Reference<uno::XComponentContext> const & context) {
+	VOIKKO_DEBUG("Hyphenator::get");
+	if (!theHyphenator.is()) {
+		theHyphenator = static_cast< ::cppu::OWeakObject * >(new Hyphenator(context));
+	}
+	return theHyphenator;
 }
 
 }

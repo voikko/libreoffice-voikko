@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2009 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ SpellChecker::SpellChecker(uno::Reference<uno::XComponentContext> const & contex
 	      linguistic2::XLinguServiceEventBroadcaster,
 	      lang::XInitialization,
 	      lang::XServiceDisplayName>(m_aMutex),
-	compContext(context) { }
+	compContext(context) { VOIKKO_DEBUG("SpellChecker:CTOR"); }
 
 OUString SAL_CALL SpellChecker::getImplementationName() throw (uno::RuntimeException) {
 	return getImplementationName_static();
@@ -161,8 +161,19 @@ OUString SAL_CALL SpellChecker::getServiceDisplayName(const lang::Locale & aLoca
 		return A2OU("Finnish spellchecker (Voikko)");
 }
 
+static uno::Reference<uno::XInterface> theSpellChecker;
+
 void SAL_CALL SpellChecker::disposing() {
-	VOIKKO_DEBUG("SpellChecker::disposing");
+	VOIKKO_DEBUG("SpellChecker:DISPOSING");
+	theSpellChecker = 0;
+}
+
+uno::Reference<uno::XInterface> SAL_CALL SpellChecker::get(uno::Reference<uno::XComponentContext> const & context) {
+	VOIKKO_DEBUG("SpellChecker::get");
+	if (!theSpellChecker.is()) {
+		theSpellChecker = static_cast< ::cppu::OWeakObject * >(new SpellChecker(context));
+	}
+	return theSpellChecker;
 }
 
 }

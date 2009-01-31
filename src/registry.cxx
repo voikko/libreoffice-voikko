@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 - 2008 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2009 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,37 +46,22 @@ Sequence<OUString> SAL_CALL regSettingsSupportedServiceNames() {
 	return s;
 }
 
-Reference<XInterface> SAL_CALL regSpellCreate(const Reference<XComponentContext> & context)
-	SAL_THROW((Exception)) {
-	return static_cast< ::cppu::OWeakObject * > (new SpellChecker(context));
-}
-
-Reference<XInterface> SAL_CALL regHyphenCreate(const Reference<XComponentContext> & context)
-	SAL_THROW((Exception)) {
-	return static_cast< ::cppu::OWeakObject * >(new Hyphenator(context));
-}
-
-Reference<XInterface> SAL_CALL regGrammarCreate(const Reference<XComponentContext> & context)
-	SAL_THROW((Exception)) {
-	return static_cast< ::cppu::OWeakObject * >(new GrammarChecker(context));
-}
-
 Reference<XInterface> SAL_CALL regSettingsCreate(const Reference<XComponentContext> & context)
 	SAL_THROW((Exception)) {
 	return static_cast< ::cppu::OWeakObject * >(new SettingsEventHandler(context));
 }
 
 static ::cppu::ImplementationEntry const regEntries[] = {
-	{ &regSpellCreate,
+	{ &SpellChecker::get,
 	  &SpellChecker::getImplementationName_static,
 	  &SpellChecker::getSupportedServiceNames_static,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
-	{ &regHyphenCreate,
+	{ &Hyphenator::get,
 	  &Hyphenator::getImplementationName_static,
 	  &Hyphenator::getSupportedServiceNames_static,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
 #ifndef DISABLE_GRAMMAR_CHECKER
-	{ &regGrammarCreate,
+	{ &GrammarChecker::get,
 	  &GrammarChecker::getImplementationName_static,
 	  &GrammarChecker::getSupportedServiceNames_static,
 	  &::cppu::createSingleComponentFactory, 0, 0 },

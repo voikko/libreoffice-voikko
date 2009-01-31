@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2009 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,9 +46,6 @@ class SpellChecker:
 	             lang::XServiceDisplayName> {
 
 	public:
-	explicit SpellChecker(uno::Reference<uno::XComponentContext> const & context);
-	virtual ~SpellChecker() {}
-
 	// ::com::sun::star::lang::XServiceInfo:
 	virtual OUString SAL_CALL getImplementationName()
 		throw (uno::RuntimeException);
@@ -89,10 +86,13 @@ class SpellChecker:
 		throw (uno::RuntimeException);
 
 	// Static methods
-	static inline OUString getImplementationName_static();
-	static inline uno::Sequence<OUString> getSupportedServiceNames_static();
+	static inline OUString SAL_CALL getImplementationName_static();
+	static inline uno::Sequence<OUString> SAL_CALL getSupportedServiceNames_static();
+	static uno::Reference<XInterface> SAL_CALL get(uno::Reference<uno::XComponentContext> const & context);
 
 	private:
+	explicit SpellChecker(uno::Reference<uno::XComponentContext> const & context);
+	virtual ~SpellChecker() {}
 	// SpellChecker(SpellChecker &); // not defined
 	// void operator =(SpellChecker &); // not defined
 
@@ -106,10 +106,10 @@ class SpellChecker:
 };
 
 // Static method implementations
-inline OUString SpellChecker::getImplementationName_static() {
+inline OUString SAL_CALL SpellChecker::getImplementationName_static() {
 	return A2OU("voikko.SpellChecker");
 }
-inline uno::Sequence<OUString> SpellChecker::getSupportedServiceNames_static() {
+inline uno::Sequence<OUString> SAL_CALL SpellChecker::getSupportedServiceNames_static() {
 	uno::Sequence<OUString> snames(1);
 	snames.getArray()[0] = A2OU("com.sun.star.linguistic2.SpellChecker");
 	return snames;

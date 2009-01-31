@@ -29,7 +29,7 @@ namespace voikko {
 PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext):
 	compContext(cContext),
 	linguEventListeners(getVoikkoMutex()) {
-	VOIKKO_DEBUG("PropertyManager created");
+	VOIKKO_DEBUG("PropertyManager:CTOR");
 	isInitialized = sal_False;
 	linguPropSet = 0;
 	hyphMinLeading = 2;
@@ -39,7 +39,7 @@ PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext
 }
 
 PropertyManager::~PropertyManager() {
-	VOIKKO_DEBUG("PropertyManager: running destructor");
+	VOIKKO_DEBUG("PropertyManager:DTOR");
 	/* This might need locking, but since the property manager is never destroyed
 	 * before the office shutdown, there should be no other sources for calls to
 	 * libvoikko at this time. */
