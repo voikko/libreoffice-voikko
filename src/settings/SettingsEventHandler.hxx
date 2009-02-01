@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2008 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2008 - 2009 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include <cppuhelper/basemutex.hxx>
 #include <com/sun/star/lang/XServiceInfo.hpp>
 #include <com/sun/star/awt/XContainerWindowEventHandler.hpp>
+#include <com/sun/star/awt/XControlContainer.hpp>
 #include <com/sun/star/uno/XComponentContext.hpp>
 
 #include "../macros.hxx"
@@ -56,6 +57,9 @@ class SettingsEventHandler:
 	virtual uno::Sequence<OUString> SAL_CALL getSupportedMethodNames()
 	        throw (uno::RuntimeException);
 
+	/** Initialize list of available dictionary variants */
+	void initAvailableVariants(int voikkoHandle);
+
 	// Static methods
 	static inline OUString getImplementationName_static();
 	static inline uno::Sequence<OUString> getSupportedServiceNames_static();
@@ -68,7 +72,12 @@ class SettingsEventHandler:
 	/** Save options from options window to registry */
 	void saveOptionsFromWindowToRegistry(const uno::Reference<awt::XWindow> & window);
 
+	/** Initialize the dropdown box for dictionary variant */
+	void initVariantDropdown(uno::Reference<awt::XControlContainer> windowContainer);
+
 	uno::Reference<uno::XComponentContext> compContext;
+
+	uno::Sequence<OUString> dictionaryVariantList;
 };
 
 // Static method implementations

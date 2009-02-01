@@ -9,6 +9,11 @@
       <value>%origin%</value>
     </prop>
   </group>
+  <group oor:name="dictionary">
+    <prop oor:name="variant" oor:type="xs:string">
+      <value>standard</value>
+    </prop>
+  </group>
   <group oor:name="hyphenator">
     <prop oor:name="hyphWordParts" oor:type="xs:boolean">
       <value>false</value>

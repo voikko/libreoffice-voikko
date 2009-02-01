@@ -10,6 +10,9 @@
     <group oor:name="internal">
       <prop oor:name="location" oor:type="xs:string"/>
     </group>
+    <group oor:name="dictionary">
+      <prop oor:name="variant" oor:type="xs:string"/>
+    </group>
     <group oor:name="hyphenator">
       <prop oor:name="hyphWordParts" oor:type="xs:boolean"/>
       <prop oor:name="hyphUnknownWords" oor:type="xs:boolean"/>

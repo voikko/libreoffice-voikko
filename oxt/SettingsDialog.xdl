@@ -9,20 +9,20 @@
             dlg:title="&amp;1.voikkoasetukset.Title"
             dlg:withtitlebar="false">
   <dlg:bulletinboard>
-    <dlg:titledbox dlg:id="vocabularyFrame" dlg:left="12" dlg:top="12"
-                   dlg:width="230" dlg:height="30">
+    <dlg:fixedline dlg:id="topLine" dlg:left="6" dlg:top="4" dlg:width="248"
+                   dlg:height="10" dlg:value="&amp;13.voikkoasetukset.topLine.Label"/>
+    <dlg:titledbox dlg:id="vocabularyFrame" dlg:left="12" dlg:top="15"
+                   dlg:width="236" dlg:height="30">
       <dlg:title dlg:value="&amp;12.voikkoasetukset.vocabularyFrame.Label"/>
       <dlg:menulist dlg:id="variant" dlg:left="5" dlg:top="12" dlg:width="200"
                     dlg:height="13" dlg:spin="true" dlg:linecount="4"
                     dlg:tab-index="0">
         <dlg:menupopup>
-          <dlg:menuitem dlg:value="kissa" dlg:selected="true"/>
-          <dlg:menuitem dlg:value="koira"/>
         </dlg:menupopup>
       </dlg:menulist>
     </dlg:titledbox>
-    <dlg:titledbox dlg:id="hyphenationFrame" dlg:left="12" dlg:top="47"
-                   dlg:width="230" dlg:height="42"
+    <dlg:titledbox dlg:id="hyphenationFrame" dlg:left="12" dlg:top="50"
+                   dlg:width="236" dlg:height="42"
                    dlg:help-text="&amp;6.voikkoasetukset.hyphenationFrame.HelpText">
       <dlg:title dlg:value="&amp;7.voikkoasetukset.hyphenationFrame.Label"/>
       <dlg:checkbox dlg:id="hyphWordParts" dlg:tab-index="1" dlg:left="5" dlg:top="12"
