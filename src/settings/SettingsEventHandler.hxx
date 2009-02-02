@@ -57,9 +57,6 @@ class SettingsEventHandler:
 	virtual uno::Sequence<OUString> SAL_CALL getSupportedMethodNames()
 	        throw (uno::RuntimeException);
 
-	/** Initialize list of available dictionary variants */
-	void initAvailableVariants(int voikkoHandle);
-
 	// Static methods
 	static inline OUString getImplementationName_static();
 	static inline uno::Sequence<OUString> getSupportedServiceNames_static();
@@ -74,6 +71,9 @@ class SettingsEventHandler:
 
 	/** Initialize the dropdown box for dictionary variant */
 	void initVariantDropdown(uno::Reference<awt::XControlContainer> windowContainer);
+
+	/** Initialize list of available dictionary variants */
+	void initAvailableVariants();
 
 	uno::Reference<uno::XComponentContext> compContext;
 

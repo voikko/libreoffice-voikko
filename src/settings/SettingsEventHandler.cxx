@@ -17,6 +17,7 @@
 
 #include "SettingsEventHandler.hxx"
 #include "../common.hxx"
+#include <libvoikko/voikko.h>
 #include <com/sun/star/awt/XControl.hpp>
 #include <com/sun/star/awt/XControlContainer.hpp>
 #include <com/sun/star/beans/PropertyValue.hpp>
@@ -221,6 +222,7 @@ void SettingsEventHandler::initVariantDropdown(uno::Reference<awt::XControlConta
 	}
 	
 	// TODO: remove debug code
+	initAvailableVariants();
 	uno::Any stringListAValue = variantProps->getPropertyValue(A2OU("StringItemList"));
 	uno::Sequence<OUString> stringListValue;
 	stringListAValue >>= stringListValue;
@@ -234,8 +236,26 @@ void SettingsEventHandler::initVariantDropdown(uno::Reference<awt::XControlConta
 	variantProps->setPropertyValue(A2OU("SelectedItems"), selectedAValues);
 }
 
-void SettingsEventHandler::initAvailableVariants(int voikkoHandle) {
-	// TODO: unimplemented
+void SettingsEventHandler::initAvailableVariants() {
+	// TODO: explicit dictionary path
+	voikko_dict ** dicts = voikko_list_dicts(0);
+	if (!dicts) {
+		VOIKKO_DEBUG("ERROR: Failed to list available dictionaries");
+		return;
+	}
+	
+	size_t nDicts = 0;
+	for (voikko_dict ** i = dicts; *i; i++) {
+		nDicts++;
+	}
+	dictionaryVariantList = uno::Sequence<OUString>(nDicts);
+	for (size_t i = 0; i < nDicts; i++) {
+		OUString dictName = A2OU(voikko_dict_variant(dicts[i]));
+		dictName += A2OU(": ");
+		dictName += A2OU(voikko_dict_description(dicts[i]));
+		dictionaryVariantList[i] = dictName;
+	}
+	voikko_free_dicts(dicts);
 }
 
 }
