@@ -84,6 +84,11 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 	result.nStartOfSentencePosition = nStartOfSentencePos;
 	result.nBehindEndOfSentencePosition = nSuggestedBehindEndOfSentencePosition;
 	result.xProofreader = this;
+	
+	if (!voikko_initialized) {
+		VOIKKO_DEBUG("ERROR: GrammarChecker::doProofreading called without initializing libvoikko");
+		return result;
+	}
 
 	OString textUtf8 = ::rtl::OUStringToOString(aText, RTL_TEXTENCODING_UTF8);
 	sal_Int32 paraLen = textUtf8.getLength();
@@ -163,7 +168,9 @@ void SAL_CALL GrammarChecker::disposing() {
 uno::Reference<uno::XInterface> SAL_CALL GrammarChecker::get(uno::Reference<uno::XComponentContext> const & context) {
 	VOIKKO_DEBUG("GrammarChecker::get");
 	if (!theGrammarChecker.is()) {
-		theGrammarChecker = static_cast< ::cppu::OWeakObject * >(new GrammarChecker(context));
+		GrammarChecker * grammarChecker = new GrammarChecker(context);
+		grammarChecker->initialize(uno::Sequence<uno::Any>());
+		theGrammarChecker = static_cast< ::cppu::OWeakObject * >(grammarChecker);
 	}
 	return theGrammarChecker;
 }

@@ -36,6 +36,7 @@ PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext
 	hyphMinTrailing = 2;
 	hyphMinWordLength = 5;
 	hyphWordParts = sal_False;
+	hyphUnknownWords = sal_True;
 }
 
 PropertyManager::~PropertyManager() {
@@ -275,7 +276,7 @@ void PropertyManager::setValue(const beans::PropertyValue & value) {
 	}
 }
 
-inline void PropertyManager::syncHyphenatorSettings() {
+void PropertyManager::syncHyphenatorSettings() {
 	if (hyphWordParts) {
 		voikko_set_int_option(voikko_handle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH,
 		                      hyphMinWordLength);
@@ -284,7 +285,8 @@ inline void PropertyManager::syncHyphenatorSettings() {
 		voikko_set_int_option(voikko_handle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH, 2);
 	}
 	
-	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS, hyphUnknownWords);
+	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS,
+	                       hyphUnknownWords ? 1 : 0);
 }
 
 void PropertyManager::sendLinguEvent(const linguistic2::LinguServiceEvent & event) {
