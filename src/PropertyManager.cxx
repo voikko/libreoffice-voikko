@@ -51,10 +51,16 @@ PropertyManager::~PropertyManager() {
 	}
 }
 
-void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent &)
+void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent & pce)
 	throw (uno::RuntimeException) {
-	// FIXME: property change notifications are not being received
-	// VOIKKO_DEBUG_2("PropertyManager::propertyChange: %s", OU2DEBUG(pce.PropertyName));
+	VOIKKO_DEBUG_2("PropertyManager::propertyChange: %s", OU2DEBUG(pce.PropertyName));
+	setProperties(linguPropSet);
+	linguistic2::LinguServiceEvent event;
+	event.nEvent =  linguistic2::LinguServiceEventFlags::SPELL_CORRECT_WORDS_AGAIN;
+	event.nEvent |= linguistic2::LinguServiceEventFlags::SPELL_WRONG_WORDS_AGAIN;
+	event.nEvent |= linguistic2::LinguServiceEventFlags::HYPHENATE_AGAIN;
+	event.nEvent |= linguistic2::LinguServiceEventFlags::PROOFREAD_AGAIN;
+	sendLinguEvent(event);
 }
 
 void SAL_CALL PropertyManager::disposing(const lang::EventObject &)
@@ -105,7 +111,9 @@ void PropertyManager::initialize() throw (uno::Exception) {
 					messageLanguage = "fi_FI";
 			}
 		}
-		catch (beans::UnknownPropertyException) { }
+		catch (beans::UnknownPropertyException) {
+			VOIKKO_DEBUG("ERROR: PropertyManager::initialize caught UnknownPropertyException");
+		}
 		
 		voikko_initialized = sal_True;
 		VOIKKO_DEBUG("PropertyManager::initialize: libvoikko initalized");
@@ -131,6 +139,7 @@ void PropertyManager::initialize() throw (uno::Exception) {
 	event.nEvent =  linguistic2::LinguServiceEventFlags::SPELL_CORRECT_WORDS_AGAIN;
 	event.nEvent |= linguistic2::LinguServiceEventFlags::SPELL_WRONG_WORDS_AGAIN;
 	event.nEvent |= linguistic2::LinguServiceEventFlags::HYPHENATE_AGAIN;
+	event.nEvent |= linguistic2::LinguServiceEventFlags::PROOFREAD_AGAIN;
 	sendLinguEvent(event);
 }
 
@@ -290,19 +299,23 @@ void PropertyManager::syncHyphenatorSettings() {
 }
 
 void PropertyManager::sendLinguEvent(const linguistic2::LinguServiceEvent & event) {
+	VOIKKO_DEBUG("PropertyManager::sendLinguEvent");
 	cppu::OInterfaceIteratorHelper iterator(linguEventListeners);
 	while (iterator.hasMoreElements()) {
 		uno::Reference<linguistic2::XLinguServiceEventListener>
 			ref(iterator.next(), uno::UNO_QUERY);
-		if (ref.is()) ref->processLinguServiceEvent(event);
+		if (ref.is()) {
+			VOIKKO_DEBUG("PropertyManager::sendLinguEvent sending event");
+			ref->processLinguServiceEvent(event);
+		}
 	}
 }
 
 static uno::Reference<voikko::PropertyManager> thePropertyManager;
 
 uno::Reference<voikko::PropertyManager> PropertyManager::get(uno::Reference<uno::XComponentContext> const & context) {
-	VOIKKO_DEBUG("PropertyManager::get");
 	if (!thePropertyManager.is()) {
+		VOIKKO_DEBUG("PropertyManager::get first");
 		thePropertyManager = new PropertyManager(context);
 	}
 	return thePropertyManager;
