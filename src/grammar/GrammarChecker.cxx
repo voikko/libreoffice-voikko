@@ -29,7 +29,10 @@ GrammarChecker::GrammarChecker(uno::Reference<uno::XComponentContext> const & co
 	      linguistic2::XProofreader,
 	      lang::XInitialization,
 	      lang::XServiceDisplayName>(m_aMutex),
-	compContext(context) { VOIKKO_DEBUG("GrammarChecker:CTOR"); }
+	compContext(context) {
+	VOIKKO_DEBUG("GrammarChecker:CTOR");
+	PropertyManager::get(compContext);
+}
 
 OUString SAL_CALL GrammarChecker::getImplementationName() throw (uno::RuntimeException) {
 	return getImplementationName_static();
@@ -110,7 +113,7 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 		gcErrors[gcI].nErrorLength = vError.errorlen;
 		gcErrors[gcI].nErrorType = text::TextMarkupType::PROOFREADING;
 		OString commentOString = OString(voikko_error_message_cstr(vError.error_code,
-			thePropertyManager->getMessageLanguage()));
+			PropertyManager::get(compContext)->getMessageLanguage()));
 		gcErrors[gcI].aShortComment = OStringToOUString(commentOString, RTL_TEXTENCODING_UTF8);
 		gcErrors[gcI].aFullComment = gcErrors[gcI].aShortComment;
 
@@ -144,9 +147,6 @@ void SAL_CALL GrammarChecker::resetIgnoreRules() throw (uno::RuntimeException) {
 
 void SAL_CALL GrammarChecker::initialize(const uno::Sequence<uno::Any> &)
 	throw (uno::RuntimeException, uno::Exception) {
-	VOIKKO_DEBUG("GrammarChecker::initialize");
-	if (thePropertyManager == 0) thePropertyManager = new PropertyManager(compContext);
-	thePropertyManager->initialize();
 }
 
 OUString SAL_CALL GrammarChecker::getServiceDisplayName(const lang::Locale & aLocale)
@@ -168,9 +168,7 @@ void SAL_CALL GrammarChecker::disposing() {
 uno::Reference<uno::XInterface> SAL_CALL GrammarChecker::get(uno::Reference<uno::XComponentContext> const & context) {
 	VOIKKO_DEBUG("GrammarChecker::get");
 	if (!theGrammarChecker.is()) {
-		GrammarChecker * grammarChecker = new GrammarChecker(context);
-		grammarChecker->initialize(uno::Sequence<uno::Any>());
-		theGrammarChecker = static_cast< ::cppu::OWeakObject * >(grammarChecker);
+		theGrammarChecker = static_cast< ::cppu::OWeakObject * >(new GrammarChecker(context));
 	}
 	return theGrammarChecker;
 }

@@ -35,8 +35,6 @@ extern sal_Bool voikko_initialized;
 
 extern int voikko_handle;
 
-extern uno::Reference<voikko::PropertyManager> thePropertyManager;
-
 }
 
 #endif

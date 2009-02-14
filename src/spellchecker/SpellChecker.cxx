@@ -30,7 +30,10 @@ SpellChecker::SpellChecker(uno::Reference<uno::XComponentContext> const & contex
 	      linguistic2::XLinguServiceEventBroadcaster,
 	      lang::XInitialization,
 	      lang::XServiceDisplayName>(m_aMutex),
-	compContext(context) { VOIKKO_DEBUG("SpellChecker:CTOR"); }
+	compContext(context) {
+	VOIKKO_DEBUG("SpellChecker:CTOR");
+	PropertyManager::get(compContext);
+}
 
 OUString SAL_CALL SpellChecker::getImplementationName() throw (uno::RuntimeException) {
 	return getImplementationName_static();
@@ -67,11 +70,11 @@ sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Loca
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
 	const char * c_str = oWord.getStr();
 
-	thePropertyManager->setValues(aProperties);
+	PropertyManager::get(compContext)->setValues(aProperties);
 	// VOIKKO_DEBUG_2("SpellChecker::isValid: c_str: '%s'\n", c_str);
 	int result = voikko_spell_cstr(voikko_handle, c_str);
 	// VOIKKO_DEBUG_2("SpellChecker::isValid: result = %i\n", result);
-	thePropertyManager->resetValues(aProperties);
+	PropertyManager::get(compContext)->resetValues(aProperties);
 	if (result) return sal_True;
 	else return sal_False;
 }
@@ -86,10 +89,7 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 		SpellAlternatives * alternatives = new SpellAlternatives();
 		alternatives->word = aWord;
 		uno::Sequence<OUString> suggSeq(1);
-		if (thePropertyManager != 0)
-			suggSeq.getArray()[0] = thePropertyManager->getInitializationStatus();
-		else
-			suggSeq.getArray()[0] = A2OU("PropertyManager does not exist");
+		suggSeq.getArray()[0] = PropertyManager::get(compContext)->getInitializationStatus();
 		alternatives->alternatives = suggSeq;
 		return alternatives;
 	}
@@ -99,13 +99,13 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
 	const char * c_str = oWord.getStr();
 
-	thePropertyManager->setValues(aProperties);
+	PropertyManager::get(compContext)->setValues(aProperties);
 	if (voikko_spell_cstr(voikko_handle, c_str)) {
-		thePropertyManager->resetValues(aProperties);
+		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
 	}
 	char ** suggestions = voikko_suggest_cstr(voikko_handle, c_str);
-	thePropertyManager->resetValues(aProperties);
+	PropertyManager::get(compContext)->resetValues(aProperties);
 	SpellAlternatives * alternatives = new SpellAlternatives();
 	alternatives->word = aWord;
 	if (suggestions == 0 || suggestions[0] == 0) return alternatives;
@@ -130,9 +130,7 @@ sal_Bool SAL_CALL SpellChecker::addLinguServiceEventListener(
 	throw (uno::RuntimeException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("SpellChecker::addLinguServiceEventListener");
-	if (thePropertyManager != 0)
-		return thePropertyManager->addLinguServiceEventListener(xLstnr);
-	else return sal_False;
+	return PropertyManager::get(compContext)->addLinguServiceEventListener(xLstnr);
 }
 
 sal_Bool SAL_CALL SpellChecker::removeLinguServiceEventListener(
@@ -140,17 +138,11 @@ sal_Bool SAL_CALL SpellChecker::removeLinguServiceEventListener(
 	throw (uno::RuntimeException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("SpellChecker::removeLinguServiceEventListener");
-	if (thePropertyManager != 0)
-		return thePropertyManager->removeLinguServiceEventListener(xLstnr);
-	else return sal_False;
+	return PropertyManager::get(compContext)->removeLinguServiceEventListener(xLstnr);
 }
 
 void SAL_CALL SpellChecker::initialize(const uno::Sequence<uno::Any> &)
 	throw (uno::RuntimeException, uno::Exception) {
-	osl::MutexGuard vmg(getVoikkoMutex());
-	VOIKKO_DEBUG("SpellChecker::initialize");
-	if (thePropertyManager == 0) thePropertyManager = new PropertyManager(compContext);
-	thePropertyManager->initialize();
 }
 
 OUString SAL_CALL SpellChecker::getServiceDisplayName(const lang::Locale & aLocale)

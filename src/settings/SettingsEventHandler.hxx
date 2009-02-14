@@ -84,7 +84,7 @@ class SettingsEventHandler:
 inline OUString SettingsEventHandler::getImplementationName_static() {
         return A2OU("org.puimula.ooovoikko.SettingsEventHandlerImplementation");
 }
-inline uno::Sequence<OUString> SettingsEventHandler::getSupportedServiceNames_static() {
+inline uno::Sequence<OUString> SAL_CALL SettingsEventHandler::getSupportedServiceNames_static() {
         uno::Sequence<OUString> snames(1);
         snames.getArray()[0] = A2OU("org.puimula.ooovoikko.SettingsEventHandlerService");
         return snames;

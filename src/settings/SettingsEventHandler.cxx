@@ -61,7 +61,7 @@ sal_Bool SAL_CALL SettingsEventHandler::callHandlerMethod(const uno::Reference<a
 	EventObject >>= eventS;
 	if (eventS == A2OU("ok")) {
 		saveOptionsFromWindowToRegistry(xWindow);
-		if (thePropertyManager != 0) thePropertyManager->readVoikkoSettings();
+		PropertyManager::get(compContext)->readVoikkoSettings();
 		return sal_True;
 	}
 	if (eventS == A2OU("back") || eventS == A2OU("initialize")) {
@@ -80,18 +80,17 @@ uno::Sequence<OUString> SAL_CALL SettingsEventHandler::getSupportedMethodNames()
 
 void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<awt::XWindow> & window) {
 	VOIKKO_DEBUG("initOptionsWindowFromRegistry()");
-	if (thePropertyManager == 0) thePropertyManager = new PropertyManager(compContext);
 	sal_Bool hyphWordPartsValue = sal_False;
 	sal_Bool hyphUnknownWordsValue = sal_True;
 	uno::Any hyphWordPartsAValue;
 	uno::Any hyphUnknownWordsAValue;
 	try {
-		hyphWordPartsAValue = thePropertyManager->readFromRegistry(
+		hyphWordPartsAValue = PropertyManager::get(compContext)->readFromRegistry(
 			A2OU("/org.puimula.ooovoikko.Config/hyphenator"),
 			A2OU("hyphWordParts"));
 		hyphWordPartsAValue >>= hyphWordPartsValue;
 		
-		hyphUnknownWordsAValue = thePropertyManager->readFromRegistry(
+		hyphUnknownWordsAValue = PropertyManager::get(compContext)->readFromRegistry(
 			A2OU("/org.puimula.ooovoikko.Config/hyphenator"),
 			A2OU("hyphUnknownWords"));
 		hyphUnknownWordsAValue >>= hyphUnknownWordsValue;

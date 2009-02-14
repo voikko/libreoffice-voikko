@@ -40,12 +40,6 @@ extern "C" SAL_DLLPUBLIC_EXPORT void SAL_CALL
 	*ppEnvTypeName = CPPU_CURRENT_LANGUAGE_BINDING_NAME ":unsafe";
 } 
 
-Sequence<OUString> SAL_CALL regSettingsSupportedServiceNames() {
-	Sequence<OUString> s(1);
-	s[0] = OUString(RTL_CONSTASCII_USTRINGPARAM("org.puimula.ooovoikko.SettingsEventHandlerService"));
-	return s;
-}
-
 Reference<XInterface> SAL_CALL regSettingsCreate(const Reference<XComponentContext> & context)
 	SAL_THROW((Exception)) {
 	return static_cast< ::cppu::OWeakObject * >(new SettingsEventHandler(context));
@@ -68,7 +62,7 @@ static ::cppu::ImplementationEntry const regEntries[] = {
 #endif
 	{ &regSettingsCreate,
 	  &SettingsEventHandler::getImplementationName_static,
-	  &regSettingsSupportedServiceNames,
+	  &SettingsEventHandler::getSupportedServiceNames_static,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0 }
 };

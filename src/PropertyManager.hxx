@@ -36,8 +36,6 @@ using namespace ::rtl;
 class PropertyManager:
 	public cppu::WeakImplHelper1<beans::XPropertyChangeListener> {
 	public:
-	explicit PropertyManager(uno::Reference<uno::XComponentContext> cContext);
-	virtual ~PropertyManager();
 	
 	// XPropertyChangeListener
 	virtual void SAL_CALL propertyChange(const beans::PropertyChangeEvent & pce)
@@ -74,7 +72,13 @@ class PropertyManager:
 	/** Returns the language code for user messages */
 	const char * getMessageLanguage();
 	
+	/** Returns the singleton instance of this object */
+	static uno::Reference<voikko::PropertyManager> get(uno::Reference<uno::XComponentContext> const & context);
+	
 	private:
+	explicit PropertyManager(uno::Reference<uno::XComponentContext> cContext);
+	virtual ~PropertyManager();
+	
 	void setProperties(const uno::Reference<beans::XPropertySet> & properties);
 	void setValue(const beans::PropertyValue & value);
 	void syncHyphenatorSettings();

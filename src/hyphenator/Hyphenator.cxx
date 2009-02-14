@@ -32,7 +32,10 @@ Hyphenator::Hyphenator(uno::Reference<uno::XComponentContext> const & context) :
 	      linguistic2::XLinguServiceEventBroadcaster,
 	      lang::XInitialization,
 	      lang::XServiceDisplayName>(m_aMutex),
-	compContext(context) { VOIKKO_DEBUG("Hyphenator:CTOR"); }
+	compContext(context) {
+	VOIKKO_DEBUG("Hyphenator:CTOR");
+	PropertyManager::get(compContext);
+}
 
 OUString SAL_CALL Hyphenator::getImplementationName() throw (uno::RuntimeException) {
 	return getImplementationName_static();
@@ -70,23 +73,23 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	VOIKKO_DEBUG("Hyphenator::hyphenate");
 	if (!voikko_initialized) return 0;
 	if (aWord.getLength() > 10000) return 0;
-	thePropertyManager->setValues(aProperties);
+	PropertyManager::get(compContext)->setValues(aProperties);
 
-	sal_Int16 minLeading = thePropertyManager->getHyphMinLeading();
-	sal_Int16 minTrailing = thePropertyManager->getHyphMinTrailing();
+	sal_Int16 minLeading = PropertyManager::get(compContext)->getHyphMinLeading();
+	sal_Int16 minTrailing = PropertyManager::get(compContext)->getHyphMinTrailing();
 	sal_Int16 wlen = (sal_Int16) aWord.getLength();
 	
 	// If the word is too short to be hyphenated, return no hyphenation points
-	if (wlen < thePropertyManager->getHyphMinWordLength() ||
+	if (wlen < PropertyManager::get(compContext)->getHyphMinWordLength() ||
 	    wlen < minLeading + minTrailing) {
-		thePropertyManager->resetValues(aProperties);
+		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
 	}
 
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
 	char * hyphenationPoints = voikko_hyphenate_cstr(voikko_handle, oWord.getStr());
 	if (hyphenationPoints == 0) {
-		thePropertyManager->resetValues(aProperties);
+		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
 	}
 
@@ -104,7 +107,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 
 	// return the result
 	voikko_free_hyphenate(hyphenationPoints);
-	thePropertyManager->resetValues(aProperties);
+	PropertyManager::get(compContext)->resetValues(aProperties);
 	if (hyphenPos != -1) return new HyphenatedWord(aWord, hyphenPos - 1);
 	else return 0;
 }
@@ -129,14 +132,14 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	if (!voikko_initialized) return 0;
 	if (aWord.getLength() > 10000) return 0;
 	sal_Int16 len = (sal_Int16) aWord.getLength();
-	thePropertyManager->setValues(aProperties);
+	PropertyManager::get(compContext)->setValues(aProperties);
 
 	// If the word is too short to be hyphenated, return no hyphenation points
-	sal_Int16 minLeading = thePropertyManager->getHyphMinLeading();
-	sal_Int16 minTrailing = thePropertyManager->getHyphMinTrailing();
-	if (len < thePropertyManager->getHyphMinWordLength() ||
+	sal_Int16 minLeading = PropertyManager::get(compContext)->getHyphMinLeading();
+	sal_Int16 minTrailing = PropertyManager::get(compContext)->getHyphMinTrailing();
+	if (len < PropertyManager::get(compContext)->getHyphMinWordLength() ||
 	    len < minLeading + minTrailing) {
-		thePropertyManager->resetValues(aProperties);
+		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
 	}
 
@@ -144,7 +147,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	uno::Reference<linguistic2::XPossibleHyphens> xRes;
 	char * hyphenationPoints = voikko_hyphenate_cstr(voikko_handle, oWord.getStr());
 	if (hyphenationPoints == 0) {
-		thePropertyManager->resetValues(aProperties);
+		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
 	}
 
@@ -167,7 +170,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	xRes = new PossibleHyphens(aWord, hyphenatedWord, hyphenSeq);
 
 	voikko_free_hyphenate(hyphenationPoints);
-	thePropertyManager->resetValues(aProperties);
+	PropertyManager::get(compContext)->resetValues(aProperties);
 	return xRes;
 }
 
@@ -176,9 +179,7 @@ sal_Bool SAL_CALL Hyphenator::addLinguServiceEventListener(
 	throw (uno::RuntimeException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("Hyphenator::addLinguServiceEventListener");
-	if (thePropertyManager != 0)
-		return thePropertyManager->addLinguServiceEventListener(xLstnr);
-	else return sal_False;
+	return PropertyManager::get(compContext)->addLinguServiceEventListener(xLstnr);
 }
 
 sal_Bool SAL_CALL Hyphenator::removeLinguServiceEventListener(
@@ -186,17 +187,11 @@ sal_Bool SAL_CALL Hyphenator::removeLinguServiceEventListener(
 	throw (uno::RuntimeException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("Hyphenator::removeLinguServiceEventListener");
-	if (thePropertyManager != 0)
-		return thePropertyManager->removeLinguServiceEventListener(xLstnr);
-	else return sal_False;
+	return PropertyManager::get(compContext)->removeLinguServiceEventListener(xLstnr);
 }
 
 void SAL_CALL Hyphenator::initialize(const uno::Sequence<uno::Any> &)
 	throw (uno::RuntimeException, uno::Exception) {
-	osl::MutexGuard vmg(getVoikkoMutex());
-	VOIKKO_DEBUG("Hyphenator::initialize");
-	if (thePropertyManager == 0) thePropertyManager = new PropertyManager(compContext);
-	thePropertyManager->initialize();
 }
 
 OUString SAL_CALL Hyphenator::getServiceDisplayName(const lang::Locale & aLocale)

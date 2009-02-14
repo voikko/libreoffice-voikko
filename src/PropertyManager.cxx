@@ -37,6 +37,7 @@ PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext
 	hyphMinWordLength = 5;
 	hyphWordParts = sal_False;
 	hyphUnknownWords = sal_True;
+	initialize();
 }
 
 PropertyManager::~PropertyManager() {
@@ -58,7 +59,6 @@ void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent &
 
 void SAL_CALL PropertyManager::disposing(const lang::EventObject &)
 	throw (uno::RuntimeException){
-	VOIKKO_DEBUG("PropertyManager::disposing");
 }
 
 void PropertyManager::initialize() throw (uno::Exception) {
@@ -296,6 +296,16 @@ void PropertyManager::sendLinguEvent(const linguistic2::LinguServiceEvent & even
 			ref(iterator.next(), uno::UNO_QUERY);
 		if (ref.is()) ref->processLinguServiceEvent(event);
 	}
+}
+
+static uno::Reference<voikko::PropertyManager> thePropertyManager;
+
+uno::Reference<voikko::PropertyManager> PropertyManager::get(uno::Reference<uno::XComponentContext> const & context) {
+	VOIKKO_DEBUG("PropertyManager::get");
+	if (!thePropertyManager.is()) {
+		thePropertyManager = new PropertyManager(context);
+	}
+	return thePropertyManager;
 }
 
 }
