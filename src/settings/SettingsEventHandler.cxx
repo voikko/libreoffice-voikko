@@ -205,6 +205,24 @@ void SettingsEventHandler::saveOptionsFromWindowToRegistry(const uno::Reference<
 		return;
 	}
 	updateCommit->commitChanges();
+	
+	// dictionary variant
+	OUString variantValue = getSelectedVariant(windowContainer);
+	uno::Any variantAValue;
+	variantAValue <<= variantValue;
+	rootView = getRegistryProperties(A2OU("/org.puimula.ooovoikko.Config/dictionary"), compContext);
+	uno::Reference<beans::XHierarchicalPropertySet> variantPropSet(rootView, uno::UNO_QUERY);
+	if (!variantPropSet.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain variantPropSet");
+		return;
+	}
+	variantPropSet->setHierarchicalPropertyValue(A2OU("variant"), variantAValue);
+	uno::Reference<util::XChangesBatch> variantUpdateCommit(rootView, uno::UNO_QUERY);
+	if (!variantUpdateCommit.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain variantUpdateCommit");
+		return;
+	}
+	variantUpdateCommit->commitChanges();
 }
 
 void SettingsEventHandler::initVariantDropdown(const uno::Reference<awt::XControlContainer> & windowContainer) {
@@ -220,19 +238,17 @@ void SettingsEventHandler::initVariantDropdown(const uno::Reference<awt::XContro
 		return;
 	}
 	
-	// TODO: remove debug code
+	// populate dropdown list with available variants
 	initAvailableVariants();
-	uno::Any stringListAValue = variantProps->getPropertyValue(A2OU("StringItemList"));
-	uno::Sequence<OUString> stringListValue;
-	stringListAValue >>= stringListValue;
+	uno::Any stringListAValue;
 	stringListAValue <<= dictionaryVariantList;
 	variantProps->setPropertyValue(A2OU("StringItemList"), stringListAValue);
 	
 	// read selected dictionary variant from registry
 	OUString registryVariantValue(A2OU("standard"));
 	try {
-		uno::Any registryVariantAValue;
-		registryVariantAValue = PropertyManager::get(compContext)->readFromRegistry(
+		uno::Any registryVariantAValue =
+			PropertyManager::get(compContext)->readFromRegistry(
 			A2OU("/org.puimula.ooovoikko.Config/dictionary"),
 			A2OU("variant"));
 		registryVariantAValue >>= registryVariantValue;
@@ -251,6 +267,7 @@ void SettingsEventHandler::initVariantDropdown(const uno::Reference<awt::XContro
 		}
 	}
 	
+	// set the selected item in the dropdown list
 	uno::Any selectedAValues;
 	selectedAValues <<= selectedValues;
 	variantProps->setPropertyValue(A2OU("SelectedItems"), selectedAValues);
@@ -276,6 +293,40 @@ void SettingsEventHandler::initAvailableVariants() {
 		dictionaryVariantList[i] = dictName;
 	}
 	voikko_free_dicts(dicts);
+}
+
+OUString SettingsEventHandler::getSelectedVariant(
+		const uno::Reference<awt::XControlContainer> & windowContainer) {
+	uno::Reference<awt::XControl> variantDropdown = windowContainer->getControl(A2OU("variant"));
+	if (!variantDropdown.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain variant dropdown control");
+		return A2OU("standard");
+	}
+	uno::Reference<beans::XPropertySet> variantProps =
+		uno::Reference<beans::XPropertySet>(variantDropdown->getModel(), uno::UNO_QUERY);
+	if (!variantDropdown.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain variantProps");
+		return A2OU("standard");
+	}
+	
+	// get all values
+	uno::Any stringListAValue = variantProps->getPropertyValue(A2OU("StringItemList"));
+	uno::Sequence<OUString> stringListValue;
+	stringListAValue >>= stringListValue;
+	
+	// get the selected item index
+	uno::Any selectedAValues = variantProps->getPropertyValue(A2OU("SelectedItems"));
+	uno::Sequence<sal_Int16> selectedValues(1);
+	selectedAValues >>= selectedValues;
+	
+	// parse the variant id from the string
+	OUString selectedValue = stringListValue[selectedValues[0]];
+	sal_Int32 variantIdEnd = selectedValue.indexOf(A2OU(":"));
+	if (variantIdEnd != -1) {
+		return selectedValue.copy(0, variantIdEnd);
+	}
+	VOIKKO_DEBUG("ERROR: failed to get the selected variant, returning default");
+	return A2OU("standard");
 }
 
 }

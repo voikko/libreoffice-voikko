@@ -75,6 +75,9 @@ class SettingsEventHandler:
 	/** Initialize list of available dictionary variants */
 	void initAvailableVariants();
 
+	/** Get the currently selected dictionary variant from the dropdown box */
+	OUString getSelectedVariant(const uno::Reference<awt::XControlContainer> & windowContainer);
+
 	uno::Reference<uno::XComponentContext> compContext;
 
 	uno::Sequence<OUString> dictionaryVariantList;
