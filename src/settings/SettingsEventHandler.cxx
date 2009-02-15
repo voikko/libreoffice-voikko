@@ -207,7 +207,7 @@ void SettingsEventHandler::saveOptionsFromWindowToRegistry(const uno::Reference<
 	updateCommit->commitChanges();
 }
 
-void SettingsEventHandler::initVariantDropdown(uno::Reference<awt::XControlContainer> windowContainer) {
+void SettingsEventHandler::initVariantDropdown(const uno::Reference<awt::XControlContainer> & windowContainer) {
 	uno::Reference<awt::XControl> variantDropdown = windowContainer->getControl(A2OU("variant"));
 	if (!variantDropdown.is()) {
 		VOIKKO_DEBUG("ERROR: failed to obtain variant dropdown control");
@@ -228,8 +228,29 @@ void SettingsEventHandler::initVariantDropdown(uno::Reference<awt::XControlConta
 	stringListAValue <<= dictionaryVariantList;
 	variantProps->setPropertyValue(A2OU("StringItemList"), stringListAValue);
 	
+	// read selected dictionary variant from registry
+	OUString registryVariantValue(A2OU("standard"));
+	try {
+		uno::Any registryVariantAValue;
+		registryVariantAValue = PropertyManager::get(compContext)->readFromRegistry(
+			A2OU("/org.puimula.ooovoikko.Config/dictionary"),
+			A2OU("variant"));
+		registryVariantAValue >>= registryVariantValue;
+	}
+	catch (beans::UnknownPropertyException e) {
+		VOIKKO_DEBUG("ERROR: UnknownPropertyException dictionary/variant");
+		return;
+	}
+	registryVariantValue += A2OU(": ");
 	uno::Sequence<sal_Int16> selectedValues(1);
-	selectedValues[0] = 0; // TODO: read correct element from registry
+	selectedValues[0] = 0;
+	for (sal_Int16 i = 0; i < dictionaryVariantList.getLength(); i++) {
+		if (dictionaryVariantList[i].indexOf(registryVariantValue) == 0) {
+			selectedValues[0] = i;
+			break;
+		}
+	}
+	
 	uno::Any selectedAValues;
 	selectedAValues <<= selectedValues;
 	variantProps->setPropertyValue(A2OU("SelectedItems"), selectedAValues);

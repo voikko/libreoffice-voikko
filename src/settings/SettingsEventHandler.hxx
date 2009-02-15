@@ -70,7 +70,7 @@ class SettingsEventHandler:
 	void saveOptionsFromWindowToRegistry(const uno::Reference<awt::XWindow> & window);
 
 	/** Initialize the dropdown box for dictionary variant */
-	void initVariantDropdown(uno::Reference<awt::XControlContainer> windowContainer);
+	void initVariantDropdown(const uno::Reference<awt::XControlContainer> & windowContainer);
 
 	/** Initialize list of available dictionary variants */
 	void initAvailableVariants();
