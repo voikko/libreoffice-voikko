@@ -60,7 +60,7 @@ Instructions for compilation
 - Run "make oxt". This will build the extensions package voikko.oxt under
   subdirectory build.
   * There are some settings available that can be used to customize the build.
-    Please see "build settings" in Makefile. You may use any of these settings
+    Please see "build settings" in Makefile. You may change any of these settings
     by running "make VARIABLE=value" instead of "make".
 
 

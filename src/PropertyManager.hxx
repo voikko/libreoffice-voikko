@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2009 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,12 +72,19 @@ class PropertyManager:
 	/** Returns the language code for user messages */
 	const char * getMessageLanguage();
 	
+	/** Reload Voikko specific settings after they have been changed
+	    in the settings dialog. */
+	void reloadVoikkoSettings();
+	
 	/** Returns the singleton instance of this object */
 	static uno::Reference<voikko::PropertyManager> get(uno::Reference<uno::XComponentContext> const & context);
 	
 	private:
 	explicit PropertyManager(uno::Reference<uno::XComponentContext> cContext);
 	virtual ~PropertyManager();
+	
+	/** (Re)initialize libvoikko with currently selected dictionary and default settings */
+	void initLibvoikko();
 	
 	void setProperties(const uno::Reference<beans::XPropertySet> & properties);
 	void setValue(const beans::PropertyValue & value);
@@ -95,6 +102,7 @@ class PropertyManager:
 	sal_Int16 hyphMinWordLength;
 	sal_Bool hyphWordParts;
 	sal_Bool hyphUnknownWords;
+	OUString dictVariant;
 	
 	/** Error message from libvoikko initialization function */
 	const char * voikkoErrorString;

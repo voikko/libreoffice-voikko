@@ -37,6 +37,7 @@ PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext
 	hyphMinWordLength = 5;
 	hyphWordParts = sal_False;
 	hyphUnknownWords = sal_True;
+	dictVariant = A2OU("standard");
 	initialize();
 }
 
@@ -67,27 +68,44 @@ void SAL_CALL PropertyManager::disposing(const lang::EventObject &)
 	throw (uno::RuntimeException){
 }
 
+void PropertyManager::initLibvoikko() {
+	if (voikko_initialized) {
+		voikko_terminate(voikko_handle);
+		voikko_initialized = sal_False;
+	}
+	
+	OString variantAscii = OUStringToOString(dictVariant, RTL_TEXTENCODING_UTF8);
+	
+	#ifdef VOIKKO_STANDALONE_EXTENSION
+		rtl_TextEncoding encoding = osl_getTextEncodingFromLocale(0);
+		if (encoding == RTL_TEXTENCODING_DONTKNOW) {
+			encoding = RTL_TEXTENCODING_UTF8;
+		}
+		voikkoErrorString = voikko_init_with_path(&voikko_handle, variantAscii.getStr(),
+			0, OUStringToOString(getInstallationPath(compContext), encoding).getStr());
+	#else
+		voikkoErrorString = voikko_init(&voikko_handle, variantAscii.getStr(), 0);
+	#endif
+	if (voikkoErrorString) {
+		VOIKKO_DEBUG_2("Failed to initialize voikko: %s", voikkoErrorString);
+		return;
+	}
+	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_DOT, 1);
+	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
+	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_TITLES_IN_GC, 1);
+	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, 1);
+	voikko_initialized = sal_True;
+	VOIKKO_DEBUG("PropertyManager::initLibvoikko: libvoikko initalized");
+}
+
 void PropertyManager::initialize() throw (uno::Exception) {
 	VOIKKO_DEBUG("PropertyManager::initialize: starting");
 	if (!voikko_initialized) {
 		isInitialized = sal_False;
-		#ifdef VOIKKO_STANDALONE_EXTENSION
-			rtl_TextEncoding encoding = osl_getTextEncodingFromLocale(0);
-			if (encoding == RTL_TEXTENCODING_DONTKNOW)
-				encoding = RTL_TEXTENCODING_UTF8;
-			voikkoErrorString = voikko_init_with_path(&voikko_handle, "fi_FI", 0,
-				OUStringToOString(getInstallationPath(compContext), encoding).getStr());
-		#else
-			voikkoErrorString = voikko_init(&voikko_handle, "fi_FI", 0);
-		#endif
-		if (voikkoErrorString) {
-			VOIKKO_DEBUG_2("Failed to initialize voikko: %s", voikkoErrorString);
+		initLibvoikko();
+		if (!voikko_initialized) {
 			return;
 		}
-		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_DOT, 1);
-		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
-		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_TITLES_IN_GC, 1);
-		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, 1);
 		
 		// Determine UI language
 		messageLanguage = "en_US";
@@ -114,9 +132,6 @@ void PropertyManager::initialize() throw (uno::Exception) {
 		catch (beans::UnknownPropertyException) {
 			VOIKKO_DEBUG("ERROR: PropertyManager::initialize caught UnknownPropertyException");
 		}
-		
-		voikko_initialized = sal_True;
-		VOIKKO_DEBUG("PropertyManager::initialize: libvoikko initalized");
 	}
 	if (!isInitialized) {
 		uno::Reference<lang::XMultiComponentFactory> servManager =
@@ -213,6 +228,50 @@ OUString PropertyManager::getInitializationStatus() {
 
 const char * PropertyManager::getMessageLanguage() {
 	return messageLanguage;
+}
+
+void PropertyManager::reloadVoikkoSettings() {
+	linguistic2::LinguServiceEvent event;
+	event.nEvent = 0;
+	try {
+		uno::Any hyphWordParts = readFromRegistry(
+			A2OU("/org.puimula.ooovoikko.Config/hyphenator"),
+			A2OU("hyphWordParts"));
+		sal_Bool hyphWordPartsNew = this->hyphWordParts;
+		hyphWordParts >>= hyphWordPartsNew;
+		if (hyphWordPartsNew != this->hyphWordParts) {
+			event.nEvent |= linguistic2::LinguServiceEventFlags::HYPHENATE_AGAIN;
+			this->hyphWordParts = hyphWordPartsNew;
+		}
+		
+		uno::Any hyphUnknownWords = readFromRegistry(
+			A2OU("/org.puimula.ooovoikko.Config/hyphenator"),
+			A2OU("hyphUnknownWords"));
+		sal_Bool hyphUnknownWordsNew = this->hyphUnknownWords;
+		hyphUnknownWords >>= hyphUnknownWordsNew;
+		if (hyphUnknownWordsNew != this->hyphUnknownWords) {
+			event.nEvent |= linguistic2::LinguServiceEventFlags::HYPHENATE_AGAIN;
+			this->hyphUnknownWords = hyphUnknownWordsNew;
+		}
+		
+		uno::Any dictVariantA = readFromRegistry(
+			A2OU("/org.puimula.ooovoikko.Config/dictionary"),
+			A2OU("variant"));
+		OUString dictVariantNew = this->dictVariant;
+		dictVariantA >>= dictVariantNew;
+		if (dictVariantNew != this->dictVariant) {
+			event.nEvent |= linguistic2::LinguServiceEventFlags::SPELL_CORRECT_WORDS_AGAIN;
+			event.nEvent |= linguistic2::LinguServiceEventFlags::SPELL_WRONG_WORDS_AGAIN;
+			event.nEvent |= linguistic2::LinguServiceEventFlags::PROOFREAD_AGAIN;
+			this->dictVariant = dictVariantNew;
+			initLibvoikko();
+		}
+	}
+	catch (beans::UnknownPropertyException e) {
+		VOIKKO_DEBUG("ERROR: PropertyManager::reloadVoikkoSettings: UnknownPropertyException");
+	}
+	syncHyphenatorSettings();
+	sendLinguEvent(event);
 }
 
 void PropertyManager::setProperties(const uno::Reference<beans::XPropertySet> & properties) {
