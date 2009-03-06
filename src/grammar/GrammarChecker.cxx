@@ -114,8 +114,12 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 		gcErrors[gcI].nErrorType = text::TextMarkupType::PROOFREADING;
 		OString commentOString = OString(voikko_error_message_cstr(vError.error_code,
 			PropertyManager::get(compContext)->getMessageLanguage()));
-		gcErrors[gcI].aShortComment = OStringToOUString(commentOString, RTL_TEXTENCODING_UTF8);
-		gcErrors[gcI].aFullComment = gcErrors[gcI].aShortComment;
+		OUString comment = OStringToOUString(commentOString, RTL_TEXTENCODING_UTF8);
+		#ifdef TEKSTINTUHO
+			comment += UTF82OU(" TEKSTINTUHO K\xc3\x84YT\xc3\x96SS\xc3\x84!");
+		#endif
+		gcErrors[gcI].aShortComment = comment;
+		gcErrors[gcI].aFullComment = comment;
 
 		// add suggestions
 		int scount = 0;

@@ -289,7 +289,7 @@ void SettingsEventHandler::initAvailableVariants() {
 	for (size_t i = 0; i < nDicts; i++) {
 		OUString dictName = A2OU(voikko_dict_variant(dicts[i]));
 		dictName += A2OU(": ");
-		dictName += A2OU(voikko_dict_description(dicts[i]));
+		dictName += UTF82OU(voikko_dict_description(dicts[i]));
 		dictionaryVariantList[i] = dictName;
 	}
 	voikko_free_dicts(dicts);

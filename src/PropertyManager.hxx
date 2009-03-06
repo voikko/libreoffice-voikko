@@ -86,6 +86,9 @@ class PropertyManager:
 	/** (Re)initialize libvoikko with currently selected dictionary and default settings */
 	void initLibvoikko();
 	
+	/** Try initializing libvoikko with specified variant string */
+	const char * initLibvoikkoWithVariant(const char * variant);
+	
 	void setProperties(const uno::Reference<beans::XPropertySet> & properties);
 	void setValue(const beans::PropertyValue & value);
 	void syncHyphenatorSettings();

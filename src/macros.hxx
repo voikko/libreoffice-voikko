@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2005 - 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2005 - 2009 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
 // Conversions
 #define A2OU(x) ::rtl::OUString::createFromAscii(x)
+#define UTF82OU(x) ::rtl::OStringToOUString(::rtl::OString(x), RTL_TEXTENCODING_UTF8)
 #define OU2DEBUG(x) ::rtl::OUStringToOString((x), RTL_TEXTENCODING_UTF8).getStr()
 
 // Debug macros

@@ -76,26 +76,39 @@ void PropertyManager::initLibvoikko() {
 	
 	OString variantAscii = OUStringToOString(dictVariant, RTL_TEXTENCODING_UTF8);
 	
-	#ifdef VOIKKO_STANDALONE_EXTENSION
-		rtl_TextEncoding encoding = osl_getTextEncodingFromLocale(0);
-		if (encoding == RTL_TEXTENCODING_DONTKNOW) {
-			encoding = RTL_TEXTENCODING_UTF8;
+	const char * error = initLibvoikkoWithVariant(variantAscii.getStr());
+	if (error) {
+		VOIKKO_DEBUG_2("Failed to initialize voikko with specific variant: %s", error);
+		VOIKKO_DEBUG("Trying next with default variant");
+		voikkoErrorString = initLibvoikkoWithVariant("default");
+		if (voikkoErrorString) {
+			VOIKKO_DEBUG_2("ERROR: Failed to initialize voikko with default variant: %s", voikkoErrorString);
+			return;
 		}
-		voikkoErrorString = voikko_init_with_path(&voikko_handle, variantAscii.getStr(),
-			0, OUStringToOString(getInstallationPath(compContext), encoding).getStr());
-	#else
-		voikkoErrorString = voikko_init(&voikko_handle, variantAscii.getStr(), 0);
-	#endif
-	if (voikkoErrorString) {
-		VOIKKO_DEBUG_2("Failed to initialize voikko: %s", voikkoErrorString);
-		return;
 	}
+	else {
+		voikkoErrorString = 0;
+	}
+	
 	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_DOT, 1);
 	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
 	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_TITLES_IN_GC, 1);
 	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, 1);
 	voikko_initialized = sal_True;
 	VOIKKO_DEBUG("PropertyManager::initLibvoikko: libvoikko initalized");
+}
+
+const char * PropertyManager::initLibvoikkoWithVariant(const char * variant) {
+	#ifdef VOIKKO_STANDALONE_EXTENSION
+		rtl_TextEncoding encoding = osl_getTextEncodingFromLocale(0);
+		if (encoding == RTL_TEXTENCODING_DONTKNOW) {
+			encoding = RTL_TEXTENCODING_UTF8;
+		}
+		return voikko_init_with_path(&voikko_handle, variant, 0,
+		       OUStringToOString(getInstallationPath(compContext), encoding).getStr());
+	#else
+		return voikko_init(&voikko_handle, variant, 0);
+	#endif
 }
 
 void PropertyManager::initialize() throw (uno::Exception) {

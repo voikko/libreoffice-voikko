@@ -1,5 +1,5 @@
 # Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
-# Copyright (C) 2005-2008 Harri Pitkänen <hatapitk@iki.fi>
+# Copyright (C) 2005-2009 Harri Pitkänen <hatapitk@iki.fi>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -133,6 +133,7 @@ endif
 # Build extension package name
 ifdef SHOW_UGLY_WARNINGS
         VOIKKO_PACKAGENAME:=tekstintuho
+        VOIKKO_CC_DEFINES += -DTEKSTINTUHO
 else
         VOIKKO_PACKAGENAME:=voikko
 endif
