@@ -37,7 +37,17 @@ PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext
 	hyphMinWordLength = 5;
 	hyphWordParts = sal_False;
 	hyphUnknownWords = sal_True;
-	dictVariant = A2OU("standard");
+	try {
+		uno::Any dictVariantA = readFromRegistry(
+		              A2OU("/org.puimula.ooovoikko.Config/dictionary"),
+		              A2OU("variant"));
+		dictVariantA >>= dictVariant;
+		VOIKKO_DEBUG_2("Initial dictionary variant '%s'", OU2DEBUG(dictVariant));
+	}
+	catch (beans::UnknownPropertyException e) {
+		VOIKKO_DEBUG("Setting initial dictionary variant to default");
+		dictVariant = A2OU("standard");
+	}
 	initialize();
 }
 

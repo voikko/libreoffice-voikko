@@ -1,3 +1,7 @@
+2009-03-11 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Read dictionary variant from registry on startup.
+
 2009-03-06 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Fall back to default dictionary if specified variant is
