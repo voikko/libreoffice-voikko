@@ -77,7 +77,7 @@ endif
 
 # Platform specific variables
 ifeq "$(PLATFORM)" "windows"
-	WARNING_FLAGS=-Wall -WX -wd4061 -wd4365 -wd4514 -wd4625 -wd4626 -wd4668 -wd4820
+	WARNING_FLAGS=-Wall -WX -wd4061 -wd4365 -wd4514 -wd4625 -wd4626 -wd4668 -wd4711 -wd4820
 	# The following warnings should be fixed in the future
 	WARNING_FLAGS+= -wd4640
 else
@@ -108,8 +108,8 @@ VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -
 ifdef STANDALONE_EXTENSION_PATH
 	VOIKKO_CC_DEFINES= -DVOIKKO_STANDALONE_EXTENSION
 	ifeq "$(PLATFORM)" "windows"
-		STANDALONE_EXTENSION_FILES=mingwm10.dll iconv.dll intl.dll libglib-2.0-0.dll malaga.dll \
-		libvoikko-1.dll voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+		STANDALONE_EXTENSION_FILES=mingwm10.dll libglib-2.0-0.dll malaga.dll \
+		libvoikko-1.dll
 		LINK_FLAGS += -lvoikko
 	else
 		ifeq "$(PLATFORM)" "macosx"

@@ -99,8 +99,12 @@ void SettingsEventHandler::initOptionsWindowFromRegistry(const uno::Reference<aw
 		VOIKKO_DEBUG("ERROR: UnknownPropertyException");
 		return;
 	}
-	if (hyphWordPartsValue) VOIKKO_DEBUG("hyphWordParts = true");
-	else VOIKKO_DEBUG("hyphWordParts = false");
+	if (hyphWordPartsValue) {
+		VOIKKO_DEBUG("hyphWordParts = true");
+	}
+	else {
+		VOIKKO_DEBUG("hyphWordParts = false");
+	}
 
 	uno::Reference<awt::XControlContainer> windowContainer =
 		uno::Reference<awt::XControlContainer>(window, uno::UNO_QUERY);

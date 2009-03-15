@@ -202,6 +202,15 @@ OUString SAL_CALL Hyphenator::getServiceDisplayName(const lang::Locale & aLocale
 		return A2OU("Finnish hyphenator (Voikko)");
 }
 
+OUString SAL_CALL Hyphenator::getImplementationName_static() {
+	return A2OU("voikko.Hyphenator");
+}
+uno::Sequence<OUString> SAL_CALL Hyphenator::getSupportedServiceNames_static() {
+	uno::Sequence<OUString> snames(1);
+	snames.getArray()[0] = A2OU("com.sun.star.linguistic2.Hyphenator");
+	return snames;
+}
+
 static uno::Reference<uno::XInterface> theHyphenator;
 
 void SAL_CALL Hyphenator::disposing() {

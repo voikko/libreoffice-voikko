@@ -1,3 +1,7 @@
+2009-03-15 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Disable grammar checker on Windows, it does not work.
+
 2009-03-11 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Read dictionary variant from registry on startup.
