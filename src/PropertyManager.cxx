@@ -102,7 +102,11 @@ void PropertyManager::initLibvoikko() {
 	
 	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_DOT, 1);
 	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
+	
+	// Set these options globally until OOo bug #97945 is resolved.
 	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_TITLES_IN_GC, 1);
+	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_BULLETED_LISTS_IN_GC, 1);
+	
 	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, 1);
 	voikko_initialized = sal_True;
 	VOIKKO_DEBUG("PropertyManager::initLibvoikko: libvoikko initalized");

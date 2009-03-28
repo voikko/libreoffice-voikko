@@ -1,5 +1,10 @@
 2009-03-15 Harri Pitkänen <hatapitk@iki.fi>
 
+	* Enable VOIKKO_OPT_ACCEPT_BULLETED_LISTS_IN_GC to silence
+	  false positives in bulleted lists.
+
+2009-03-15 Harri Pitkänen <hatapitk@iki.fi>
+
 	* Disable grammar checker on Windows, it does not work.
 
 2009-03-11 Harri Pitkänen <hatapitk@iki.fi>
