@@ -1,3 +1,8 @@
+2009-04-05 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Print debug info to stderr instead of stdout to avoid
+	  buffering.
+
 2009-03-15 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Enable VOIKKO_OPT_ACCEPT_BULLETED_LISTS_IN_GC to silence

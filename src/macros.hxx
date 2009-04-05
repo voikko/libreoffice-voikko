@@ -27,8 +27,8 @@
 
 // Debug macros
 #ifdef VOIKKO_DEBUG_OUTPUT
-#define VOIKKO_DEBUG(x) printf("VOIKKO_DEBUG: " x "\n")
-#define VOIKKO_DEBUG_2(x, y) printf("VOIKKO_DEBUG: " x "\n", y)
+#define VOIKKO_DEBUG(x) fprintf(stderr, "VOIKKO_DEBUG: " x "\n")
+#define VOIKKO_DEBUG_2(x, y) fprintf(stderr, "VOIKKO_DEBUG: " x "\n", y)
 #else
 #define VOIKKO_DEBUG(x)
 #define VOIKKO_DEBUG_2(x, y)
