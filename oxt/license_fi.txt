@@ -1,5 +1,5 @@
                       Openoffice.org-voikko
-© 2005 - 2008 Harri Pitkänen (hatapitk@iki.fi)
+© 2005 - 2009 Harri Pitkänen (hatapitk@iki.fi)
 
 Tämä ohjelma saattaa sisältää osan tai kaikki seuraavista komponenteista:
   - Suomi-malaga

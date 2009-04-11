@@ -1,3 +1,8 @@
+2009-04-11 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Implement listing of available dictionaries in standalone
+	  extensions.
+
 2009-04-05 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Print debug info to stderr instead of stdout to avoid

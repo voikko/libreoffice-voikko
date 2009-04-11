@@ -18,6 +18,7 @@
 #include "SettingsEventHandler.hxx"
 #include "../common.hxx"
 #include <libvoikko/voikko.h>
+#include <osl/nlsupport.h>
 #include <com/sun/star/awt/XControl.hpp>
 #include <com/sun/star/awt/XControlContainer.hpp>
 #include <com/sun/star/beans/PropertyValue.hpp>
@@ -278,8 +279,17 @@ void SettingsEventHandler::initVariantDropdown(const uno::Reference<awt::XContro
 }
 
 void SettingsEventHandler::initAvailableVariants() {
-	// TODO: explicit dictionary path
-	voikko_dict ** dicts = voikko_list_dicts(0);
+	voikko_dict ** dicts;
+	#ifdef VOIKKO_STANDALONE_EXTENSION
+		rtl_TextEncoding encoding = osl_getTextEncodingFromLocale(0);
+		if (encoding == RTL_TEXTENCODING_DONTKNOW) {
+			encoding = RTL_TEXTENCODING_UTF8;
+		}
+		dicts = voikko_list_dicts(OUStringToOString(getInstallationPath(compContext), encoding).getStr());
+	#else
+		dicts = voikko_list_dicts(0);
+	#endif
+	
 	if (!dicts) {
 		VOIKKO_DEBUG("ERROR: Failed to list available dictionaries");
 		return;

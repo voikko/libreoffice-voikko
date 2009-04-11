@@ -113,7 +113,7 @@ ifdef STANDALONE_EXTENSION_PATH
 		LINK_FLAGS += -lvoikko
 	else
 		ifeq "$(PLATFORM)" "macosx"
-			STANDALONE_EXTENSION_FILES=voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+			STANDALONE_EXTENSION_FILES=1
 		else
 			STANDALONE_EXTENSION_FILES=libmalaga.so.7 libvoikko.so.1 \
 			voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
@@ -176,7 +176,7 @@ EXTENSION_FILES=build/oxt/META-INF/manifest.xml build/oxt/description.xml \
 extension-files : $(EXTENSION_FILES)
 
 oxt: $(EXTENSION_FILES)
-	cd build/oxt && $(SDK_ZIP) -9 ../$(VOIKKO_PACKAGENAME).oxt \
+	cd build/oxt && $(SDK_ZIP) -r -9 ../$(VOIKKO_PACKAGENAME).oxt \
 	   $(patsubst build/oxt/%,%,$^)
 
 all: oxt
@@ -219,7 +219,7 @@ $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)): build/oxt/%: oxt/%
 
 $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)): build/oxt/%: $(STANDALONE_EXTENSION_PATH)/%
 	-$(MKDIR) $(subst /,$(PS),$(@D))
-	$(COPY) "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
+	$(COPY) -r "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
 
 # Type library C++ headers
 build/hpp.flag:
