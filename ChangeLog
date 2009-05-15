@@ -1,3 +1,8 @@
+2009-05-15 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Replace the icon with something less irritating and add
+	  svg version.
+
 2009-04-11 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Implement listing of available dictionaries in standalone
