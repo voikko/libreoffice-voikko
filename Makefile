@@ -101,8 +101,12 @@ else
 		WARNING_FLAGS+= -fno-strict-aliasing
 	endif
 endif
-LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) $(LINKER_FLAGS) $(LINK_LIBS) \
-           $(SALLIB) $(CPPULIB) $(CPPUHELPERLIB)
+# separated generic link flags and linked libs are needed to build with -Wl,--as-needed
+# this flag has been enabled by default on openSUSE-11.2
+LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) $(LINKER_FLAGS)
+ifneq "$(PLATFORM)" "macosx"
+	LINK_LIBS+=$(SALLIB) $(CPPULIB) $(CPPUHELPERLIB)
+endif
 VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -I$(PRJ)/include
 
 ifdef STANDALONE_EXTENSION_PATH
@@ -110,20 +114,19 @@ ifdef STANDALONE_EXTENSION_PATH
 	ifeq "$(PLATFORM)" "windows"
 		STANDALONE_EXTENSION_FILES=mingwm10.dll libglib-2.0-0.dll malaga.dll \
 		libvoikko-1.dll
-		LINK_FLAGS += -lvoikko
 	else
 		ifeq "$(PLATFORM)" "macosx"
 			STANDALONE_EXTENSION_FILES=1
 		else
 			STANDALONE_EXTENSION_FILES=libmalaga.so.7 libvoikko.so.1 \
 			voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
-			LINK_FLAGS += -lvoikko
+			LINK_LIBS += -lvoikko
 		endif
 	endif
 else
 	VOIKKO_CC_DEFINES=
 	STANDALONE_EXTENSION_FILES=
-	LINK_FLAGS += -lvoikko
+	LINK_LIBS += -lvoikko
 endif
 
 ifndef ENABLE_GRAMMAR_CHECKER
@@ -253,7 +256,7 @@ ifeq "$(PLATFORM)" "macosx"
 		$(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation -framework Carbon
 		$(INSTALL_NAME_URELIBS)  $@
 else
-		$(LINK) $(LINK_FLAGS) -o $@ $^
+		$(LINK) $(LINK_FLAGS) $^ -o $@ $(LINK_LIBS)
 endif
 endif
 

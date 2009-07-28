@@ -1,3 +1,8 @@
+2009-07-27 Petr Mladek
+
+	* Change order of linker flags on Linux to enable building with
+	  -Wl,--as-needed.
+
 2009-05-15 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Replace the icon with something less irritating and add
