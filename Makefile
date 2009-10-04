@@ -40,7 +40,7 @@ VOIKKO_DEBUG=NO
 # following and adjust the path accordingly. For OS X this must be set if
 # a standalone extension is to be built.
 # LIBVOIKKO_PATH=/usr/local/voikko
-# LIBVOIKKO_PATH=c:/msys/1.0/inst
+# LIBVOIKKO_PATH=c:/voikko
 # LIBVOIKKO_PATH=/Users/paakayttaja/voikko
 
 # If you want to have all of the library and dictionary files included within
@@ -80,8 +80,11 @@ ifeq "$(PLATFORM)" "windows"
 	WARNING_FLAGS=-Wall -WX -wd4061 -wd4365 -wd4514 -wd4625 -wd4626 -wd4668 -wd4711 -wd4820
 	# The following warnings should be fixed in the future
 	WARNING_FLAGS+= -wd4640
+	COPYDIR=xcopy /E /I
+	PS="\"
 else
 	WARNING_FLAGS=-Wall -Wno-non-virtual-dtor -Werror
+	COPYDIR=cp -r
 endif
 ifeq "$(PLATFORM)" "linux"
 	LINKER_FLAGS=-Wl,--no-undefined
@@ -112,14 +115,12 @@ VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -
 ifdef STANDALONE_EXTENSION_PATH
 	VOIKKO_CC_DEFINES= -DVOIKKO_STANDALONE_EXTENSION
 	ifeq "$(PLATFORM)" "windows"
-		STANDALONE_EXTENSION_FILES=mingwm10.dll libglib-2.0-0.dll malaga.dll \
-		libvoikko-1.dll
+		STANDALONE_EXTENSION_FILES=libglib-2.0-0.dll libvoikko-1.dll 2
 	else
 		ifeq "$(PLATFORM)" "macosx"
-			STANDALONE_EXTENSION_FILES=1
+			STANDALONE_EXTENSION_FILES=2
 		else
-			STANDALONE_EXTENSION_FILES=libmalaga.so.7 libvoikko.so.1 \
-			voikko-fi_FI.pro voikko-fi_FI.lex_l voikko-fi_FI.mor_l voikko-fi_FI.sym_l
+			STANDALONE_EXTENSION_FILES=libvoikko.so.1 2
 			LINK_LIBS += -lvoikko
 		endif
 	endif
@@ -222,11 +223,11 @@ $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)): build/oxt/%: oxt/%
 
 $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)): build/oxt/%: $(STANDALONE_EXTENSION_PATH)/%
 	-$(MKDIR) $(subst /,$(PS),$(@D))
-	$(COPY) -r "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
+	$(COPYDIR) "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
 
 # Type library C++ headers
 build/hpp.flag:
-	-$(MKDIR) build/hpp
+	-$(MKDIR) build$(PS)hpp
 	$(CPPUMAKER) -Gc -BUCR -O./build/hpp $(URE_TYPES) $(OFFICE_TYPES)
 	echo flagged > $@
 
@@ -240,10 +241,9 @@ build/src/%.$(OBJ_EXT): src/%.cxx build/hpp.flag $(patsubst %,src/%.hxx,$(VOIKKO
 # Link the shared library
 build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB): $(patsubst %,build/src/%.$(OBJ_EXT),$(VOIKKO_OBJECTS))
 ifeq "$(PLATFORM)" "windows"
-	cd build && lib /machine:i386 /def:$(LIBVOIKKO_PATH)\bin\libvoikko-1.def
 	$(LINK) $(COMP_LINK_FLAGS) /OUT:$@ \
 	/MAP:build/voikko.map $^ \
-	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(STLPORTLIB) msvcrt.lib kernel32.lib build\libvoikko-1.lib
+	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(STLPORTLIB) msvcrt.lib kernel32.lib $(LIBVOIKKO_PATH)\lib\libvoikko-1.lib
 	mt -manifest build/oxt/voikko.dll.manifest -outputresource:build/oxt/voikko.dll;2
 else
 ifeq "$(PLATFORM)" "macosx"

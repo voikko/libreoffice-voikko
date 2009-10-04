@@ -92,17 +92,10 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 		VOIKKO_DEBUG("ERROR: GrammarChecker::doProofreading called without initializing libvoikko");
 		return result;
 	}
-	#ifdef WIN32
-	else {
-		// FIXME: Something with grammar checking is now broken on Windows (stack corruption, threads, destructors?)
-		// Disable for now.
-		VOIKKO_DEBUG("ERROR: GrammarChecker::doProofreading disabled on Windows");
-		return result;
-	}
-	#endif
 
 	OString textUtf8 = ::rtl::OUStringToOString(aText, RTL_TEXTENCODING_UTF8);
 	sal_Int32 paraLen = textUtf8.getLength();
+	if (paraLen <= 0) return result;
 	uno::Sequence<linguistic2::SingleProofreadingError> gcErrors(0);
 	sal_Int32 gcI = 0;
 	sal_Int32 vErrorCount = 0;

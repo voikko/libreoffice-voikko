@@ -1,3 +1,13 @@
+2009-10-04 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Re-enable grammar checker on Windows, since it works when libvoikko
+	  has been built with MSVC.
+	* Document the fact that MSVC should be used for building libvoikko on
+	  Windows. Change the build system so that libvoikko-1.def -> libvoikko-1.lib
+	  conversion is no longer done, because MSVC creates libvoikko-1.lib automatically.
+	* Allow copying entire directories when creating standalone extensions. Update
+	  the names of files to be copied for libvoikko 2.2.
+
 2009-07-27 Petr Mladek
 
 	* Change order of linker flags on Linux to enable building with
