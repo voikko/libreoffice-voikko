@@ -326,7 +326,6 @@ void PropertyManager::resetValues(const uno::Sequence<beans::PropertyValue> & va
 
 void PropertyManager::setValue(const beans::PropertyValue & value) {
 	sal_Bool bValue = sal_False;
-	sal_Int16 iValue = 0;
 	int vbValue = 0;
 	// VOIKKO_DEBUG_2("PropertyManager::setValue: name %s", OU2DEBUG(value.Name));
 	if (value.Name == A2OU("IsSpellWithDigits")) {
@@ -349,6 +348,7 @@ void PropertyManager::setValue(const beans::PropertyValue & value) {
 		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, vbValue);
 	}
 	else if (value.Name == A2OU("HyphMinLeading")) {
+		sal_Int16 iValue;
 		if (value.Value >>= iValue) {
 			hyphMinLeading = iValue;
 			// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", iValue);
@@ -356,6 +356,7 @@ void PropertyManager::setValue(const beans::PropertyValue & value) {
 		}
 	}
 	else if (value.Name == A2OU("HyphMinTrailing")) {
+		sal_Int16 iValue;
 		if (value.Value >>= iValue) {
 			hyphMinTrailing = iValue;
 			// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", iValue);
@@ -363,6 +364,7 @@ void PropertyManager::setValue(const beans::PropertyValue & value) {
 		}
 	}
 	else if (value.Name == A2OU("HyphMinWordLength")) {
+		sal_Int16 iValue;
 		if (value.Value >>= iValue) {
 			hyphMinWordLength = iValue;
 			// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", iValue);

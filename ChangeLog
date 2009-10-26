@@ -1,3 +1,7 @@
+2009-10-26 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Reduce scope of a variable to fix cppcheck warning.
+
 2009-10-04 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Re-enable grammar checker on Windows, since it works when libvoikko
