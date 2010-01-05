@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 - 2008 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
 	uno::Sequence<uno::Any> aArguments(1);
 	aArguments.getArray()[0] = (uno::Any) pathArgument;
 	try {
+		// FIXME: this may crash if configuration is damaged
 		rootView = provider->createInstanceWithArguments(
 			A2OU("com.sun.star.configuration.ConfigurationUpdateAccess"), aArguments);
 	}
@@ -86,8 +87,6 @@ uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
 		VOIKKO_DEBUG("ERROR: failed to obtain rootView");
 	}
 	return rootView;
-	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
-	return propSet;
 }
 
 sal_Bool voikko_initialized = sal_False;

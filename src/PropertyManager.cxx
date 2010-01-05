@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 - 2009 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,10 +221,14 @@ uno::Any PropertyManager::readFromRegistry(const OUString group, const OUString 
 	throw (beans::UnknownPropertyException) {
 	uno::Reference<uno::XInterface> rootView =
 		getRegistryProperties(group, compContext);
+	if (!rootView.is()) {
+		VOIKKO_DEBUG("ERROR: failed to obtain rootView");
+		throw beans::UnknownPropertyException();
+	}
 	uno::Reference<beans::XHierarchicalPropertySet> propSet(rootView, uno::UNO_QUERY);
 	if (!propSet.is()) {
 		VOIKKO_DEBUG("ERROR: failed to obtain propSet");
-		throw new beans::UnknownPropertyException();
+		throw beans::UnknownPropertyException();
 	}
 	uno::Any value = propSet->getHierarchicalPropertyValue(key);
 	return value;
