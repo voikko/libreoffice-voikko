@@ -28,7 +28,7 @@ include $(PRJ)/settings/std.mk
 # ===== Build settings =====
 
 # Version number of the openoffice.org-voikko extension
-VOIKKO_VERSION=3.1
+VOIKKO_VERSION=3.1.1
 
 # VOIKKO_DEBUG controls the amount of debugging information in the resulting UNO
 # package. Possible values are NO (creates an optimized build without any
@@ -115,7 +115,7 @@ VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -
 ifdef STANDALONE_EXTENSION_PATH
 	VOIKKO_CC_DEFINES= -DVOIKKO_STANDALONE_EXTENSION
 	ifeq "$(PLATFORM)" "windows"
-		STANDALONE_EXTENSION_FILES=libglib-2.0-0.dll libvoikko-1.dll 2
+		STANDALONE_EXTENSION_FILES=libvoikko-1.dll 2
 	else
 		ifeq "$(PLATFORM)" "macosx"
 			STANDALONE_EXTENSION_FILES=2
@@ -251,8 +251,8 @@ ifeq "$(PLATFORM)" "macosx"
 		nm -gx $^ | $(ADDSYMBOLS) >> build/voikko.map
 		$(LINK) $(COMP_LINK_FLAGS) build/voikko.map $(LINK_LIBS) -o $@ $^ \
 		$(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(CPPUHELPERDYLIB) $(CPPUDYLIB) $(SALDYLIB) \
-		$(LIBVOIKKO_PATH)/lib/libvoikko.a $(LIBVOIKKO_PATH)/lib/libmalaga.a \
-		$(LIBVOIKKO_PATH)/lib/libiconv.a $(LIBVOIKKO_PATH)/lib/libglib-2.0.a \
+		$(LIBVOIKKO_PATH)/lib/libvoikko.a \
+		$(LIBVOIKKO_PATH)/lib/libiconv.a \
 		$(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation -framework Carbon
 		$(INSTALL_NAME_URELIBS)  $@
 else

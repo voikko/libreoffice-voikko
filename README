@@ -12,15 +12,16 @@ version 3 or later (see COPYING).
 
 Authors
 =======
-2005 - 2009 Harri Pitkänen (hatapitk@iki.fi)
+2005 - 2010 Harri Pitkänen (hatapitk@iki.fi)
 
 
 Porting status
 ==============
 - Linux: This is the primary development platform, and should always work
 - FreeBSD: Status unknown
-- Windows: Supported with some limitations
-- Mac OS X: Version 10.5 (Intel) is supported
+- Windows: Partially supported (but current versions of libvoikko may not
+  work properly)
+- Mac OS X: Version 10.5 (Intel) was supported, current status unknown.
 
 
 Build requirements
@@ -29,7 +30,8 @@ Build requirements
 - OpenOffice.org (Office and SDK), version 3.0.1 or later.
 - Libvoikko version 2.1 or later, and compatible versions of Suomi-malaga and
   malaga. On Windows libvoikko should be built with MSVC, otherwise grammar checking
-  may not work.
+  may not work. For standalone extensions libvoikko 2.3 is needed or the build
+  will fail.
 - On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
   needed for compilation are usually present in default setups of any
   distribution.

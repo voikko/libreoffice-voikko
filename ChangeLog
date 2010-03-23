@@ -1,3 +1,8 @@
+2010-04-23 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Remove references to malaga and glib libraries for Windows and OS X.
+	* Increase version number to 3.1.1.
+
 2010-01-05 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Fix error handling for cases where configuration is somehow damaged.
