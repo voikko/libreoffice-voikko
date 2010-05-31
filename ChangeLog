@@ -1,6 +1,7 @@
 2010-05-31 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Switch to new libvoikko 3.0 API (Trac #11).
+	* Ignoring grammar checker rules works (Trac #12).
 
 2010-05-07 Harri Pitkänen <hatapitk@iki.fi>
 

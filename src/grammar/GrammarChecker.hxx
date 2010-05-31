@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2008 - 2009 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2008 - 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 #ifndef _GRAMMARCHECKER_HXX_
 #define _GRAMMARCHECKER_HXX_
 
+#include <set>
 #include <cppuhelper/compbase4.hxx>
 #include <cppuhelper/basemutex.hxx>
 #include <com/sun/star/lang/XServiceInfo.hpp>
@@ -88,6 +89,9 @@ class GrammarChecker:
 	virtual ~GrammarChecker() {}
 	virtual void SAL_CALL disposing();
 	uno::Reference<uno::XComponentContext> compContext;
+	
+	/** Grammar checker error codes that should be ignored */
+	std::set<OUString> ignoredErrors;
 };
 
 // Static method implementations

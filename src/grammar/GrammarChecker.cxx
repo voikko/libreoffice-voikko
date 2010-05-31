@@ -29,7 +29,8 @@ GrammarChecker::GrammarChecker(uno::Reference<uno::XComponentContext> const & co
 	      linguistic2::XProofreader,
 	      lang::XInitialization,
 	      lang::XServiceDisplayName>(m_aMutex),
-	compContext(context) {
+	compContext(context),
+	ignoredErrors() {
 	VOIKKO_DEBUG("GrammarChecker:CTOR");
 	PropertyManager::get(compContext);
 }
@@ -122,6 +123,13 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 		
 		// we have a real grammar error
 		int errorCode = voikkoGetGrammarErrorCode(vError);
+		OUString ruleIdentifier = OUString::valueOf(errorCode);
+		if (ignoredErrors.count(ruleIdentifier) == 1) {
+			// ignore this error
+			voikkoFreeGrammarError(vError);
+			continue;
+		}
+		
 		const char ** suggestions = voikkoGetGrammarErrorSuggestions(vError);
 		gcErrors.realloc(gcI + 1);
 		gcErrors[gcI].nErrorStart = startPos;
@@ -135,6 +143,7 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 		#endif
 		gcErrors[gcI].aShortComment = comment;
 		gcErrors[gcI].aFullComment = comment;
+		gcErrors[gcI].aRuleIdentifier = ruleIdentifier;
 
 		// add suggestions
 		if (suggestions) {
@@ -158,13 +167,13 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 	return result;
 }
 
-void SAL_CALL GrammarChecker::ignoreRule(const OUString & /* aRuleIdentifier */, const lang::Locale & /* aLocale */)
+void SAL_CALL GrammarChecker::ignoreRule(const OUString & aRuleIdentifier, const lang::Locale & /* aLocale */)
 		throw (lang::IllegalArgumentException, uno::RuntimeException) {
-	// TODO: unimplemented
+	ignoredErrors.insert(aRuleIdentifier);
 }
 
 void SAL_CALL GrammarChecker::resetIgnoreRules() throw (uno::RuntimeException) {
-	// TODO: unimplemented
+	ignoredErrors.clear();
 }
 
 void SAL_CALL GrammarChecker::initialize(const uno::Sequence<uno::Any> &)
