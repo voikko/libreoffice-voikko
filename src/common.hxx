@@ -19,6 +19,7 @@
 #define _COMMON_HXX_
 
 #include <osl/mutex.hxx>
+#include <libvoikko/voikko.h>
 #include "PropertyManager.hxx"
 
 namespace voikko {
@@ -33,7 +34,7 @@ uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
 
 extern sal_Bool voikko_initialized;
 
-extern int voikko_handle;
+extern VoikkoHandle * voikkoHandle;
 
 }
 

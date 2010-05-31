@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2008 - 2009 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2008 - 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,20 +100,34 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 	sal_Int32 gcI = 0;
 	sal_Int32 vErrorCount = 0;
 	while (paraLen < 1000000) { // sanity check
-		voikko_grammar_error vError = voikko_next_grammar_error_cstr(
-			voikko_handle, textUtf8.getStr(), paraLen, 0, vErrorCount++);
-		if (vError.error_code == 0) break;
-		if ((sal_Int32) vError.startpos < result.nStartOfSentencePosition) continue;
-		if ((sal_Int32) vError.startpos >= result.nBehindEndOfSentencePosition) break;
-		if ((sal_Int32) (vError.startpos + vError.errorlen) > result.nBehindEndOfSentencePosition)
-			result.nBehindEndOfSentencePosition = vError.startpos + vError.errorlen;
+		VoikkoGrammarError * vError = voikkoNextGrammarErrorCstr(
+			voikkoHandle, textUtf8.getStr(), paraLen, 0, vErrorCount++);
+		if (!vError) {
+			break;
+		}
+		size_t startPos = voikkoGetGrammarErrorStartPos(vError);
+		size_t errorLength = voikkoGetGrammarErrorLength(vError);
+		
+		if ((sal_Int32) startPos < result.nStartOfSentencePosition) {
+			voikkoFreeGrammarError(vError);
+			continue;
+		}
+		if ((sal_Int32) startPos >= result.nBehindEndOfSentencePosition) {
+			voikkoFreeGrammarError(vError);
+			break;
+		}
+		if ((sal_Int32) (startPos + errorLength) > result.nBehindEndOfSentencePosition) {
+			result.nBehindEndOfSentencePosition = startPos + errorLength;
+		}
 		
 		// we have a real grammar error
+		int errorCode = voikkoGetGrammarErrorCode(vError);
+		const char ** suggestions = voikkoGetGrammarErrorSuggestions(vError);
 		gcErrors.realloc(gcI + 1);
-		gcErrors[gcI].nErrorStart = vError.startpos;
-		gcErrors[gcI].nErrorLength = vError.errorlen;
+		gcErrors[gcI].nErrorStart = startPos;
+		gcErrors[gcI].nErrorLength = errorLength;
 		gcErrors[gcI].nErrorType = text::TextMarkupType::PROOFREADING;
-		OString commentOString = OString(voikko_error_message_cstr(vError.error_code,
+		OString commentOString = OString(voikko_error_message_cstr(errorCode,
 			PropertyManager::get(compContext)->getMessageLanguage()));
 		OUString comment = OStringToOUString(commentOString, RTL_TEXTENCODING_UTF8);
 		#ifdef TEKSTINTUHO
@@ -123,16 +137,19 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 		gcErrors[gcI].aFullComment = comment;
 
 		// add suggestions
-		int scount = 0;
-		while (vError.suggestions && vError.suggestions[scount] != 0) scount++;
-		uno::Sequence<OUString> suggSeq(scount);
-		for (int i = 0; i < scount; i++) {
-			OString ostr = OString(vError.suggestions[i]);
-			suggSeq[i] = OStringToOUString(ostr, RTL_TEXTENCODING_UTF8);
+		if (suggestions) {
+			int scount = 0;
+			while (suggestions[scount] != 0) {
+				scount++;
+			}
+			uno::Sequence<OUString> suggSeq(scount);
+			for (int i = 0; i < scount; i++) {
+				OString ostr = OString(suggestions[i]);
+				suggSeq[i] = OStringToOUString(ostr, RTL_TEXTENCODING_UTF8);
+			}
+			gcErrors[gcI].aSuggestions = suggSeq;
 		}
-		voikko_free_suggest_cstr(vError.suggestions);
-		gcErrors[gcI].aSuggestions = suggSeq;
-
+		voikkoFreeGrammarError(vError);
 		gcI++;
 	}
 

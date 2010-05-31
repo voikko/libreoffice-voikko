@@ -57,7 +57,8 @@ PropertyManager::~PropertyManager() {
 	 * before the office shutdown, there should be no other sources for calls to
 	 * libvoikko at this time. */
 	if (voikko_initialized) {
-		voikko_terminate(voikko_handle);
+		voikkoTerminate(voikkoHandle);
+		voikkoHandle = 0;
 		voikko_initialized = sal_False;
 	}
 }
@@ -80,17 +81,19 @@ void SAL_CALL PropertyManager::disposing(const lang::EventObject &)
 
 void PropertyManager::initLibvoikko() {
 	if (voikko_initialized) {
-		voikko_terminate(voikko_handle);
+		voikkoTerminate(voikkoHandle);
+		voikkoHandle = 0;
 		voikko_initialized = sal_False;
 	}
 	
-	OString variantAscii = OUStringToOString(dictVariant, RTL_TEXTENCODING_UTF8);
+	OString variantAscii = OString("fi-x-");
+	variantAscii += OUStringToOString(dictVariant, RTL_TEXTENCODING_UTF8);
 	
 	const char * error = initLibvoikkoWithVariant(variantAscii.getStr());
 	if (error) {
 		VOIKKO_DEBUG_2("Failed to initialize voikko with specific variant: %s", error);
 		VOIKKO_DEBUG("Trying next with default variant");
-		voikkoErrorString = initLibvoikkoWithVariant("default");
+		voikkoErrorString = initLibvoikkoWithVariant("fi");
 		if (voikkoErrorString) {
 			VOIKKO_DEBUG_2("ERROR: Failed to initialize voikko with default variant: %s", voikkoErrorString);
 			return;
@@ -100,29 +103,37 @@ void PropertyManager::initLibvoikko() {
 		voikkoErrorString = 0;
 	}
 	
-	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_DOT, 1);
-	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
+	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_IGNORE_DOT, 1);
+	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
 	
 	// Set these options globally until OOo bug #97945 is resolved.
-	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_TITLES_IN_GC, 1);
-	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_BULLETED_LISTS_IN_GC, 1);
+	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_ACCEPT_TITLES_IN_GC, 1);
+	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_ACCEPT_BULLETED_LISTS_IN_GC, 1);
 	
-	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, 1);
+	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, 1);
 	voikko_initialized = sal_True;
 	VOIKKO_DEBUG("PropertyManager::initLibvoikko: libvoikko initalized");
 }
 
 const char * PropertyManager::initLibvoikkoWithVariant(const char * variant) {
+	rtl_TextEncoding encoding = osl_getTextEncodingFromLocale(0);
+	if (encoding == RTL_TEXTENCODING_DONTKNOW) {
+		encoding = RTL_TEXTENCODING_UTF8;
+	}
+	OString installationPath = OUStringToOString(getInstallationPath(compContext), encoding).getStr();
+	const char * dictPath;
 	#ifdef VOIKKO_STANDALONE_EXTENSION
-		rtl_TextEncoding encoding = osl_getTextEncodingFromLocale(0);
-		if (encoding == RTL_TEXTENCODING_DONTKNOW) {
-			encoding = RTL_TEXTENCODING_UTF8;
-		}
-		return voikko_init_with_path(&voikko_handle, variant, 0,
-		       OUStringToOString(getInstallationPath(compContext), encoding).getStr());
+		dictPath = installationPath;
 	#else
-		return voikko_init(&voikko_handle, variant, 0);
+		dictPath = 0;
 	#endif
+	const char * errorString = 0;
+	voikkoHandle = voikkoInit(&errorString, variant, dictPath);
+	if (voikkoHandle) {
+		return 0;
+	} else {
+		return errorString;
+	}
 }
 
 void PropertyManager::initialize() throw (uno::Exception) {
@@ -336,20 +347,20 @@ void PropertyManager::setValue(const beans::PropertyValue & value) {
 		value.Value >>= bValue;
 		if (!bValue) vbValue = 1;
 		// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
-		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_NUMBERS, vbValue);
+		voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_IGNORE_NUMBERS, vbValue);
 	}
 	else if (value.Name == A2OU("IsSpellUpperCase")) {
 		value.Value >>= bValue;
 		if (!bValue) vbValue = 1;
 		// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
-		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_IGNORE_UPPERCASE, vbValue);
+		voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_IGNORE_UPPERCASE, vbValue);
 	}
 	else if (value.Name == A2OU("IsSpellCapitalization")) {
 		// FIXME: should ignore ALL errors in capitalization
 		value.Value >>= bValue;
 		if (!bValue) vbValue = 1;
 		// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
-		voikko_set_bool_option(voikko_handle, VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, vbValue);
+		voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, vbValue);
 	}
 	else if (value.Name == A2OU("HyphMinLeading")) {
 		sal_Int16 iValue;
@@ -379,14 +390,14 @@ void PropertyManager::setValue(const beans::PropertyValue & value) {
 
 void PropertyManager::syncHyphenatorSettings() {
 	if (hyphWordParts) {
-		voikko_set_int_option(voikko_handle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH,
+		voikkoSetIntegerOption(voikkoHandle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH,
 		                      hyphMinWordLength);
 	}
 	else {
-		voikko_set_int_option(voikko_handle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH, 2);
+		voikkoSetIntegerOption(voikkoHandle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH, 2);
 	}
 	
-	voikko_set_bool_option(voikko_handle, VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS,
+	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS,
 	                       hyphUnknownWords ? 1 : 0);
 }
 

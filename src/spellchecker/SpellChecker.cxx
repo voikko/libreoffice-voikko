@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 - 2009 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Loca
 
 	PropertyManager::get(compContext)->setValues(aProperties);
 	// VOIKKO_DEBUG_2("SpellChecker::isValid: c_str: '%s'\n", c_str);
-	int result = voikko_spell_cstr(voikko_handle, c_str);
+	int result = voikkoSpellCstr(voikkoHandle, c_str);
 	// VOIKKO_DEBUG_2("SpellChecker::isValid: result = %i\n", result);
 	PropertyManager::get(compContext)->resetValues(aProperties);
 	if (result) return sal_True;
@@ -100,11 +100,11 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	const char * c_str = oWord.getStr();
 
 	PropertyManager::get(compContext)->setValues(aProperties);
-	if (voikko_spell_cstr(voikko_handle, c_str)) {
+	if (voikkoSpellCstr(voikkoHandle, c_str)) {
 		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
 	}
-	char ** suggestions = voikko_suggest_cstr(voikko_handle, c_str);
+	char ** suggestions = voikkoSuggestCstr(voikkoHandle, c_str);
 	PropertyManager::get(compContext)->resetValues(aProperties);
 	SpellAlternatives * alternatives = new SpellAlternatives();
 	alternatives->word = aWord;
@@ -119,7 +119,7 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 		ostr = OString(suggestions[i]);
 		suggStrings[i] = OStringToOUString(ostr, RTL_TEXTENCODING_UTF8);
 	}
-	voikko_free_suggest_cstr(suggestions);
+	voikkoFreeCstrArray(suggestions);
 
 	alternatives->alternatives = suggSeq;
 	return alternatives;

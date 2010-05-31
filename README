@@ -28,10 +28,8 @@ Build requirements
 ==================
 
 - OpenOffice.org (Office and SDK), version 3.0.1 or later.
-- Libvoikko version 2.1 or later, and compatible versions of Suomi-malaga and
-  malaga. On Windows libvoikko should be built with MSVC, otherwise grammar checking
-  may not work. For standalone extensions libvoikko 2.3 is needed or the build
-  will fail.
+- Libvoikko version 3.0 or later, and compatible versions of Suomi-malaga and
+  malaga.
 - On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
   needed for compilation are usually present in default setups of any
   distribution.

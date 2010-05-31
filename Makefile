@@ -1,5 +1,5 @@
 # Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
-# Copyright (C) 2005-2009 Harri Pitkänen <hatapitk@iki.fi>
+# Copyright (C) 2005-2010 Harri Pitkänen <hatapitk@iki.fi>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ include $(PRJ)/settings/std.mk
 # ===== Build settings =====
 
 # Version number of the openoffice.org-voikko extension
-VOIKKO_VERSION=3.1.1
+VOIKKO_VERSION=3.2
 
 # VOIKKO_DEBUG controls the amount of debugging information in the resulting UNO
 # package. Possible values are NO (creates an optimized build without any

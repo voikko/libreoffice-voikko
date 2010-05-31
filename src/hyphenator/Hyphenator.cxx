@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 - 2009 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2007 - 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	}
 
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
-	char * hyphenationPoints = voikko_hyphenate_cstr(voikko_handle, oWord.getStr());
+	char * hyphenationPoints = voikkoHyphenateCstr(voikkoHandle, oWord.getStr());
 	if (hyphenationPoints == 0) {
 		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
@@ -106,7 +106,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	}
 
 	// return the result
-	voikko_free_hyphenate(hyphenationPoints);
+	voikkoFreeCstr(hyphenationPoints);
 	PropertyManager::get(compContext)->resetValues(aProperties);
 	if (hyphenPos != -1) return new HyphenatedWord(aWord, hyphenPos - 1);
 	else return 0;
@@ -145,7 +145,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
 	uno::Reference<linguistic2::XPossibleHyphens> xRes;
-	char * hyphenationPoints = voikko_hyphenate_cstr(voikko_handle, oWord.getStr());
+	char * hyphenationPoints = voikkoHyphenateCstr(voikkoHandle, oWord.getStr());
 	if (hyphenationPoints == 0) {
 		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
@@ -169,7 +169,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	hyphenatedWord = hyphenatedWordBuffer.makeStringAndClear();
 	xRes = new PossibleHyphens(aWord, hyphenatedWord, hyphenSeq);
 
-	voikko_free_hyphenate(hyphenationPoints);
+	voikkoFreeCstr(hyphenationPoints);
 	PropertyManager::get(compContext)->resetValues(aProperties);
 	return xRes;
 }
