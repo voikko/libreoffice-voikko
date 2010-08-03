@@ -1,3 +1,7 @@
+2010-07-27 David Tardon
+
+	* Fix broken config.xcu to work with stricter validation in OOo 3.3.
+
 2010-04-23 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Remove references to malaga and glib libraries for Windows and OS X.
