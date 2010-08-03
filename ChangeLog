@@ -2,6 +2,11 @@
 
 	* Fix broken config.xcu to work with stricter validation in OOo 3.3.
 
+2010-05-07 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Add license attribute that allows suppressing the license dialog with
+	  unopkg --suppress-license.
+
 2010-04-23 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Remove references to malaga and glib libraries for Windows and OS X.

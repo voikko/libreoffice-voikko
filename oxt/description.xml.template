@@ -13,7 +13,7 @@
 
   <!-- SHOW_LICENSE
   <registration>
-    <simple-license accept-by="admin" default-license-id="en-US">
+    <simple-license accept-by="admin" default-license-id="en-US" suppress-if-required="true">
       <license-text xlink:href="license_fi.txt" lang="fi" />
       <license-text xlink:href="license_en-US.txt" lang="en-US" license-id="en-US" />
     </simple-license>
