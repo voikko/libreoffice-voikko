@@ -4,22 +4,22 @@
  oor:package="org.puimula.ooovoikko"
  xmlns:oor="http://openoffice.org/2001/registry"
  xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <group oor:name="internal">
+  <node oor:name="internal">
     <prop oor:name="location" oor:type="xs:string">
       <value>%origin%</value>
     </prop>
-  </group>
-  <group oor:name="dictionary">
+  </node>
+  <node oor:name="dictionary">
     <prop oor:name="variant" oor:type="xs:string">
       <value>standard</value>
     </prop>
-  </group>
-  <group oor:name="hyphenator">
+  </node>
+  <node oor:name="hyphenator">
     <prop oor:name="hyphWordParts" oor:type="xs:boolean">
       <value>false</value>
     </prop>
     <prop oor:name="hyphUnknownWords" oor:type="xs:boolean">
       <value>true</value>
     </prop>
-  </group>
+  </node>
 </oor:component-data>
