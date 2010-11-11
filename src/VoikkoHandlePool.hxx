@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2007 - 2008 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,24 +15,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#ifndef _COMMON_HXX_
-#define _COMMON_HXX_
+#ifndef _VOIKKOHANDLEPOOL_HXX_
+#define _VOIKKOHANDLEPOOL_HXX_
 
-#include <osl/mutex.hxx>
 #include <libvoikko/voikko.h>
-#include "PropertyManager.hxx"
+#include <com/sun/star/lang/Locale.hpp>
 
 namespace voikko {
 
-osl::Mutex & getVoikkoMutex();
+//using namespace ::rtl;
+using namespace ::com::sun::star;
 
-OUString getInstallationPath(uno::Reference<uno::XComponentContext> & compContext);
-
-/** Get property set for given group from registry */
-uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
-	uno::Reference<uno::XComponentContext> compContext);
-
-extern sal_Bool voikko_initialized;
+class VoikkoHandlePool {
+	public:
+		static VoikkoHandlePool * getInstance();
+		
+		void putHandle(VoikkoHandle * handle/*, const lang::Locale & locale TODO: temporary solution*/);
+		
+		VoikkoHandle * getHandle(const lang::Locale & locale);
+		
+		void closeAllHandles();
+		
+		void setGlobalBooleanOption(int option, bool value);
+		
+		void setGlobalIntegerOption(int option, int value);
+	private:
+		VoikkoHandle * handle;
+		static VoikkoHandlePool * instance;
+};
 
 }
 

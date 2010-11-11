@@ -91,8 +91,6 @@ uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
 
 sal_Bool voikko_initialized = sal_False;
 
-VoikkoHandle * voikkoHandle = 0;
-
 uno::Reference<voikko::PropertyManager> thePropertyManager = 0;
 
 }

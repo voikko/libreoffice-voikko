@@ -22,6 +22,7 @@
 #include <libvoikko/voikko.h>
 
 #include "PropertyManager.hxx"
+#include "VoikkoHandlePool.hxx"
 #include "common.hxx"
 
 namespace voikko {
@@ -56,11 +57,7 @@ PropertyManager::~PropertyManager() {
 	/* This might need locking, but since the property manager is never destroyed
 	 * before the office shutdown, there should be no other sources for calls to
 	 * libvoikko at this time. */
-	if (voikko_initialized) {
-		voikkoTerminate(voikkoHandle);
-		voikkoHandle = 0;
-		voikko_initialized = sal_False;
-	}
+	VoikkoHandlePool::getInstance()->closeAllHandles();
 }
 
 void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent & pce)
@@ -80,11 +77,7 @@ void SAL_CALL PropertyManager::disposing(const lang::EventObject &)
 }
 
 void PropertyManager::initLibvoikko() {
-	if (voikko_initialized) {
-		voikkoTerminate(voikkoHandle);
-		voikkoHandle = 0;
-		voikko_initialized = sal_False;
-	}
+	VoikkoHandlePool::getInstance()->closeAllHandles();
 	
 	OString variantAscii = OString("fi-x-");
 	variantAscii += OUStringToOString(dictVariant, RTL_TEXTENCODING_UTF8);
@@ -103,14 +96,14 @@ void PropertyManager::initLibvoikko() {
 		voikkoErrorString = 0;
 	}
 	
-	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_IGNORE_DOT, 1);
-	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_NO_UGLY_HYPHENATION, 1);
+	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_IGNORE_DOT, true);
+	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_NO_UGLY_HYPHENATION, true);
 	
 	// Set these options globally until OOo bug #97945 is resolved.
-	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_ACCEPT_TITLES_IN_GC, 1);
-	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_ACCEPT_BULLETED_LISTS_IN_GC, 1);
+	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_ACCEPT_TITLES_IN_GC, true);
+	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_ACCEPT_BULLETED_LISTS_IN_GC, true);
 	
-	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, 1);
+	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, true);
 	voikko_initialized = sal_True;
 	VOIKKO_DEBUG("PropertyManager::initLibvoikko: libvoikko initalized");
 }
@@ -128,8 +121,10 @@ const char * PropertyManager::initLibvoikkoWithVariant(const char * variant) {
 		dictPath = 0;
 	#endif
 	const char * errorString = 0;
-	voikkoHandle = voikkoInit(&errorString, variant, dictPath);
+	VOIKKO_DEBUG("PropertyManager::initLibvoikkoWithVariant: voikkoInit");
+	VoikkoHandle * voikkoHandle = voikkoInit(&errorString, variant, dictPath);
 	if (voikkoHandle) {
+		VoikkoHandlePool::getInstance()->putHandle(voikkoHandle);
 		return 0;
 	} else {
 		return errorString;
@@ -341,26 +336,22 @@ void PropertyManager::resetValues(const uno::Sequence<beans::PropertyValue> & va
 
 void PropertyManager::setValue(const beans::PropertyValue & value) {
 	sal_Bool bValue = sal_False;
-	int vbValue = 0;
 	// VOIKKO_DEBUG_2("PropertyManager::setValue: name %s", OU2DEBUG(value.Name));
 	if (value.Name == A2OU("IsSpellWithDigits")) {
 		value.Value >>= bValue;
-		if (!bValue) vbValue = 1;
 		// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
-		voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_IGNORE_NUMBERS, vbValue);
+		VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_IGNORE_NUMBERS, !bValue);
 	}
 	else if (value.Name == A2OU("IsSpellUpperCase")) {
 		value.Value >>= bValue;
-		if (!bValue) vbValue = 1;
 		// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
-		voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_IGNORE_UPPERCASE, vbValue);
+		VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_IGNORE_UPPERCASE, !bValue);
 	}
 	else if (value.Name == A2OU("IsSpellCapitalization")) {
 		// FIXME: should ignore ALL errors in capitalization
 		value.Value >>= bValue;
-		if (!bValue) vbValue = 1;
 		// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
-		voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, vbValue);
+		VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, bValue);
 	}
 	else if (value.Name == A2OU("HyphMinLeading")) {
 		sal_Int16 iValue;
@@ -390,15 +381,14 @@ void PropertyManager::setValue(const beans::PropertyValue & value) {
 
 void PropertyManager::syncHyphenatorSettings() {
 	if (hyphWordParts) {
-		voikkoSetIntegerOption(voikkoHandle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH,
+		VoikkoHandlePool::getInstance()->setGlobalIntegerOption(VOIKKO_MIN_HYPHENATED_WORD_LENGTH,
 		                      hyphMinWordLength);
 	}
 	else {
-		voikkoSetIntegerOption(voikkoHandle, VOIKKO_MIN_HYPHENATED_WORD_LENGTH, 2);
+		VoikkoHandlePool::getInstance()->setGlobalIntegerOption(VOIKKO_MIN_HYPHENATED_WORD_LENGTH, 2);
 	}
 	
-	voikkoSetBooleanOption(voikkoHandle, VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS,
-	                       hyphUnknownWords ? 1 : 0);
+	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS, hyphUnknownWords);
 }
 
 void PropertyManager::sendLinguEvent(const linguistic2::LinguServiceEvent & event) {

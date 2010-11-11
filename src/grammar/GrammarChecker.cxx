@@ -19,6 +19,7 @@
 #include <libvoikko/voikko.h>
 
 #include "GrammarChecker.hxx"
+#include "../VoikkoHandlePool.hxx"
 #include "../common.hxx"
 
 namespace voikko {
@@ -102,7 +103,7 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 	sal_Int32 vErrorCount = 0;
 	while (paraLen < 1000000) { // sanity check
 		VoikkoGrammarError * vError = voikkoNextGrammarErrorCstr(
-			voikkoHandle, textUtf8.getStr(), paraLen, 0, vErrorCount++);
+			VoikkoHandlePool::getInstance()->getHandle(aLocale), textUtf8.getStr(), paraLen, 0, vErrorCount++);
 		if (!vError) {
 			break;
 		}

@@ -152,10 +152,12 @@ ifdef LIBVOIKKO_PATH
 endif
 
 VOIKKO_EXTENSION_SHAREDLIB=voikko.$(SHAREDLIB_EXT)
-VOIKKO_OBJECTS=registry common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
+VOIKKO_OBJECTS=registry common PropertyManager VoikkoHandlePool \
+               spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
                grammar/GrammarChecker settings/SettingsEventHandler
-VOIKKO_HEADERS=macros common PropertyManager spellchecker/SpellAlternatives spellchecker/SpellChecker \
+VOIKKO_HEADERS=macros common PropertyManager VoikkoHandlePool \
+               spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
                grammar/GrammarChecker settings/SettingsEventHandler
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \

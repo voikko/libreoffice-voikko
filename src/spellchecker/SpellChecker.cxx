@@ -19,6 +19,7 @@
 
 #include "SpellChecker.hxx"
 #include "SpellAlternatives.hxx"
+#include "../VoikkoHandlePool.hxx"
 #include "../common.hxx"
 
 namespace voikko {
@@ -62,7 +63,7 @@ sal_Bool SAL_CALL SpellChecker::hasLocale(const lang::Locale & aLocale) throw (u
 	else return sal_False;
 }
 
-sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Locale &,
+sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Locale & aLocale,
 	                              const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
@@ -72,7 +73,7 @@ sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Loca
 
 	PropertyManager::get(compContext)->setValues(aProperties);
 	// VOIKKO_DEBUG_2("SpellChecker::isValid: c_str: '%s'\n", c_str);
-	int result = voikkoSpellCstr(voikkoHandle, c_str);
+	int result = voikkoSpellCstr(VoikkoHandlePool::getInstance()->getHandle(aLocale), c_str);
 	// VOIKKO_DEBUG_2("SpellChecker::isValid: result = %i\n", result);
 	PropertyManager::get(compContext)->resetValues(aProperties);
 	if (result) return sal_True;
@@ -80,7 +81,7 @@ sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Loca
 }
 
 uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
-	const OUString & aWord, const lang::Locale &,
+	const OUString & aWord, const lang::Locale & aLocale,
 	const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	
@@ -96,15 +97,16 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	
 	osl::MutexGuard vmg(getVoikkoMutex());
 	if (!voikko_initialized) return 0;
+	VoikkoHandle * handle = VoikkoHandlePool::getInstance()->getHandle(aLocale);
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
 	const char * c_str = oWord.getStr();
 
 	PropertyManager::get(compContext)->setValues(aProperties);
-	if (voikkoSpellCstr(voikkoHandle, c_str)) {
+	if (voikkoSpellCstr(handle, c_str)) {
 		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
 	}
-	char ** suggestions = voikkoSuggestCstr(voikkoHandle, c_str);
+	char ** suggestions = voikkoSuggestCstr(handle, c_str);
 	PropertyManager::get(compContext)->resetValues(aProperties);
 	SpellAlternatives * alternatives = new SpellAlternatives();
 	alternatives->word = aWord;

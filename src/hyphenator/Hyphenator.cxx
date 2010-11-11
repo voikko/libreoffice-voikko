@@ -21,6 +21,7 @@
 #include "Hyphenator.hxx"
 #include "HyphenatedWord.hxx"
 #include "PossibleHyphens.hxx"
+#include "../VoikkoHandlePool.hxx"
 #include "../common.hxx"
 
 namespace voikko {
@@ -65,7 +66,7 @@ sal_Bool SAL_CALL Hyphenator::hasLocale(const lang::Locale & aLocale) throw (uno
 }
 
 uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
-	Hyphenator::hyphenate(const OUString & aWord, const lang::Locale &,
+	Hyphenator::hyphenate(const OUString & aWord, const lang::Locale & aLocale,
 	                      sal_Int16 nMaxLeading,
 	                      const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
@@ -87,7 +88,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	}
 
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
-	char * hyphenationPoints = voikkoHyphenateCstr(voikkoHandle, oWord.getStr());
+	char * hyphenationPoints = voikkoHyphenateCstr(VoikkoHandlePool::getInstance()->getHandle(aLocale), oWord.getStr());
 	if (hyphenationPoints == 0) {
 		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
@@ -124,7 +125,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 }
 
 uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
-	Hyphenator::createPossibleHyphens(const OUString & aWord, const lang::Locale &,
+	Hyphenator::createPossibleHyphens(const OUString & aWord, const lang::Locale & aLocale,
 	                                  const uno::Sequence<beans::PropertyValue> & aProperties)
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
@@ -145,7 +146,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
 	uno::Reference<linguistic2::XPossibleHyphens> xRes;
-	char * hyphenationPoints = voikkoHyphenateCstr(voikkoHandle, oWord.getStr());
+	char * hyphenationPoints = voikkoHyphenateCstr(VoikkoHandlePool::getInstance()->getHandle(aLocale), oWord.getStr());
 	if (hyphenationPoints == 0) {
 		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
