@@ -142,7 +142,6 @@ else
         VOIKKO_PACKAGENAME:=voikko
 endif
 ifneq "$(VOIKKO_DEBUG)" "NO"
-        VOIKKO_PACKAGENAME:=$(VOIKKO_PACKAGENAME)-dbg
         VOIKKO_CC_DEFINES+= -DVOIKKO_DEBUG_OUTPUT
 endif
 
