@@ -60,7 +60,7 @@ PropertyManager::~PropertyManager() {
 	VoikkoHandlePool::getInstance()->closeAllHandles();
 }
 
-void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent & pce)
+void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent & /*pce*/)
 	throw (uno::RuntimeException) {
 	VOIKKO_DEBUG_2("PropertyManager::propertyChange: %s", OU2DEBUG(pce.PropertyName));
 	setProperties(linguPropSet);

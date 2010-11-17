@@ -1,16 +1,11 @@
                       Openoffice.org-voikko
-© 2005 - 2009 Harri Pitkänen (hatapitk@iki.fi)
+© 2005 - 2010 Harri Pitkänen (hatapitk@iki.fi)
 
-Tämä ohjelma saattaa sisältää osan tai kaikki seuraavista komponenteista:
-  - Suomi-malaga
-  - libvoikko
-  - malaga
-  - glib
-  - GNU libiconv
-  - GNU libintl
-Tarkempaa tietoa käytetyistä komponenteista ja niiden tekijöistä löydät
-lähdekoodipaketeista, jotka tämän ohjelman levittäjän on kuulunut
-laittaa saatavillesi.
+Suomen kielen oikoluku, tavutus ja kieliopin tarkistin LibreOfficelle ja
+OpenOffice.orgille. Tämä lisäosa käyttää libvoikkoa ja Suomi-malagaa, ja
+nämä komponentit tulevat lisäosan mukana. Tarkempaa tietoa käytetyistä
+komponenteista ja niiden tekijöistä löydät lähdekoodipaketeista, jotka
+tämän ohjelman levittäjän on kuulunut laittaa saatavillesi.
 
 Tätä ohjelmaa saa kokonaisuudessaan käyttää vapaasti, ja sitä saa levittää
 edelleen "GNU General Public License"-lisenssin version 3 tai myöhempien

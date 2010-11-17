@@ -1,17 +1,11 @@
                       Openoffice.org-voikko
-© 2005 - 2009 Harri Pitkänen (hatapitk@iki.fi)
+© 2005 - 2010 Harri Pitkänen (hatapitk@iki.fi)
 
-This program may also contain some or all of the following additional
-modules:
-  - Suomi-malaga
-  - libvoikko
-  - malaga
-  - glib
-  - GNU libiconv
-  - GNU libintl
-For more information, see the copyright notices in the source code
-packages which should have been made available to you by the
-distributor of this program.
+Finnis spell checker, hyphenator and grammar checker for LibreOffice
+and OpenOffice.org. This extension uses and includes libvoikko and
+Suomi-malaga. For more information, see the copyright notices in the
+source code packages which should have been made available to you by
+the distributor of this program.
 
 This program as a whole may be freely used, and it may be distributed
 under the GNU General Public License, version 3 or later (see below).

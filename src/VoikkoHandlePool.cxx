@@ -34,7 +34,7 @@ void VoikkoHandlePool::putHandle(VoikkoHandle * handle) {
 	this->handle = handle;
 }
 
-VoikkoHandle * VoikkoHandlePool::getHandle(const lang::Locale & locale) {
+VoikkoHandle * VoikkoHandlePool::getHandle(const lang::Locale & /*locale*/) {
 	return handle;
 }
 
