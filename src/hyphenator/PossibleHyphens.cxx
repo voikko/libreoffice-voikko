@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2005 - 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2005 - 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,12 @@
 
 namespace voikko {
 
-PossibleHyphens::PossibleHyphens(OUString wrd, OUString hypWrd, uno::Sequence<sal_Int16> positions) {
-	word = wrd;
-	hyphenatedWord = hypWrd;
-	hyphenationPositions = positions;
+PossibleHyphens::PossibleHyphens(const OUString & wrd, const OUString & hypWrd,
+	                         uno::Sequence<sal_Int16> positions, const lang::Locale & locale) :
+	word(wrd),
+	hyphenatedWord(hypWrd),
+	hyphenationPositions(positions),
+	locale(locale) {
 }
 
 OUString SAL_CALL PossibleHyphens::getWord() throw (uno::RuntimeException) {
@@ -31,7 +33,7 @@ OUString SAL_CALL PossibleHyphens::getWord() throw (uno::RuntimeException) {
 }
 
 lang::Locale SAL_CALL PossibleHyphens::getLocale() throw (uno::RuntimeException) {
-	return lang::Locale(A2OU("fi"), A2OU("FI"), A2OU(""));
+	return locale;
 }
 
 OUString SAL_CALL PossibleHyphens::getPossibleHyphens() throw (uno::RuntimeException) {

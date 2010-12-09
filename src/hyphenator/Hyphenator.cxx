@@ -106,8 +106,11 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	// return the result
 	voikkoFreeCstr(hyphenationPoints);
 	PropertyManager::get(compContext)->resetValues(aProperties);
-	if (hyphenPos != -1) return new HyphenatedWord(aWord, hyphenPos - 1);
-	else return 0;
+	if (hyphenPos != -1) {
+		return new HyphenatedWord(aWord, hyphenPos - 1, aLocale);
+	} else {
+		return 0;
+	}
 }
 
 uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
@@ -165,7 +168,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	}
 
 	hyphenatedWord = hyphenatedWordBuffer.makeStringAndClear();
-	xRes = new PossibleHyphens(aWord, hyphenatedWord, hyphenSeq);
+	xRes = new PossibleHyphens(aWord, hyphenatedWord, hyphenSeq, aLocale);
 
 	voikkoFreeCstr(hyphenationPoints);
 	PropertyManager::get(compContext)->resetValues(aProperties);

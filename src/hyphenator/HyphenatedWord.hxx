@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2005 - 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2005 - 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +30,15 @@ namespace voikko {
  *  the interface documentation for more information.
  */
 class HyphenatedWord : public cppu::WeakImplHelper1<linguistic2::XHyphenatedWord> {
-	public:
-	OUString word;
+	private:
+	const OUString word;
+	const sal_Int16 hyphenPos;
+	const lang::Locale locale;
 	OUString hyphenatedWord;
-	sal_Int16 hyphenPos;
 	sal_Bool isAlternative;
 
-	HyphenatedWord(OUString wrd, sal_Int16 pos);
+	public:
+	HyphenatedWord(const OUString & wrd, sal_Int16 pos, const lang::Locale & locale);
 	virtual OUString SAL_CALL getWord() throw (uno::RuntimeException);
 	virtual lang::Locale SAL_CALL getLocale() throw (uno::RuntimeException);
 	virtual sal_Int16 SAL_CALL getHyphenationPos() throw (uno::RuntimeException);

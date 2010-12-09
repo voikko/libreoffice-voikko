@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2005 - 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2005 - 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,10 @@
 
 namespace voikko {
 
-HyphenatedWord::HyphenatedWord(OUString wrd, sal_Int16 pos) {
-	word = wrd;
-	hyphenPos = pos;
+HyphenatedWord::HyphenatedWord(const OUString & wrd, sal_Int16 pos, const lang::Locale & locale) :
+	word(wrd),
+	hyphenPos(pos),
+	locale(locale) {
 	if (wrd[pos+1] == '-') {
 		hyphenatedWord = wrd.replaceAt(pos+1, 1, A2OU(""));
 		isAlternative = sal_True;
@@ -45,7 +46,7 @@ OUString SAL_CALL HyphenatedWord::getHyphenatedWord() throw (uno::RuntimeExcepti
 }
 
 lang::Locale SAL_CALL HyphenatedWord::getLocale() throw (uno::RuntimeException) {
-	return lang::Locale(A2OU("fi"), A2OU("FI"), A2OU(""));
+	return locale;
 }
 
 sal_Int16 SAL_CALL HyphenatedWord::getHyphenationPos() throw (uno::RuntimeException) {

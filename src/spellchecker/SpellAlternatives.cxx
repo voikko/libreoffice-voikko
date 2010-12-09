@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2005 - 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2005 - 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,18 @@
 
 namespace voikko {
 
+SpellAlternatives::SpellAlternatives(const OUString & word, uno::Sequence<OUString> alternatives, const lang::Locale & locale) :
+	word(word),
+	alternatives(alternatives),
+	locale(locale) {
+}
+
 OUString SAL_CALL SpellAlternatives::getWord() throw (uno::RuntimeException) {
 	return word;
 }
 
 lang::Locale SAL_CALL SpellAlternatives::getLocale() throw (uno::RuntimeException) {
-	return lang::Locale(A2OU("fi"), A2OU("FI"), A2OU(""));
+	return locale;
 }
 
 sal_Int16 SAL_CALL SpellAlternatives::getFailureType() throw (uno::RuntimeException) {
@@ -34,7 +40,7 @@ sal_Int16 SAL_CALL SpellAlternatives::getFailureType() throw (uno::RuntimeExcept
 }
 
 sal_Int16 SAL_CALL SpellAlternatives::getAlternativesCount() throw (uno::RuntimeException) {
-	return (sal_Int16) alternatives.getLength(); // Integer overflow is not possible
+	return static_cast<sal_Int16>(alternatives.getLength()); // Integer overflow is not possible
 }
 
 uno::Sequence<OUString> SAL_CALL SpellAlternatives::getAlternatives() throw (uno::RuntimeException) {

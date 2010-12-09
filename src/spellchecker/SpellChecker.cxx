@@ -84,12 +84,9 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	
 	// Check if diagnostic message should be returned
 	if (aWord.equals(A2OU("VoikkoGetStatusInformation"))) {
-		SpellAlternatives * alternatives = new SpellAlternatives();
-		alternatives->word = aWord;
 		uno::Sequence<OUString> suggSeq(1);
 		suggSeq.getArray()[0] = PropertyManager::get(compContext)->getInitializationStatus();
-		alternatives->alternatives = suggSeq;
-		return alternatives;
+		return new SpellAlternatives(aWord, suggSeq, aLocale);
 	}
 	
 	osl::MutexGuard vmg(getVoikkoMutex());
@@ -105,9 +102,9 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	}
 	char ** suggestions = voikkoSuggestCstr(handle, c_str);
 	PropertyManager::get(compContext)->resetValues(aProperties);
-	SpellAlternatives * alternatives = new SpellAlternatives();
-	alternatives->word = aWord;
-	if (suggestions == 0 || suggestions[0] == 0) return alternatives;
+	if (suggestions == 0 || suggestions[0] == 0) {
+		return new SpellAlternatives(aWord, uno::Sequence<OUString>(0), aLocale);
+	}
 	int scount = 0;
 	while (suggestions[scount] != 0) scount++;
 	uno::Sequence<OUString> suggSeq(scount);
@@ -120,8 +117,7 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	}
 	voikkoFreeCstrArray(suggestions);
 
-	alternatives->alternatives = suggSeq;
-	return alternatives;
+	return new SpellAlternatives(aWord, suggSeq, aLocale);
 }
 
 sal_Bool SAL_CALL SpellChecker::addLinguServiceEventListener(

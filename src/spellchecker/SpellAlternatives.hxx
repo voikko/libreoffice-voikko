@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2005 - 2007 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2005 - 2010 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +28,13 @@ using namespace ::rtl;
 namespace voikko {
 
 class SpellAlternatives : public cppu::WeakImplHelper1<linguistic2::XSpellAlternatives> {
-	public:
-	OUString word;
-	uno::Sequence<OUString> alternatives;
+	private:
+	const OUString word;
+	const uno::Sequence<OUString> alternatives;
+	const lang::Locale locale;
 
+	public:
+	SpellAlternatives(const OUString & word, uno::Sequence<OUString> alternatives, const lang::Locale & locale);
 	virtual OUString SAL_CALL getWord() throw (uno::RuntimeException);
 	virtual lang::Locale SAL_CALL getLocale() throw (uno::RuntimeException);
 	virtual sal_Int16 SAL_CALL getFailureType() throw (uno::RuntimeException);
