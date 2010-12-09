@@ -39,6 +39,18 @@ class VoikkoHandlePool {
 		void setGlobalBooleanOption(int option, bool value);
 		
 		void setGlobalIntegerOption(int option, int value);
+		
+		uno::Sequence<lang::Locale> getSupportedSpellingLocales();
+		
+		uno::Sequence<lang::Locale> getSupportedHyphenationLocales();
+		
+		uno::Sequence<lang::Locale> getSupportedGrammarLocales();
+		
+		bool supportsSpellingLocale(const lang::Locale & locale);
+		
+		bool supportsHyphenationLocale(const lang::Locale & locale);
+		
+		bool supportsGrammarLocale(const lang::Locale & locale);
 	private:
 		VoikkoHandle * handle;
 		static VoikkoHandlePool * instance;

@@ -55,14 +55,11 @@ uno::Sequence<OUString> SAL_CALL Hyphenator::getSupportedServiceNames() throw (u
 }
 
 uno::Sequence<lang::Locale> SAL_CALL Hyphenator::getLocales() throw (uno::RuntimeException) {
-	uno::Sequence<lang::Locale> locales(1);
-	locales.getArray()[0] = lang::Locale(A2OU("fi"), A2OU("FI"), OUString());
-	return locales;
+	return VoikkoHandlePool::getInstance()->getSupportedHyphenationLocales();
 }
 
 sal_Bool SAL_CALL Hyphenator::hasLocale(const lang::Locale & aLocale) throw (uno::RuntimeException) {
-	if (aLocale.Language == A2OU("fi")) return sal_True;
-	else return sal_False;
+	return VoikkoHandlePool::getInstance()->supportsHyphenationLocale(aLocale);
 }
 
 uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
@@ -198,9 +195,9 @@ void SAL_CALL Hyphenator::initialize(const uno::Sequence<uno::Any> &)
 OUString SAL_CALL Hyphenator::getServiceDisplayName(const lang::Locale & aLocale)
 	throw (uno::RuntimeException) {
 	if (aLocale.Language == A2OU("fi"))
-		return A2OU("Suomen kielen tavutus (Voikko)");
+		return A2OU("Tavutus (Voikko)");
 	else
-		return A2OU("Finnish hyphenator (Voikko)");
+		return A2OU("Hyphenator (Voikko)");
 }
 
 OUString SAL_CALL Hyphenator::getImplementationName_static() {

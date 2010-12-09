@@ -53,14 +53,11 @@ uno::Sequence<OUString> SAL_CALL SpellChecker::getSupportedServiceNames() throw 
 }
 
 uno::Sequence<lang::Locale> SAL_CALL SpellChecker::getLocales() throw (uno::RuntimeException) {
-	uno::Sequence<lang::Locale> locales(1);
-	locales.getArray()[0] = lang::Locale(A2OU("fi"), A2OU("FI"), OUString());
-	return locales;
+	return VoikkoHandlePool::getInstance()->getSupportedSpellingLocales();
 }
 
 sal_Bool SAL_CALL SpellChecker::hasLocale(const lang::Locale & aLocale) throw (uno::RuntimeException) {
-	if (aLocale.Language == A2OU("fi")) return sal_True;
-	else return sal_False;
+	return VoikkoHandlePool::getInstance()->supportsSpellingLocale(aLocale);
 }
 
 sal_Bool SAL_CALL SpellChecker::isValid(const OUString & aWord, const lang::Locale & aLocale,
@@ -150,9 +147,9 @@ void SAL_CALL SpellChecker::initialize(const uno::Sequence<uno::Any> &)
 OUString SAL_CALL SpellChecker::getServiceDisplayName(const lang::Locale & aLocale)
 	throw (uno::RuntimeException) {
 	if (aLocale.Language == A2OU("fi"))
-		return A2OU("Suomen kielen oikoluku (Voikko)");
+		return A2OU("Oikoluku (Voikko)");
 	else
-		return A2OU("Finnish spellchecker (Voikko)");
+		return A2OU("Spellchecker (Voikko)");
 }
 
 static uno::Reference<uno::XInterface> theSpellChecker;

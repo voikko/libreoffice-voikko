@@ -58,6 +58,42 @@ void VoikkoHandlePool::setGlobalIntegerOption(int option, int value) {
 	}
 }
 
+uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedSpellingLocales() {
+	uno::Sequence<lang::Locale> locales(1);
+	locales.getArray()[0] = lang::Locale(A2OU("fi"), A2OU("FI"), OUString());
+	return locales;
+}
+
+uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedHyphenationLocales() {
+	return getSupportedSpellingLocales();
+}
+
+uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedGrammarLocales() {
+	return getSupportedSpellingLocales();
+}
+
+static bool containsLocale(const lang::Locale & localeToFind, const uno::Sequence<lang::Locale> & locales) {
+	for (sal_Int32 i = 0; i < locales.getLength(); i++) {
+		if (locales[i].Language == localeToFind.Language &&
+		    locales[i].Country == localeToFind.Country) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool VoikkoHandlePool::supportsSpellingLocale(const lang::Locale & locale) {
+	return containsLocale(locale, getSupportedSpellingLocales());
+}
+
+bool VoikkoHandlePool::supportsHyphenationLocale(const lang::Locale & locale) {
+	return containsLocale(locale, getSupportedHyphenationLocales());
+}
+
+bool VoikkoHandlePool::supportsGrammarLocale(const lang::Locale & locale) {
+	return containsLocale(locale, getSupportedGrammarLocales());
+}
+
 VoikkoHandlePool * VoikkoHandlePool::instance = 0;
 
 }
