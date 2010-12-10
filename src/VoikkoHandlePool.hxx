@@ -19,6 +19,7 @@
 #define _VOIKKOHANDLEPOOL_HXX_
 
 #include <libvoikko/voikko.h>
+#include <map>
 #include <com/sun/star/lang/Locale.hpp>
 
 namespace voikko {
@@ -52,7 +53,9 @@ class VoikkoHandlePool {
 		
 		bool supportsGrammarLocale(const lang::Locale & locale);
 	private:
-		VoikkoHandle * handle;
+		std::map<rtl::OString, VoikkoHandle *> handles;
+		std::map<int, bool> globalBooleanOptions;
+		std::map<int, int> globalIntegerOptions;
 		static VoikkoHandlePool * instance;
 };
 

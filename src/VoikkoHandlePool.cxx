@@ -20,6 +20,7 @@
 
 namespace voikko {
 
+using namespace std;
 using namespace ::rtl;
 using namespace ::com::sun::star;
 
@@ -31,30 +32,38 @@ VoikkoHandlePool * VoikkoHandlePool::getInstance() {
 }
 
 void VoikkoHandlePool::putHandle(VoikkoHandle * handle) {
-	this->handle = handle;
+	handles[OString("fi")] = handle;
 }
 
 VoikkoHandle * VoikkoHandlePool::getHandle(const lang::Locale & /*locale*/) {
-	return handle;
+	return handles[OString("fi")];
 }
 
 void VoikkoHandlePool::closeAllHandles() {
-	if (voikko_initialized) {
-		voikkoTerminate(handle);
-		handle = 0;
-		voikko_initialized = sal_False;
+	for (map<OString,VoikkoHandle *>::const_iterator it = handles.begin(); it != handles.end(); it++) {
+		voikkoTerminate(it->second);
 	}
+	handles.clear();
+	voikko_initialized = sal_False;
 }
 
 void VoikkoHandlePool::setGlobalBooleanOption(int option, bool value) {
-	if (handle) {
-		voikkoSetBooleanOption(handle, option, value ? 1 : 0);
+	if (globalBooleanOptions.find(option) != globalBooleanOptions.end() && globalBooleanOptions[option] == value) {
+		return;
+	}
+	globalBooleanOptions[option] = value;
+	for (map<OString,VoikkoHandle *>::const_iterator it = handles.begin(); it != handles.end(); it++) {
+		voikkoSetBooleanOption(it->second, option, value ? 1 : 0);
 	}
 }
 
 void VoikkoHandlePool::setGlobalIntegerOption(int option, int value) {
-	if (handle) {
-		voikkoSetIntegerOption(handle, option, value);
+	if (globalIntegerOptions.find(option) != globalIntegerOptions.end() && globalIntegerOptions[option] == value) {
+		return;
+	}
+	globalIntegerOptions[option] = value;
+	for (map<OString,VoikkoHandle *>::const_iterator it = handles.begin(); it != handles.end(); it++) {
+		voikkoSetIntegerOption(it->second, option, value);
 	}
 }
 
