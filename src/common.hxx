@@ -32,8 +32,6 @@ OUString getInstallationPath(uno::Reference<uno::XComponentContext> & compContex
 uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
 	uno::Reference<uno::XComponentContext> compContext);
 
-extern sal_Bool voikko_initialized;
-
 }
 
 #endif

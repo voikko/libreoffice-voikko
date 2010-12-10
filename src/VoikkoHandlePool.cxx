@@ -44,7 +44,6 @@ void VoikkoHandlePool::closeAllHandles() {
 		voikkoTerminate(it->second);
 	}
 	handles.clear();
-	voikko_initialized = sal_False;
 }
 
 void VoikkoHandlePool::setGlobalBooleanOption(int option, bool value) {

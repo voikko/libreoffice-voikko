@@ -27,6 +27,8 @@
 
 namespace voikko {
 
+static sal_Bool voikko_initialized = sal_False;
+
 PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext):
 	compContext(cContext),
 	linguEventListeners(getVoikkoMutex()) {
@@ -58,6 +60,7 @@ PropertyManager::~PropertyManager() {
 	 * before the office shutdown, there should be no other sources for calls to
 	 * libvoikko at this time. */
 	VoikkoHandlePool::getInstance()->closeAllHandles();
+	voikko_initialized = sal_False;
 }
 
 void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent & /*pce*/)
@@ -78,6 +81,7 @@ void SAL_CALL PropertyManager::disposing(const lang::EventObject &)
 
 void PropertyManager::initLibvoikko() {
 	VoikkoHandlePool::getInstance()->closeAllHandles();
+	voikko_initialized = sal_False;
 	
 	OString variantAscii = OString("fi-x-");
 	variantAscii += OUStringToOString(dictVariant, RTL_TEXTENCODING_UTF8);
@@ -404,7 +408,7 @@ void PropertyManager::sendLinguEvent(const linguistic2::LinguServiceEvent & even
 	}
 }
 
-static uno::Reference<voikko::PropertyManager> thePropertyManager;
+static uno::Reference<voikko::PropertyManager> thePropertyManager = 0;
 
 uno::Reference<voikko::PropertyManager> PropertyManager::get(uno::Reference<uno::XComponentContext> const & context) {
 	if (!thePropertyManager.is()) {

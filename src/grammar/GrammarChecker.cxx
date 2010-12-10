@@ -87,7 +87,8 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 	result.nBehindEndOfSentencePosition = nSuggestedBehindEndOfSentencePosition;
 	result.xProofreader = this;
 	
-	if (!voikko_initialized) {
+	VoikkoHandle * voikkoHandle = VoikkoHandlePool::getInstance()->getHandle(aLocale);
+	if (!voikkoHandle) {
 		VOIKKO_DEBUG("ERROR: GrammarChecker::doProofreading called without initializing libvoikko");
 		return result;
 	}
@@ -100,7 +101,7 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 	sal_Int32 vErrorCount = 0;
 	while (paraLen < 1000000) { // sanity check
 		VoikkoGrammarError * vError = voikkoNextGrammarErrorCstr(
-			VoikkoHandlePool::getInstance()->getHandle(aLocale), textUtf8.getStr(), paraLen, 0, vErrorCount++);
+			voikkoHandle, textUtf8.getStr(), paraLen, 0, vErrorCount++);
 		if (!vError) {
 			break;
 		}

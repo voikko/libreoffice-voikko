@@ -69,8 +69,13 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("Hyphenator::hyphenate");
-	if (!voikko_initialized) return 0;
-	if (aWord.getLength() > 10000) return 0;
+	VoikkoHandle * voikkoHandle = VoikkoHandlePool::getInstance()->getHandle(aLocale);
+	if (!voikkoHandle) {
+		return 0;
+	}
+	if (aWord.getLength() > 10000) {
+		return 0;
+	}
 	PropertyManager::get(compContext)->setValues(aProperties);
 
 	sal_Int16 minLeading = PropertyManager::get(compContext)->getHyphMinLeading();
@@ -85,7 +90,7 @@ uno::Reference<linguistic2::XHyphenatedWord> SAL_CALL
 	}
 
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
-	char * hyphenationPoints = voikkoHyphenateCstr(VoikkoHandlePool::getInstance()->getHandle(aLocale), oWord.getStr());
+	char * hyphenationPoints = voikkoHyphenateCstr(voikkoHandle, oWord.getStr());
 	if (hyphenationPoints == 0) {
 		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;
@@ -130,8 +135,13 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 	throw (uno::RuntimeException, lang::IllegalArgumentException) {
 	osl::MutexGuard vmg(getVoikkoMutex());
 	VOIKKO_DEBUG("Hyphenator::createPossibleHyphens");
-	if (!voikko_initialized) return 0;
-	if (aWord.getLength() > 10000) return 0;
+	if (aWord.getLength() > 10000) {
+		return 0;
+	}
+	VoikkoHandle * voikkoHandle = VoikkoHandlePool::getInstance()->getHandle(aLocale);
+	if (!voikkoHandle) {
+		return 0;
+	}
 	sal_Int16 len = (sal_Int16) aWord.getLength();
 	PropertyManager::get(compContext)->setValues(aProperties);
 
@@ -146,7 +156,7 @@ uno::Reference<linguistic2::XPossibleHyphens> SAL_CALL
 
 	OString oWord = OUStringToOString(aWord, RTL_TEXTENCODING_UTF8);
 	uno::Reference<linguistic2::XPossibleHyphens> xRes;
-	char * hyphenationPoints = voikkoHyphenateCstr(VoikkoHandlePool::getInstance()->getHandle(aLocale), oWord.getStr());
+	char * hyphenationPoints = voikkoHyphenateCstr(voikkoHandle, oWord.getStr());
 	if (hyphenationPoints == 0) {
 		PropertyManager::get(compContext)->resetValues(aProperties);
 		return 0;

@@ -89,8 +89,4 @@ uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
 	return rootView;
 }
 
-sal_Bool voikko_initialized = sal_False;
-
-uno::Reference<voikko::PropertyManager> thePropertyManager = 0;
-
 }
