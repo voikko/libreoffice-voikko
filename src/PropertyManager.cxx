@@ -31,7 +31,8 @@ static sal_Bool voikko_initialized = sal_False;
 
 PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext):
 	compContext(cContext),
-	linguEventListeners(getVoikkoMutex()) {
+	linguEventListeners(getVoikkoMutex()),
+	messageLanguage("en_US") {
 	VOIKKO_DEBUG("PropertyManager:CTOR");
 	isInitialized = sal_False;
 	linguPropSet = 0;
@@ -135,8 +136,37 @@ const char * PropertyManager::initLibvoikkoWithVariant(const char * variant) {
 	}
 }
 
+void PropertyManager::setUiLanguage() {
+	try {
+		uno::Any langA = readFromRegistry(
+			A2OU("org.openoffice.Office.Linguistic/General"),
+			A2OU("UILocale"));
+		OUString lang;
+		langA >>= lang;
+		VOIKKO_DEBUG_2("Specified UI locale = '%s'", OU2DEBUG(lang));
+		if (lang.match(A2OU("fi"), 0)) {
+			messageLanguage = "fi_FI";
+		} else if (lang.getLength() == 0) { // Use system default language
+			// FIXME: This does not check LC_MESSAGES. There is
+			// also GetSystemUILanguage but that cannot be used
+			// from extension.
+			rtl_Locale * rtlLocale;
+			osl_getProcessLocale(&rtlLocale);
+			OUString localeLang(rtlLocale->Language);
+			VOIKKO_DEBUG_2("Locale language = '%s'", OU2DEBUG(localeLang));
+			if (localeLang.match(A2OU("fi"), 0)) {
+				messageLanguage = "fi_FI";
+			}
+		}
+	}
+	catch (beans::UnknownPropertyException) {
+		VOIKKO_DEBUG("ERROR: PropertyManager::initialize caught UnknownPropertyException");
+	}
+}
+
 void PropertyManager::initialize() throw (uno::Exception) {
 	VOIKKO_DEBUG("PropertyManager::initialize: starting");
+	setUiLanguage();
 	if (!voikko_initialized) {
 		isInitialized = sal_False;
 		initLibvoikko();
@@ -144,31 +174,6 @@ void PropertyManager::initialize() throw (uno::Exception) {
 			return;
 		}
 		
-		// Determine UI language
-		messageLanguage = "en_US";
-		try {
-			uno::Any langA = readFromRegistry(
-				A2OU("org.openoffice.Office.Linguistic/General"),
-				A2OU("UILocale"));
-			OUString lang;
-			langA >>= lang;
-			VOIKKO_DEBUG_2("Specified UI locale = '%s'", OU2DEBUG(lang));
-			if (lang.match(A2OU("fi"), 0)) messageLanguage = "fi_FI";
-			else if (lang.getLength() == 0) { // Use system default language
-				// FIXME: This does not check LC_MESSAGES. There is
-				// also GetSystemUILanguage but that cannot be used
-				// from extension.
-				rtl_Locale * rtlLocale;
-				osl_getProcessLocale(&rtlLocale);
-				OUString localeLang(rtlLocale->Language);
-				VOIKKO_DEBUG_2("Locale language = '%s'", OU2DEBUG(localeLang));
-				if (localeLang.match(A2OU("fi"), 0))
-					messageLanguage = "fi_FI";
-			}
-		}
-		catch (beans::UnknownPropertyException) {
-			VOIKKO_DEBUG("ERROR: PropertyManager::initialize caught UnknownPropertyException");
-		}
 	}
 	if (!isInitialized) {
 		uno::Reference<lang::XMultiComponentFactory> servManager =
