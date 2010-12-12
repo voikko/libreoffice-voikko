@@ -41,6 +41,16 @@ class VoikkoHandlePool {
 		
 		void setGlobalIntegerOption(int option, int value);
 		
+		/**
+		 * Set the preferred dictionary variant (private use tag) that
+		 * will be used for all languages. If the specified variant is not
+		 * available for given language then standard variant is used
+		 * as a fallback.
+		 */
+		void setPreferredGlobalVariant(const rtl::OUString & variant);
+		
+		rtl::OUString getPreferredGlobalVariant();
+		
 		uno::Sequence<lang::Locale> getSupportedSpellingLocales();
 		
 		uno::Sequence<lang::Locale> getSupportedHyphenationLocales();
@@ -59,6 +69,7 @@ class VoikkoHandlePool {
 		std::map<rtl::OString, VoikkoHandle *> handles;
 		std::map<int, bool> globalBooleanOptions;
 		std::map<int, int> globalIntegerOptions;
+		rtl::OUString preferredGlobalVariant;
 		static VoikkoHandlePool * instance;
 };
 

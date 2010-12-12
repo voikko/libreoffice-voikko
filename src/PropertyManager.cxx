@@ -42,12 +42,14 @@ PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext
 		uno::Any dictVariantA = readFromRegistry(
 		              A2OU("/org.puimula.ooovoikko.Config/dictionary"),
 		              A2OU("variant"));
+		OUString dictVariant;
 		dictVariantA >>= dictVariant;
+		VoikkoHandlePool::getInstance()->setPreferredGlobalVariant(dictVariant);
 		VOIKKO_DEBUG_2("Initial dictionary variant '%s'", OU2DEBUG(dictVariant));
 	}
 	catch (beans::UnknownPropertyException e) {
 		VOIKKO_DEBUG("Setting initial dictionary variant to default");
-		dictVariant = A2OU("standard");
+		VoikkoHandlePool::getInstance()->setPreferredGlobalVariant(OUString());
 	}
 	initialize();
 }
@@ -80,7 +82,7 @@ void PropertyManager::initLibvoikko() {
 	VoikkoHandlePool::getInstance()->closeAllHandles();
 	
 	OString variantAscii = OString("fi-x-");
-	variantAscii += OUStringToOString(dictVariant, RTL_TEXTENCODING_UTF8);
+	variantAscii += OUStringToOString(VoikkoHandlePool::getInstance()->getPreferredGlobalVariant(), RTL_TEXTENCODING_UTF8);
 	
 	const char * error = initLibvoikkoWithVariant(variantAscii.getStr());
 	if (error) {
@@ -261,6 +263,7 @@ const char * PropertyManager::getMessageLanguage() {
 }
 
 void PropertyManager::reloadVoikkoSettings() {
+	VoikkoHandlePool * pool = VoikkoHandlePool::getInstance();
 	linguistic2::LinguServiceEvent event;
 	event.nEvent = 0;
 	try {
@@ -287,13 +290,13 @@ void PropertyManager::reloadVoikkoSettings() {
 		uno::Any dictVariantA = readFromRegistry(
 			A2OU("/org.puimula.ooovoikko.Config/dictionary"),
 			A2OU("variant"));
-		OUString dictVariantNew = this->dictVariant;
+		OUString dictVariantNew = pool->getPreferredGlobalVariant();
 		dictVariantA >>= dictVariantNew;
-		if (dictVariantNew != this->dictVariant) {
+		if (dictVariantNew != pool->getPreferredGlobalVariant()) {
 			event.nEvent |= linguistic2::LinguServiceEventFlags::SPELL_CORRECT_WORDS_AGAIN;
 			event.nEvent |= linguistic2::LinguServiceEventFlags::SPELL_WRONG_WORDS_AGAIN;
 			event.nEvent |= linguistic2::LinguServiceEventFlags::PROOFREAD_AGAIN;
-			this->dictVariant = dictVariantNew;
+			pool->setPreferredGlobalVariant(dictVariantNew);
 			initLibvoikko();
 		}
 	}

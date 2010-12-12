@@ -88,6 +88,14 @@ rtl::OUString VoikkoHandlePool::getInitializationStatus() {
 	return A2OU("OK");
 }
 
+void VoikkoHandlePool::setPreferredGlobalVariant(const OUString & variant) {
+	this->preferredGlobalVariant = variant;
+}
+
+OUString VoikkoHandlePool::getPreferredGlobalVariant() {
+	return this->preferredGlobalVariant;
+}
+
 static bool containsLocale(const lang::Locale & localeToFind, const uno::Sequence<lang::Locale> & locales) {
 	for (sal_Int32 i = 0; i < locales.getLength(); i++) {
 		if (locales[i].Language == localeToFind.Language &&
