@@ -52,6 +52,9 @@ class VoikkoHandlePool {
 		bool supportsHyphenationLocale(const lang::Locale & locale);
 		
 		bool supportsGrammarLocale(const lang::Locale & locale);
+		
+		/** Returns initialization status diagnostics */
+		rtl::OUString getInitializationStatus();
 	private:
 		std::map<rtl::OString, VoikkoHandle *> handles;
 		std::map<int, bool> globalBooleanOptions;

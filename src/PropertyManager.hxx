@@ -66,9 +66,6 @@ class PropertyManager:
 		throw (beans::UnknownPropertyException);
 	void readVoikkoSettings();
 	
-	/** Returns initialization status diagnostics */
-	OUString getInitializationStatus();
-
 	/** Returns the language code for user messages */
 	const char * getMessageLanguage();
 	
@@ -96,7 +93,6 @@ class PropertyManager:
 	void syncHyphenatorSettings();
 	void sendLinguEvent(const linguistic2::LinguServiceEvent & event);
 	
-	sal_Bool isInitialized;
 	uno::Reference<beans::XPropertySet> linguPropSet;
 	uno::Reference<uno::XComponentContext> compContext;
 	::cppu::OInterfaceContainerHelper linguEventListeners;

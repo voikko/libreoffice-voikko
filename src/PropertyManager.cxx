@@ -27,14 +27,11 @@
 
 namespace voikko {
 
-static sal_Bool voikko_initialized = sal_False;
-
 PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext):
 	compContext(cContext),
 	linguEventListeners(getVoikkoMutex()),
 	messageLanguage("en_US") {
 	VOIKKO_DEBUG("PropertyManager:CTOR");
-	isInitialized = sal_False;
 	linguPropSet = 0;
 	hyphMinLeading = 2;
 	hyphMinTrailing = 2;
@@ -61,7 +58,6 @@ PropertyManager::~PropertyManager() {
 	 * before the office shutdown, there should be no other sources for calls to
 	 * libvoikko at this time. */
 	VoikkoHandlePool::getInstance()->closeAllHandles();
-	voikko_initialized = sal_False;
 }
 
 void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent & /*pce*/)
@@ -82,7 +78,6 @@ void SAL_CALL PropertyManager::disposing(const lang::EventObject &)
 
 void PropertyManager::initLibvoikko() {
 	VoikkoHandlePool::getInstance()->closeAllHandles();
-	voikko_initialized = sal_False;
 	
 	OString variantAscii = OString("fi-x-");
 	variantAscii += OUStringToOString(dictVariant, RTL_TEXTENCODING_UTF8);
@@ -101,15 +96,7 @@ void PropertyManager::initLibvoikko() {
 		voikkoErrorString = 0;
 	}
 	
-	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_IGNORE_DOT, true);
-	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_NO_UGLY_HYPHENATION, true);
-	
-	// Set these options globally until OOo bug #97945 is resolved.
-	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_ACCEPT_TITLES_IN_GC, true);
-	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_ACCEPT_BULLETED_LISTS_IN_GC, true);
-	
-	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, true);
-	voikko_initialized = sal_True;
+
 	VOIKKO_DEBUG("PropertyManager::initLibvoikko: libvoikko initalized");
 }
 
@@ -167,26 +154,28 @@ void PropertyManager::setUiLanguage() {
 void PropertyManager::initialize() throw (uno::Exception) {
 	VOIKKO_DEBUG("PropertyManager::initialize: starting");
 	setUiLanguage();
-	if (!voikko_initialized) {
-		isInitialized = sal_False;
-		initLibvoikko();
-		if (!voikko_initialized) {
-			return;
-		}
-		
-	}
-	if (!isInitialized) {
-		uno::Reference<lang::XMultiComponentFactory> servManager =
-			compContext->getServiceManager();
-		uno::Reference<uno::XInterface> LPIFace = servManager->createInstanceWithContext(
-			A2OU("com.sun.star.linguistic2.LinguProperties"), compContext);
-		linguPropSet = uno::Reference<beans::XPropertySet>(LPIFace, uno::UNO_QUERY);
-		linguPropSet->addPropertyChangeListener(A2OU("IsSpellWithDigits"), this);
-		linguPropSet->addPropertyChangeListener(A2OU("IsSpellUpperCase"), this);
-		linguPropSet->addPropertyChangeListener(A2OU("IsSpellCapitalization"), this);
-		VOIKKO_DEBUG("PropertyManager::initialize: property manager initalized");
-		isInitialized = sal_True;
-	}
+	
+	initLibvoikko();
+	
+	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_IGNORE_DOT, true);
+	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_NO_UGLY_HYPHENATION, true);
+	
+	// Set these options globally until OOo bug #97945 is resolved.
+	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_ACCEPT_TITLES_IN_GC, true);
+	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_ACCEPT_BULLETED_LISTS_IN_GC, true);
+	
+	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, true);
+	
+	uno::Reference<lang::XMultiComponentFactory> servManager =
+		compContext->getServiceManager();
+	uno::Reference<uno::XInterface> LPIFace = servManager->createInstanceWithContext(
+		A2OU("com.sun.star.linguistic2.LinguProperties"), compContext);
+	linguPropSet = uno::Reference<beans::XPropertySet>(LPIFace, uno::UNO_QUERY);
+	linguPropSet->addPropertyChangeListener(A2OU("IsSpellWithDigits"), this);
+	linguPropSet->addPropertyChangeListener(A2OU("IsSpellUpperCase"), this);
+	linguPropSet->addPropertyChangeListener(A2OU("IsSpellCapitalization"), this);
+	VOIKKO_DEBUG("PropertyManager::initialize: property manager initalized");
+	
 	// synchronize the local settings from global preferences
 	setProperties(linguPropSet);
 	readVoikkoSettings();
@@ -265,11 +254,6 @@ void PropertyManager::readVoikkoSettings() {
 		VOIKKO_DEBUG("ERROR: readVoikkoSettings: UnknownPropertyException");
 	}
 	syncHyphenatorSettings();
-}
-
-OUString PropertyManager::getInitializationStatus() {
-	if (isInitialized) return A2OU("OK");
-	else return A2OU(voikkoErrorString);
 }
 
 const char * PropertyManager::getMessageLanguage() {

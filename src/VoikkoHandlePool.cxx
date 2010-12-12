@@ -80,6 +80,14 @@ uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedGrammarLocales() {
 	return getSupportedSpellingLocales();
 }
 
+rtl::OUString VoikkoHandlePool::getInitializationStatus() {
+	// FIXME: more informative status message
+	if (handles.empty()) {
+		return A2OU("Not initialized");
+	}
+	return A2OU("OK");
+}
+
 static bool containsLocale(const lang::Locale & localeToFind, const uno::Sequence<lang::Locale> & locales) {
 	for (sal_Int32 i = 0; i < locales.getLength(); i++) {
 		if (locales[i].Language == localeToFind.Language &&

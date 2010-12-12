@@ -88,7 +88,7 @@ uno::Reference<linguistic2::XSpellAlternatives> SAL_CALL SpellChecker::spell(
 	// Check if diagnostic message should be returned
 	if (aWord.equals(A2OU("VoikkoGetStatusInformation"))) {
 		uno::Sequence<OUString> suggSeq(1);
-		suggSeq.getArray()[0] = PropertyManager::get(compContext)->getInitializationStatus();
+		suggSeq.getArray()[0] = VoikkoHandlePool::getInstance()->getInitializationStatus();
 		return new SpellAlternatives(aWord, suggSeq, aLocale);
 	}
 	
