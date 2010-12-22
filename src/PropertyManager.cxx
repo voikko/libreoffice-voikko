@@ -17,6 +17,9 @@
 
 #include <com/sun/star/beans/XHierarchicalPropertySet.hpp>
 #include <com/sun/star/linguistic2/LinguServiceEventFlags.hpp>
+#include <com/sun/star/deployment/PackageInformationProvider.hpp>
+#include <com/sun/star/deployment/XPackageInformationProvider.hpp>
+#include <osl/file.hxx>
 #include <osl/nlsupport.h>
 #include <rtl/process.h>
 #include <libvoikko/voikko.h>
@@ -27,10 +30,37 @@
 
 namespace voikko {
 
+#ifdef VOIKKO_STANDALONE_EXTENSION
+static OUString getInstallationPath(uno::Reference<uno::XComponentContext> & compContext) {
+	try {
+		VOIKKO_DEBUG("getInstallationPath");
+		uno::Reference<deployment::XPackageInformationProvider> provider(deployment::PackageInformationProvider::get(compContext));
+		OUString locationFileURL = provider->getPackageLocation(A2OU("org.puimula.ooovoikko"));
+		VOIKKO_DEBUG_2("%s", OU2DEBUG(locationFileURL));
+		OUString locationSystemPath;
+		osl::FileBase::getSystemPathFromFileURL(locationFileURL, locationSystemPath);
+		VOIKKO_DEBUG_2("%s", OU2DEBUG(locationSystemPath));
+		return locationSystemPath;
+	}
+	catch (uno::Exception e) {
+		// TODO: something more useful here
+		VOIKKO_DEBUG("getInstallationPath(): ERROR");
+		return OUString();
+	}
+}
+#endif
+
 PropertyManager::PropertyManager(uno::Reference<uno::XComponentContext> cContext):
 	compContext(cContext),
 	linguEventListeners(getVoikkoMutex()),
 	messageLanguage("en_US") {
+	#ifdef VOIKKO_STANDALONE_EXTENSION
+		rtl_TextEncoding encoding = osl_getTextEncodingFromLocale(0);
+		if (encoding == RTL_TEXTENCODING_DONTKNOW) {
+			encoding = RTL_TEXTENCODING_UTF8;
+		}
+		VoikkoHandlePool::getInstance()->setInstallationPath(OUStringToOString(getInstallationPath(cContext), encoding));
+	#endif
 	VOIKKO_DEBUG("PropertyManager:CTOR");
 	linguPropSet = 0;
 	hyphMinLeading = 2;
@@ -64,7 +94,7 @@ PropertyManager::~PropertyManager() {
 
 void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent & /*pce*/)
 	throw (uno::RuntimeException) {
-	VOIKKO_DEBUG_2("PropertyManager::propertyChange: %s", OU2DEBUG(pce.PropertyName));
+	VOIKKO_DEBUG("PropertyManager::propertyChange");
 	setProperties(linguPropSet);
 	linguistic2::LinguServiceEvent event;
 	event.nEvent =  linguistic2::LinguServiceEventFlags::SPELL_CORRECT_WORDS_AGAIN;
@@ -76,53 +106,6 @@ void SAL_CALL PropertyManager::propertyChange(const beans::PropertyChangeEvent &
 
 void SAL_CALL PropertyManager::disposing(const lang::EventObject &)
 	throw (uno::RuntimeException){
-}
-
-void PropertyManager::initLibvoikko() {
-	VoikkoHandlePool::getInstance()->closeAllHandles();
-	
-	OString variantAscii = OString("fi-x-");
-	variantAscii += OUStringToOString(VoikkoHandlePool::getInstance()->getPreferredGlobalVariant(), RTL_TEXTENCODING_UTF8);
-	
-	const char * error = initLibvoikkoWithVariant(variantAscii.getStr());
-	if (error) {
-		VOIKKO_DEBUG_2("Failed to initialize voikko with specific variant: %s", error);
-		VOIKKO_DEBUG("Trying next with default variant");
-		voikkoErrorString = initLibvoikkoWithVariant("fi");
-		if (voikkoErrorString) {
-			VOIKKO_DEBUG_2("ERROR: Failed to initialize voikko with default variant: %s", voikkoErrorString);
-			return;
-		}
-	}
-	else {
-		voikkoErrorString = 0;
-	}
-	
-
-	VOIKKO_DEBUG("PropertyManager::initLibvoikko: libvoikko initalized");
-}
-
-const char * PropertyManager::initLibvoikkoWithVariant(const char * variant) {
-	rtl_TextEncoding encoding = osl_getTextEncodingFromLocale(0);
-	if (encoding == RTL_TEXTENCODING_DONTKNOW) {
-		encoding = RTL_TEXTENCODING_UTF8;
-	}
-	OString installationPath = OUStringToOString(getInstallationPath(compContext), encoding).getStr();
-	const char * dictPath;
-	#ifdef VOIKKO_STANDALONE_EXTENSION
-		dictPath = installationPath;
-	#else
-		dictPath = 0;
-	#endif
-	const char * errorString = 0;
-	VOIKKO_DEBUG("PropertyManager::initLibvoikkoWithVariant: voikkoInit");
-	VoikkoHandle * voikkoHandle = voikkoInit(&errorString, variant, dictPath);
-	if (voikkoHandle) {
-		VoikkoHandlePool::getInstance()->putHandle(voikkoHandle);
-		return 0;
-	} else {
-		return errorString;
-	}
 }
 
 void PropertyManager::setUiLanguage() {
@@ -156,8 +139,6 @@ void PropertyManager::setUiLanguage() {
 void PropertyManager::initialize() throw (uno::Exception) {
 	VOIKKO_DEBUG("PropertyManager::initialize: starting");
 	setUiLanguage();
-	
-	initLibvoikko();
 	
 	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_IGNORE_DOT, true);
 	VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_NO_UGLY_HYPHENATION, true);
@@ -297,7 +278,6 @@ void PropertyManager::reloadVoikkoSettings() {
 			event.nEvent |= linguistic2::LinguServiceEventFlags::SPELL_WRONG_WORDS_AGAIN;
 			event.nEvent |= linguistic2::LinguServiceEventFlags::PROOFREAD_AGAIN;
 			pool->setPreferredGlobalVariant(dictVariantNew);
-			initLibvoikko();
 		}
 	}
 	catch (beans::UnknownPropertyException e) {

@@ -19,6 +19,7 @@
 #include <libvoikko/voikko.h>
 
 #include "GrammarChecker.hxx"
+#include "../PropertyManager.hxx"
 #include "../VoikkoHandlePool.hxx"
 #include "../common.hxx"
 

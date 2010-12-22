@@ -17,6 +17,7 @@
 
 #include "VoikkoHandlePool.hxx"
 #include "common.hxx"
+#include "macros.hxx"
 
 namespace voikko {
 
@@ -31,12 +32,54 @@ VoikkoHandlePool * VoikkoHandlePool::getInstance() {
 	return instance;
 }
 
-void VoikkoHandlePool::putHandle(VoikkoHandle * handle) {
-	handles[OString("fi")] = handle;
+const char * VoikkoHandlePool::getInstallationPath() {
+	if (installationPath.getLength() == 0) {
+		return 0;
+	} else {
+		return installationPath.getStr();
+	}
 }
 
-VoikkoHandle * VoikkoHandlePool::getHandle(const lang::Locale & /*locale*/) {
-	return handles[OString("fi")];
+VoikkoHandle * VoikkoHandlePool::openHandleWithVariant(const OString & language, const OString & fullVariant) {
+	const char * errorString = 0;
+	VOIKKO_DEBUG("VoikkoHandlePool::openHandleWithVariant");
+	VoikkoHandle * voikkoHandle = voikkoInit(&errorString, fullVariant.getStr(), getInstallationPath());
+	if (voikkoHandle) {
+		handles[language] = voikkoHandle;
+		for (map<int, bool>::const_iterator it = globalBooleanOptions.begin(); it != globalBooleanOptions.end(); it++) {
+			voikkoSetBooleanOption(voikkoHandle, it->first, it->second ? 1 : 0);
+		}
+		for (map<int, int>::const_iterator it = globalIntegerOptions.begin(); it != globalIntegerOptions.end(); it++) {
+			voikkoSetIntegerOption(voikkoHandle, it->first, it->second);
+		}
+		return voikkoHandle;
+	} else {
+		initializationErrors[language] = errorString;
+		return 0;
+	}
+}
+
+VoikkoHandle * VoikkoHandlePool::openHandle(const OString & language) {
+	if (getPreferredGlobalVariant().getLength() > 0) {
+		OString languageWithVariant = language + OString("-x-") +
+			OUStringToOString(getPreferredGlobalVariant(), RTL_TEXTENCODING_UTF8);
+		VoikkoHandle * handle = openHandleWithVariant(language, languageWithVariant);
+		if (handle) {
+			return handle;
+		}
+	}
+	return openHandleWithVariant(language, language);
+}
+
+VoikkoHandle * VoikkoHandlePool::getHandle(const lang::Locale & locale) {
+	OString language = OUStringToOString(locale.Language, RTL_TEXTENCODING_UTF8);
+	if (handles.find(language) != handles.end()) {
+		return handles[language];
+	}
+	if (initializationErrors.find(language) != initializationErrors.end()) {
+		return 0;
+	}
+	return openHandle(language);
 }
 
 void VoikkoHandlePool::closeAllHandles() {
@@ -44,6 +87,7 @@ void VoikkoHandlePool::closeAllHandles() {
 		voikkoTerminate(it->second);
 	}
 	handles.clear();
+	initializationErrors.clear();
 }
 
 void VoikkoHandlePool::setGlobalBooleanOption(int option, bool value) {
@@ -89,7 +133,14 @@ rtl::OUString VoikkoHandlePool::getInitializationStatus() {
 }
 
 void VoikkoHandlePool::setPreferredGlobalVariant(const OUString & variant) {
-	this->preferredGlobalVariant = variant;
+	if (variant != this->preferredGlobalVariant) {
+		this->preferredGlobalVariant = variant;
+		closeAllHandles();
+	}
+}
+
+void VoikkoHandlePool::setInstallationPath(const rtl::OString & path) {
+	this->installationPath = path;
 }
 
 OUString VoikkoHandlePool::getPreferredGlobalVariant() {

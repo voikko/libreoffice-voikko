@@ -80,12 +80,6 @@ class PropertyManager:
 	explicit PropertyManager(uno::Reference<uno::XComponentContext> cContext);
 	virtual ~PropertyManager();
 	
-	/** (Re)initialize libvoikko with currently selected dictionary and default settings */
-	void initLibvoikko();
-	
-	/** Try initializing libvoikko with specified variant string */
-	const char * initLibvoikkoWithVariant(const char * variant);
-	
 	void setUiLanguage();
 	
 	void setProperties(const uno::Reference<beans::XPropertySet> & properties);

@@ -15,15 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
+#include <com/sun/star/beans/PropertyValue.hpp>
 #include <com/sun/star/beans/XHierarchicalPropertySet.hpp>
+#include <com/sun/star/lang/XMultiServiceFactory.hpp>
 #include <com/sun/star/uno/XComponentContext.hpp>
 #include <com/sun/star/uno/XInterface.hpp>
-#include <com/sun/star/deployment/PackageInformationProvider.hpp>
-#include <com/sun/star/deployment/XPackageInformationProvider.hpp>
 #include <cppuhelper/bootstrap.hxx>
-#include <osl/file.hxx>
 
 #include "common.hxx"
+#include "macros.hxx"
+
+using namespace rtl;
 
 namespace voikko {
 
@@ -32,23 +34,6 @@ osl::Mutex & getVoikkoMutex() {
 	return voikkoMutex;
 }
 
-OUString getInstallationPath(uno::Reference<uno::XComponentContext> & compContext) {
-	try {
-	VOIKKO_DEBUG("getInstallationPath");
-	uno::Reference<deployment::XPackageInformationProvider> provider(deployment::PackageInformationProvider::get(compContext));
-	OUString locationFileURL = provider->getPackageLocation(A2OU("org.puimula.ooovoikko"));
-	VOIKKO_DEBUG_2("%s", OU2DEBUG(locationFileURL));
-	OUString locationSystemPath;
-	osl::FileBase::getSystemPathFromFileURL(locationFileURL, locationSystemPath);
-	VOIKKO_DEBUG_2("%s", OU2DEBUG(locationSystemPath));
-	return locationSystemPath;
-	}
-	catch (uno::Exception e) {
-	// TODO: something more useful here
-	VOIKKO_DEBUG("getInstallationPath(): ERROR");
-	return A2OU("");
-	}
-}
 
 uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
 	uno::Reference<uno::XComponentContext> compContext) {

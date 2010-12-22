@@ -31,8 +31,6 @@ class VoikkoHandlePool {
 	public:
 		static VoikkoHandlePool * getInstance();
 		
-		void putHandle(VoikkoHandle * handle/*, const lang::Locale & locale TODO: temporary solution*/);
-		
 		VoikkoHandle * getHandle(const lang::Locale & locale);
 		
 		void closeAllHandles();
@@ -48,6 +46,10 @@ class VoikkoHandlePool {
 		 * as a fallback.
 		 */
 		void setPreferredGlobalVariant(const rtl::OUString & variant);
+		
+		void setInstallationPath(const rtl::OString & path);
+		
+		const char * getInstallationPath();
 		
 		rtl::OUString getPreferredGlobalVariant();
 		
@@ -66,10 +68,14 @@ class VoikkoHandlePool {
 		/** Returns initialization status diagnostics */
 		rtl::OUString getInitializationStatus();
 	private:
+		VoikkoHandle * openHandle(const rtl::OString & language);
+		VoikkoHandle * openHandleWithVariant(const rtl::OString & language, const rtl::OString & fullVariant);
 		std::map<rtl::OString, VoikkoHandle *> handles;
+		std::map<rtl::OString, const char *> initializationErrors;
 		std::map<int, bool> globalBooleanOptions;
 		std::map<int, int> globalIntegerOptions;
 		rtl::OUString preferredGlobalVariant;
+		rtl::OString installationPath;
 		static VoikkoHandlePool * instance;
 };
 

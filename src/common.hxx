@@ -18,18 +18,19 @@
 #ifndef _COMMON_HXX_
 #define _COMMON_HXX_
 
+#include <com/sun/star/uno/Reference.hxx>
+#include <com/sun/star/uno/XComponentContext.hpp>
+#include <com/sun/star/uno/XInterface.hpp>
 #include <osl/mutex.hxx>
-#include <libvoikko/voikko.h>
-#include "PropertyManager.hxx"
+
+using namespace com::sun::star;
 
 namespace voikko {
 
 osl::Mutex & getVoikkoMutex();
 
-OUString getInstallationPath(uno::Reference<uno::XComponentContext> & compContext);
-
 /** Get property set for given group from registry */
-uno::Reference<uno::XInterface> getRegistryProperties(const OUString & group,
+uno::Reference<uno::XInterface> getRegistryProperties(const rtl::OUString & group,
 	uno::Reference<uno::XComponentContext> compContext);
 
 }
