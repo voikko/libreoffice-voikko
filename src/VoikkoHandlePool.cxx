@@ -18,6 +18,7 @@
 #include "VoikkoHandlePool.hxx"
 #include "common.hxx"
 #include "macros.hxx"
+#include <cstring>
 
 namespace voikko {
 
@@ -110,18 +111,51 @@ void VoikkoHandlePool::setGlobalIntegerOption(int option, int value) {
 	}
 }
 
+static void addLocale(uno::Sequence<lang::Locale> & locales, const char * language) {
+	// TODO: n^2 performance because sequence is reconstructed on every add
+	// TODO: more automated mapping
+	sal_Int32 position = locales.getLength();
+	if (strcmp(language, "fi") == 0) {
+		locales.realloc(position + 1);
+		locales[position] = lang::Locale(A2OU("fi"), A2OU("FI"), OUString());
+	} else if (strcmp(language, "fr") == 0) {
+		locales.realloc(position + 1);
+		locales[position] = lang::Locale(A2OU("fr"), A2OU("FR"), OUString());
+	} else if (strcmp(language, "se") == 0) {
+		// TODO: just guessing
+		locales.realloc(position + 3);
+		locales[position] = lang::Locale(A2OU("se"), A2OU("NO"), OUString());
+		locales[position + 1] = lang::Locale(A2OU("se"), A2OU("SE"), OUString());
+		locales[position + 2] = lang::Locale(A2OU("se"), A2OU("FI"), OUString());
+	} else {
+		VOIKKO_DEBUG_2("Unknown language code '%s'", language);
+	}
+}
+
 uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedSpellingLocales() {
-	uno::Sequence<lang::Locale> locales(1);
-	locales.getArray()[0] = lang::Locale(A2OU("fi"), A2OU("FI"), OUString());
+	char ** languages = voikkoListSupportedSpellingLanguages(getInstallationPath());
+	uno::Sequence<lang::Locale> locales(0);
+	for (char ** i = languages; *i; i++) {
+		addLocale(locales, *i);
+	}
+	voikkoFreeCstrArray(languages);
 	return locales;
 }
 
 uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedHyphenationLocales() {
-	return getSupportedSpellingLocales();
+	uno::Sequence<lang::Locale> spellingLocales = getSupportedSpellingLocales();
+	for (sal_Int32 i = 0; i < spellingLocales.getLength(); i++) {
+		if (spellingLocales[i].Language == A2OU("fi")) {
+			uno::Sequence<lang::Locale> locales(1);
+			locales.getArray()[0] = lang::Locale(A2OU("fi"), A2OU("FI"), OUString());
+			return locales;
+		}
+	}
+	return uno::Sequence<lang::Locale>(0);
 }
 
 uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedGrammarLocales() {
-	return getSupportedSpellingLocales();
+	return getSupportedHyphenationLocales();
 }
 
 rtl::OUString VoikkoHandlePool::getInitializationStatus() {
