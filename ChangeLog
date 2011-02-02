@@ -1,3 +1,9 @@
+2011-02-01 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Remove %origin% expansion trick from configuration, it has been unused
+	  since version 3.0.
+	* Document that the extension now targets primarily LibreOffice.
+
 2010-12-22 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Add support for spell checking multiple languages.

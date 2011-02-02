@@ -1,7 +1,10 @@
 What is this?
 =============
-This is openoffice.org-voikko, Finnish spellchecker, grammar checker and
-hyphenator extension for OpenOffice.org based on libvoikko.
+This is openoffice.org-voikko, a multi language spellchecker, grammar checker and
+hyphenator extension for LibreOffice and OpenOffice.org. It uses libvoikko
+for all linguistic operations.
+Spell checking is supported for multiple languages. Other features are currently
+available only for Finnish.
 
 
 License
@@ -12,22 +15,22 @@ version 3 or later (see COPYING).
 
 Authors
 =======
-2005 - 2010 Harri Pitkänen (hatapitk@iki.fi)
+2005 - 2011 Harri Pitkänen (hatapitk@iki.fi)
 
 
 Porting status
 ==============
 - Linux: This is the primary development platform, and should always work
 - FreeBSD: Status unknown
-- Windows: Partially supported (but current versions of libvoikko may not
-  work properly)
+- Windows: Should usually work without too much patching.
 - Mac OS X: Version 10.5 (Intel) was supported, current status unknown.
 
 
 Build requirements
 ==================
 
-- OpenOffice.org (Office and SDK), version 3.0.1 or later.
+- Any version of LibreOffice (Office and SDK). OpenOffice.org, version 3.0.1 or later,
+  should also work.
 - Libvoikko version 3.0 or later, and compatible versions of Suomi-malaga and
   malaga.
 - On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
@@ -51,7 +54,7 @@ Instructions for compilation
   defaults are usually correct. Answers to these questions will be saved under
   the home directory of the user (for example to a file
   openoffice.org2.0_sdk/setsdkenv_unix.sh).
-  * On OS X and Windows you must make sure that neither OpenOffice.org nor its
+  * On OS X and Windows you must make sure that neither LibreOffice nor its
     SDK have spaces in their installation path. On Windows you can use spaces in
     these paths if you replace the components containing spaces with the "8.3" name
     during configuration of the SDK as follows:

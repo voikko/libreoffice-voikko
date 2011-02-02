@@ -4,11 +4,6 @@
  oor:package="org.puimula.ooovoikko"
  xmlns:oor="http://openoffice.org/2001/registry"
  xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <node oor:name="internal">
-    <prop oor:name="location" oor:type="xs:string">
-      <value>%origin%</value>
-    </prop>
-  </node>
   <node oor:name="dictionary">
     <prop oor:name="variant" oor:type="xs:string">
       <value>standard</value>
