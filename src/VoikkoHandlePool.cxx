@@ -1,5 +1,5 @@
 /* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
- * Copyright (C) 2010 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2010 - 2011 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,34 @@
 #include "VoikkoHandlePool.hxx"
 #include "common.hxx"
 #include "macros.hxx"
-#include <cstring>
 
 namespace voikko {
 
 using namespace std;
 using namespace ::rtl;
 using namespace ::com::sun::star;
+
+struct Bcp47ToOOoMapping {
+	const char * bcpTag;
+	const char * oooLanguage;
+	const char * oooRegion;
+};
+
+static Bcp47ToOOoMapping const bcpToOOoMapping[] = {
+	{"fi", "fi", "FI"},
+	{"fr", "fr", "FR"},
+	{"se", "se", "FI"},
+	{"se", "se", "NO"},
+	{"se", "se", "SE"},
+	{0, 0, 0}
+};
+
+VoikkoHandlePool::VoikkoHandlePool() {
+	for (const Bcp47ToOOoMapping * m = bcpToOOoMapping; m->bcpTag; ++m) {
+		bcpToOOoMap.insert(pair<string, pair<string, string> >(m->bcpTag,
+		                   pair<string, string>(m->oooLanguage, m->oooRegion)));
+	}
+}
 
 VoikkoHandlePool * VoikkoHandlePool::getInstance() {
 	if (!instance) {
@@ -111,24 +132,17 @@ void VoikkoHandlePool::setGlobalIntegerOption(int option, int value) {
 	}
 }
 
-static void addLocale(uno::Sequence<lang::Locale> & locales, const char * language) {
+void VoikkoHandlePool::addLocale(uno::Sequence<lang::Locale> & locales, const char * language) {
 	// TODO: n^2 performance because sequence is reconstructed on every add
-	// TODO: more automated mapping
 	sal_Int32 position = locales.getLength();
-	if (strcmp(language, "fi") == 0) {
-		locales.realloc(position + 1);
-		locales[position] = lang::Locale(A2OU("fi"), A2OU("FI"), OUString());
-	} else if (strcmp(language, "fr") == 0) {
-		locales.realloc(position + 1);
-		locales[position] = lang::Locale(A2OU("fr"), A2OU("FR"), OUString());
-	} else if (strcmp(language, "se") == 0) {
-		// TODO: just guessing
-		locales.realloc(position + 3);
-		locales[position] = lang::Locale(A2OU("se"), A2OU("NO"), OUString());
-		locales[position + 1] = lang::Locale(A2OU("se"), A2OU("SE"), OUString());
-		locales[position + 2] = lang::Locale(A2OU("se"), A2OU("FI"), OUString());
-	} else {
-		VOIKKO_DEBUG_2("Unknown language code '%s'", language);
+	pair<multimap<string, pair<string, string> >::iterator, multimap<string, pair<string, string> >::iterator>
+	   matchingLangs = bcpToOOoMap.equal_range(language);
+	for (multimap<string, pair<string, string> >::iterator it = matchingLangs.first;
+	     it != matchingLangs.second; ++it) {
+		locales.realloc(++position);
+		OUString lang = A2OU((*it).second.first.c_str());
+		OUString region = A2OU((*it).second.second.c_str());
+		locales.getArray()[position - 1] = lang::Locale(lang, region, OUString());
 	}
 }
 

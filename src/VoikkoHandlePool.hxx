@@ -21,6 +21,7 @@
 #include <libvoikko/voikko.h>
 #include <map>
 #include <com/sun/star/lang/Locale.hpp>
+#include <string>
 
 namespace voikko {
 
@@ -68,12 +69,15 @@ class VoikkoHandlePool {
 		/** Returns initialization status diagnostics */
 		rtl::OUString getInitializationStatus();
 	private:
+		VoikkoHandlePool();
 		VoikkoHandle * openHandle(const rtl::OString & language);
 		VoikkoHandle * openHandleWithVariant(const rtl::OString & language, const rtl::OString & fullVariant);
+		void addLocale(uno::Sequence<lang::Locale> & locales, const char * language);
 		std::map<rtl::OString, VoikkoHandle *> handles;
 		std::map<rtl::OString, const char *> initializationErrors;
 		std::map<int, bool> globalBooleanOptions;
 		std::map<int, int> globalIntegerOptions;
+		std::multimap<std::string, std::pair<std::string, std::string> > bcpToOOoMap;
 		rtl::OUString preferredGlobalVariant;
 		rtl::OString installationPath;
 		static VoikkoHandlePool * instance;
