@@ -2,6 +2,8 @@
 
 	* Rename source package to libreoffice-voikko.
 	* Add new codes to language mapping table.
+	* Remove -Werror from compiler flags, STLPort (used on 32 bit Linux)
+	  headers contain code that triggers warnings with recent GCC.
 
 2011-02-01 Harri Pitkänen <hatapitk@iki.fi>
 

@@ -83,7 +83,7 @@ ifeq "$(PLATFORM)" "windows"
 	COPYDIR=xcopy /E /I
 	PS="\"
 else
-	WARNING_FLAGS=-Wall -Wno-non-virtual-dtor -Werror
+	WARNING_FLAGS=-Wall -Wno-non-virtual-dtor
 	COPYDIR=cp -r
 endif
 ifeq "$(PLATFORM)" "linux"
