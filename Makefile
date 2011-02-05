@@ -104,9 +104,14 @@ else
 		WARNING_FLAGS+= -fno-strict-aliasing
 	endif
 endif
+
 # separated generic link flags and linked libs are needed to build with -Wl,--as-needed
 # this flag has been enabled by default on openSUSE-11.2
 LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) $(LINKER_FLAGS)
+
+# This will do nothing on platforms that do not use STLPort but is needed on those that do.
+LINK_LIBS += $(STLPORTLIB)
+
 ifneq "$(PLATFORM)" "macosx"
 	LINK_LIBS+=$(SALLIB) $(CPPULIB) $(CPPUHELPERLIB)
 endif
