@@ -1,3 +1,8 @@
+2011-02-05 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Rename source package to libreoffice-voikko.
+	* Add new codes to language mapping table.
+
 2011-02-01 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Remove %origin% expansion trick from configuration, it has been unused
