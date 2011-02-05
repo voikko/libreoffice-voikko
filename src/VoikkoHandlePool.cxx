@@ -1,4 +1,4 @@
-/* Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
+/* Libreoffice-voikko: Finnish linguistic extension for LibreOffice
  * Copyright (C) 2010 - 2011 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
