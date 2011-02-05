@@ -1,5 +1,5 @@
 # Openoffice.org-voikko: Finnish linguistic extension for OpenOffice.org
-# Copyright (C) 2005-2010 Harri Pitkänen <hatapitk@iki.fi>
+# Copyright (C) 2005-2011 Harri Pitkänen <hatapitk@iki.fi>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ include $(PRJ)/settings/std.mk
 
 # ===== Build settings =====
 
-# Version number of the openoffice.org-voikko extension
+# Version number of the libreoffice-voikko extension
 VOIKKO_VERSION=3.2
 
 # VOIKKO_DEBUG controls the amount of debugging information in the resulting UNO
@@ -63,7 +63,7 @@ ENABLE_GRAMMAR_CHECKER=1
 
 # Destination directory when installing unpacked extension with
 # make install-unpacked
-DESTDIR=/usr/lib/openoffice.org-voikko
+DESTDIR=/usr/lib/libreoffice-voikko
 
 # === End build settings ===
 
@@ -264,18 +264,18 @@ endif
 
 
 # Rules for creating the source distribution
-dist-gzip: openoffice.org-voikko-$(VOIKKO_VERSION).tar.gz
+dist-gzip: libreoffice-voikko-$(VOIKKO_VERSION).tar.gz
 
-openoffice.org-voikko-$(VOIKKO_VERSION).tar.gz: $(patsubst %,openoffice.org-voikko-$(VOIKKO_VERSION)/%, \
+libreoffice-voikko-$(VOIKKO_VERSION).tar.gz: $(patsubst %,libreoffice-voikko-$(VOIKKO_VERSION)/%, \
 	                                      $(sort $(SRCDIST)))
-	tar c --group 0 --owner 0 openoffice.org-voikko-$(VOIKKO_VERSION) | gzip -9 > $@
+	tar c --group 0 --owner 0 libreoffice-voikko-$(VOIKKO_VERSION) | gzip -9 > $@
 
-$(patsubst %,openoffice.org-voikko-$(VOIKKO_VERSION)/%, $(sort $(SRCDIST))): \
-	openoffice.org-voikko-$(VOIKKO_VERSION)/%: %
+$(patsubst %,libreoffice-voikko-$(VOIKKO_VERSION)/%, $(sort $(SRCDIST))): \
+	libreoffice-voikko-$(VOIKKO_VERSION)/%: %
 	install --mode=644 -D $^ $@
 
 
 # The clean target
 clean:
-	rm -rf build openoffice.org-voikko-$(VOIKKO_VERSION)
-	rm -f openoffice.org-voikko-$(VOIKKO_VERSION).tar.gz
+	rm -rf build libreoffice-voikko-$(VOIKKO_VERSION)
+	rm -f libreoffice-voikko-$(VOIKKO_VERSION).tar.gz
