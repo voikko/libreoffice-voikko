@@ -139,6 +139,7 @@ static Bcp47ToOOoMapping const bcpToOOoMapping[] = {
 	{"se", "se", "FI"},
 	{"se", "se", "NO"},
 	{"se", "se", "SE"},
+	{"sjd", "sjd", "RU"},
 	{"sk", "sk", "SK"},
 	{"sl", "sl", "SI"},
 	{"sma", "sma", "NO"},
