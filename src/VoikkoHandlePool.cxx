@@ -298,12 +298,19 @@ uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedGrammarLocales() {
 	return getSupportedHyphenationLocales();
 }
 
-rtl::OUString VoikkoHandlePool::getInitializationStatus() {
-	// FIXME: more informative status message
-	if (handles.empty()) {
-		return A2OU("Not initialized");
+OUString VoikkoHandlePool::getInitializationStatus() {
+	OUString status = A2OU("Init OK:[");
+	for (map<OString, VoikkoHandle *>::const_iterator it = handles.begin(); it != handles.end(); it++) {
+		status += OStringToOUString(it->first, RTL_TEXTENCODING_UTF8) + A2OU(" ");
 	}
-	return A2OU("OK");
+	
+	status += A2OU("] FAILED:[");
+	for (map<OString, const char *>::const_iterator it = initializationErrors.begin(); it != initializationErrors.end(); it++) {
+		status += OStringToOUString(it->first, RTL_TEXTENCODING_UTF8) + A2OU(":'") + A2OU(it->second) + A2OU("' ");
+	}
+	status += A2OU("]");
+	
+	return status;
 }
 
 void VoikkoHandlePool::setPreferredGlobalVariant(const OUString & variant) {
