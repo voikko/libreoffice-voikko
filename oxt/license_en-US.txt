@@ -1,5 +1,5 @@
-                      Openoffice.org-voikko
-© 2005 - 2010 Harri Pitkänen (hatapitk@iki.fi)
+                      Libreoffice-voikko
+© 2005 - 2011 Harri Pitkänen (hatapitk@iki.fi)
 
 Finnis spell checker, hyphenator and grammar checker for LibreOffice
 and OpenOffice.org. This extension uses and includes libvoikko and

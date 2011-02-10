@@ -1,6 +1,6 @@
 What is this?
 =============
-This is openoffice.org-voikko, a multi language spellchecker, grammar checker and
+This is libreoffice-voikko, a multi language spellchecker, grammar checker and
 hyphenator extension for LibreOffice and OpenOffice.org. It uses libvoikko
 for all linguistic operations.
 Spell checking is supported for multiple languages. Other features are currently
@@ -89,20 +89,20 @@ Supported Make targets
 Diagnostic tools
 ================
 
-Compiling openoffice.org-voikko with DEBUG=LOG or DEBUG=FULL will create a
+Compiling libreoffice-voikko with DEBUG=LOG or DEBUG=FULL will create a
 build that prints some useful diagnostic output to stdout.
 
 To debug possible initialization errors in production builds, try listing
 spelling suggestions for string "VoikkoGetStatusInformation". This will
-return "OK" if there were no initialization errors. Otherwise the returned
-string will contain the initialization error message from libvoikko.
+return a string that contains all successfully initialized languages
+and failed initializations along with error messages from libvoikko.
 
 
 Bug reports and patches
 =======================
 
 Patches and bug reports can be sent to the author (hatapitk@iki.fi). The web
-site for openoffice.org-voikko is located at http://voikko.sourceforge.net
+site for libreoffice-voikko is located at http://voikko.sourceforge.net
 
 
 Change history
