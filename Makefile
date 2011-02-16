@@ -257,9 +257,7 @@ ifeq "$(PLATFORM)" "macosx"
 		nm -gx $^ | $(ADDSYMBOLS) >> build/voikko.map
 		$(LINK) $(COMP_LINK_FLAGS) build/voikko.map $(LINK_LIBS) -o $@ $^ \
 		$(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(CPPUHELPERDYLIB) $(CPPUDYLIB) $(SALDYLIB) \
-		$(LIBVOIKKO_PATH)/lib/libvoikko.a \
-		$(LIBVOIKKO_PATH)/lib/libiconv.a \
-		$(LIBVOIKKO_PATH)/lib/libintl.a -framework CoreFoundation -framework Carbon
+		$(LIBVOIKKO_PATH)/lib/libvoikko.a -framework CoreFoundation -framework Carbon
 		$(INSTALL_NAME_URELIBS)  $@
 else
 		$(LINK) $(LINK_FLAGS) $^ -o $@ $(LINK_LIBS)
