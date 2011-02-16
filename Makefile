@@ -73,6 +73,9 @@ ifeq "$(PLATFORM)" "macosx"
 	ifeq "$(PROCTYPE)" "i686"
 		UNOPKG_PLATFORM=MacOSX_x86
 	endif
+	ifeq "$(PROCTYPE)" "i386"
+		UNOPKG_PLATFORM=MacOSX_x86
+	endif
 endif
 
 # Platform specific variables
@@ -257,7 +260,7 @@ ifeq "$(PLATFORM)" "macosx"
 		nm -gx $^ | $(ADDSYMBOLS) >> build/voikko.map
 		$(LINK) $(COMP_LINK_FLAGS) build/voikko.map $(LINK_LIBS) -o $@ $^ \
 		$(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(CPPUHELPERDYLIB) $(CPPUDYLIB) $(SALDYLIB) \
-		$(LIBVOIKKO_PATH)/lib/libvoikko.a -framework CoreFoundation -framework Carbon
+		-lvoikko
 		$(INSTALL_NAME_URELIBS)  $@
 else
 		$(LINK) $(LINK_FLAGS) $^ -o $@ $(LINK_LIBS)
