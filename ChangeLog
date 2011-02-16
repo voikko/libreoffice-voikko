@@ -1,3 +1,7 @@
+2011-02-16 Harri Pitkänen <hatapitk@iki.fi>
+
+	* Specify English as the fallback language for settings dialog.
+
 2011-02-05 Harri Pitkänen <hatapitk@iki.fi>
 
 	* Rename source package to libreoffice-voikko.
