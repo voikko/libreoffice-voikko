@@ -189,7 +189,7 @@ OUString SAL_CALL GrammarChecker::getServiceDisplayName(const lang::Locale & aLo
 		return A2OU("Grammar checker (Voikko)");
 }
 
-static uno::Reference<uno::XInterface> theGrammarChecker;
+static ::cppu::OWeakObject * theGrammarChecker = 0;
 
 void SAL_CALL GrammarChecker::disposing() {
 	VOIKKO_DEBUG("GrammarChecker:DISPOSING");
@@ -198,10 +198,14 @@ void SAL_CALL GrammarChecker::disposing() {
 
 uno::Reference<uno::XInterface> SAL_CALL GrammarChecker::get(uno::Reference<uno::XComponentContext> const & context) {
 	VOIKKO_DEBUG("GrammarChecker::get");
-	if (!theGrammarChecker.is()) {
+	if (!theGrammarChecker) {
 		theGrammarChecker = static_cast< ::cppu::OWeakObject * >(new GrammarChecker(context));
 	}
 	return theGrammarChecker;
+}
+
+GrammarChecker::~GrammarChecker() {
+	VOIKKO_DEBUG("GrammarChecker:DTOR");
 }
 
 }

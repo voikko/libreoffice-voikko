@@ -153,7 +153,7 @@ OUString SAL_CALL SpellChecker::getServiceDisplayName(const lang::Locale & aLoca
 		return A2OU("Spellchecker (Voikko)");
 }
 
-static uno::Reference<uno::XInterface> theSpellChecker;
+static ::cppu::OWeakObject * theSpellChecker = 0;
 
 void SAL_CALL SpellChecker::disposing() {
 	VOIKKO_DEBUG("SpellChecker:DISPOSING");
@@ -162,10 +162,14 @@ void SAL_CALL SpellChecker::disposing() {
 
 uno::Reference<uno::XInterface> SAL_CALL SpellChecker::get(uno::Reference<uno::XComponentContext> const & context) {
 	VOIKKO_DEBUG("SpellChecker::get");
-	if (!theSpellChecker.is()) {
+	if (!theSpellChecker) {
 		theSpellChecker = static_cast< ::cppu::OWeakObject * >(new SpellChecker(context));
 	}
 	return theSpellChecker;
+}
+
+SpellChecker::~SpellChecker() {
+	VOIKKO_DEBUG("SpellChecker:DTOR");
 }
 
 }

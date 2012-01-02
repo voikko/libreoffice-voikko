@@ -1,3 +1,6 @@
+2012-01-02 Harri Pitkänen <hatapitk@iki.fi>
+	* Avoid double delete of component objects.
+
 2011-02-17 Tarja Lindfors <tarja@puimula.org>
 
 	* New icon.

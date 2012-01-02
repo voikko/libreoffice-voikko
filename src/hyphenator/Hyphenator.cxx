@@ -222,7 +222,7 @@ uno::Sequence<OUString> SAL_CALL Hyphenator::getSupportedServiceNames_static() {
 	return snames;
 }
 
-static uno::Reference<uno::XInterface> theHyphenator;
+static ::cppu::OWeakObject * theHyphenator = 0;
 
 void SAL_CALL Hyphenator::disposing() {
 	VOIKKO_DEBUG("Hyphenator:DISPOSING");
@@ -231,10 +231,14 @@ void SAL_CALL Hyphenator::disposing() {
 
 uno::Reference<uno::XInterface> SAL_CALL Hyphenator::get(uno::Reference<uno::XComponentContext> const & context) {
 	VOIKKO_DEBUG("Hyphenator::get");
-	if (!theHyphenator.is()) {
+	if (!theHyphenator) {
 		theHyphenator = static_cast< ::cppu::OWeakObject * >(new Hyphenator(context));
 	}
 	return theHyphenator;
+}
+
+Hyphenator::~Hyphenator() {
+	VOIKKO_DEBUG("Hyphenator:DTOR");
 }
 
 }

@@ -28,7 +28,7 @@ include $(PRJ)/settings/std.mk
 # ===== Build settings =====
 
 # Version number of the libreoffice-voikko extension
-VOIKKO_VERSION=3.2
+VOIKKO_VERSION=3.3
 
 # VOIKKO_DEBUG controls the amount of debugging information in the resulting UNO
 # package. Possible values are NO (creates an optimized build without any

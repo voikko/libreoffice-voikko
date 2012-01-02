@@ -92,7 +92,7 @@ class SpellChecker:
 
 	private:
 	explicit SpellChecker(uno::Reference<uno::XComponentContext> const & context);
-	virtual ~SpellChecker() {}
+	virtual ~SpellChecker();
 	// SpellChecker(SpellChecker &); // not defined
 	// void operator =(SpellChecker &); // not defined
 

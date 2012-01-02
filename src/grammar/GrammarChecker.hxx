@@ -86,7 +86,7 @@ class GrammarChecker:
 
 	private:
 	explicit GrammarChecker(uno::Reference<uno::XComponentContext> const & context);
-	virtual ~GrammarChecker() {}
+	virtual ~GrammarChecker();
 	virtual void SAL_CALL disposing();
 	uno::Reference<uno::XComponentContext> compContext;
 	

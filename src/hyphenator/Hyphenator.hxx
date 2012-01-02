@@ -100,7 +100,7 @@ class Hyphenator:
 
 	private:
 	explicit Hyphenator(uno::Reference<uno::XComponentContext> const & context);
-	virtual ~Hyphenator() {}
+	virtual ~Hyphenator();
 	virtual void SAL_CALL disposing();
 
 	uno::Reference<uno::XComponentContext> compContext;
