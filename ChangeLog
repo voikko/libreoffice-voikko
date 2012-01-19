@@ -1,3 +1,6 @@
+2012-01-19 Harri Pitkänen <hatapitk@iki.fi>
+	* Add links to extended grammar checker help.
+
 2012-01-02 Harri Pitkänen <hatapitk@iki.fi>
 	* Avoid double delete of component objects.
 

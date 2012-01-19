@@ -1,5 +1,5 @@
 /* Libreoffice-voikko: Finnish linguistic extension for LibreOffice
- * Copyright (C) 2008 - 2010 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2008 - 2012 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,6 +144,16 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 		gcErrors[gcI].aShortComment = comment;
 		gcErrors[gcI].aFullComment = comment;
 		gcErrors[gcI].aRuleIdentifier = ruleIdentifier;
+		
+		beans::PropertyValue detailUrl;
+		detailUrl.Name = A2OU("FullCommentURL");
+		uno::Any aDetailUrl;
+		OUString sDetailUrl = A2OU("http://voikko.sourceforge.net/gchelp/fi/") + ruleIdentifier + A2OU(".html");
+		aDetailUrl <<= sDetailUrl;
+		detailUrl.Value = aDetailUrl;
+		uno::Sequence<beans::PropertyValue> urlSequence(1);
+		urlSequence[0] = detailUrl;
+		gcErrors[gcI].aProperties = urlSequence;
 
 		// add suggestions
 		if (suggestions) {
