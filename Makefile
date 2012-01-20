@@ -1,5 +1,5 @@
 # Libreoffice-voikko: Finnish linguistic extension for LibreOffice
-# Copyright (C) 2005-2011 Harri Pitkänen <hatapitk@iki.fi>
+# Copyright (C) 2005-2012 Harri Pitkänen <hatapitk@iki.fi>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ endif
 
 # Platform specific variables
 ifeq "$(PLATFORM)" "windows"
-	WARNING_FLAGS=-Wall -WX -wd4061 -wd4365 -wd4514 -wd4625 -wd4626 -wd4668 -wd4711 -wd4820
+	WARNING_FLAGS=-Wall -WX -wd4061 -wd4365 -wd4514 -wd4619 -wd4625 -wd4626 -wd4668 -wd4710 -wd4711 -wd4820
 	# The following warnings should be fixed in the future
 	WARNING_FLAGS+= -wd4640
 	COPYDIR=xcopy /E /I

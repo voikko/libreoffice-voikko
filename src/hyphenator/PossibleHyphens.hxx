@@ -35,6 +35,7 @@ class PossibleHyphens : public cppu::WeakImplHelper1<linguistic2::XPossibleHyphe
 	const OUString hyphenatedWord;
 	const uno::Sequence<sal_Int16> hyphenationPositions;
 	const lang::Locale locale;
+	PossibleHyphens & operator=(const PossibleHyphens&);
 
 	public:
 	PossibleHyphens(const OUString & wrd, const OUString & hypWrd, uno::Sequence<sal_Int16> positions,

@@ -36,6 +36,7 @@ class HyphenatedWord : public cppu::WeakImplHelper1<linguistic2::XHyphenatedWord
 	const lang::Locale locale;
 	OUString hyphenatedWord;
 	sal_Bool isAlternative;
+	HyphenatedWord & operator=(const HyphenatedWord&);
 
 	public:
 	HyphenatedWord(const OUString & wrd, sal_Int16 pos, const lang::Locale & locale);

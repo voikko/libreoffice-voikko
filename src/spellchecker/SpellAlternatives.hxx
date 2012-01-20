@@ -32,6 +32,7 @@ class SpellAlternatives : public cppu::WeakImplHelper1<linguistic2::XSpellAltern
 	const OUString word;
 	const uno::Sequence<OUString> alternatives;
 	const lang::Locale locale;
+	SpellAlternatives & operator=(const SpellAlternatives&);
 
 	public:
 	SpellAlternatives(const OUString & word, uno::Sequence<OUString> alternatives, const lang::Locale & locale);

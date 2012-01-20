@@ -1,3 +1,6 @@
+2012-01-20 Harri Pitkänen <hatapitk@iki.fi>
+	* Fix build with MSVC 2005.
+
 2012-01-19 Harri Pitkänen <hatapitk@iki.fi>
 	* Add links to extended grammar checker help.
 
