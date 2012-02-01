@@ -1,5 +1,5 @@
 /* Libreoffice-voikko: Finnish linguistic extension for LibreOffice
- * Copyright (C) 2010 - 2011 Harri Pitkänen <hatapitk@iki.fi>
+ * Copyright (C) 2010 - 2012 Harri Pitkänen <hatapitk@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,6 +104,8 @@ static Bcp47ToOOoMapping const bcpToOOoMapping[] = {
 	{"it", "it", "CH"},
 	{"it", "it", "IT"},
 	{"kl", "kl", "GL"},
+	{"koi", "koi", "RU"},
+	{"kpv", "kpv", "RU"},
 	{"ku", "ku", "TR"},
 	{"ku", "ku", "SY"},
 	{"la", "la", "VA"},
