@@ -112,9 +112,6 @@ endif
 # this flag has been enabled by default on openSUSE-11.2
 LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) $(LINKER_FLAGS)
 
-# This will do nothing on platforms that do not use STLPort but is needed on those that do.
-LINK_LIBS += $(STLPORTLIB)
-
 ifneq "$(PLATFORM)" "macosx"
 	LINK_LIBS+=$(SALLIB) $(CPPULIB) $(CPPUHELPERLIB)
 endif
@@ -252,7 +249,7 @@ build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB): $(patsubst %,build/src/%.$(OBJ_EXT),$(V
 ifeq "$(PLATFORM)" "windows"
 	$(LINK) $(COMP_LINK_FLAGS) /OUT:$@ \
 	/MAP:build/voikko.map $^ \
-	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(STLPORTLIB) msvcrt.lib kernel32.lib $(LIBVOIKKO_PATH)\lib\libvoikko-1.lib
+	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) msvcrt.lib kernel32.lib $(LIBVOIKKO_PATH)\lib\libvoikko-1.lib
 	mt -manifest build/oxt/voikko.dll.manifest -outputresource:build/oxt/voikko.dll;2
 else
 ifeq "$(PLATFORM)" "macosx"
