@@ -1,8 +1,7 @@
 What is this?
 =============
 This is libreoffice-voikko, a multi language spellchecker, grammar checker and
-hyphenator extension for LibreOffice and OpenOffice.org. It uses libvoikko
-for all linguistic operations.
+hyphenator extension for LibreOffice. It uses libvoikko for all linguistic operations.
 Spell checking is supported for multiple languages. Other features are currently
 available only for Finnish.
 
@@ -17,7 +16,7 @@ Authors
 =======
 
 Source code:
-  2005 - 2012 Harri Pitkänen (hatapitk@iki.fi)
+  2005 - 2013 Harri Pitkänen (hatapitk@iki.fi)
 Icon:
   2011 Tarja Lindfors (tarja@puimula.org)
 
@@ -32,14 +31,12 @@ Porting status
 Build requirements
 ==================
 
-- Any version of LibreOffice (Office and SDK). OpenOffice.org, version 3.0.1 or later,
-  should also work.
-- Libvoikko version 3.0 or later, and compatible versions of Suomi-malaga and
-  malaga.
+- LibreOffice 3.5 or later (Office and SDK).
+- Libvoikko version 3.0 or later.
 - On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
   needed for compilation are usually present in default setups of any
   distribution.
-- On Windows: Microsoft Visual C++ 2005 or 2008 (the Express Edition is sufficient),
+- On Windows: Microsoft Visual C++ 2005 or later (the Express Edition is sufficient),
   GNU make, GNU sed and Info-Zip zip.
 - On OS X: Xcode tools from the operating system installation CD.
   Static versions of libvoikko and its dependencies

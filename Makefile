@@ -1,5 +1,5 @@
 # Libreoffice-voikko: Finnish linguistic extension for LibreOffice
-# Copyright (C) 2005-2012 Harri Pitkänen <hatapitk@iki.fi>
+# Copyright (C) 2005-2013 Harri Pitkänen <hatapitk@iki.fi>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ include $(PRJ)/settings/std.mk
 # ===== Build settings =====
 
 # Version number of the libreoffice-voikko extension
-VOIKKO_VERSION=3.3
+VOIKKO_VERSION=3.4
 
 # VOIKKO_DEBUG controls the amount of debugging information in the resulting UNO
 # package. Possible values are NO (creates an optimized build without any
@@ -117,15 +117,17 @@ ifneq "$(PLATFORM)" "macosx"
 endif
 VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -I$(PRJ)/include
 
+# STANDALONE_EXTENSION_FILES must contain the libvoikko library (unless it will be
+# linked statically) and versioned directories for dictionary data to be embedded.
 ifdef STANDALONE_EXTENSION_PATH
 	VOIKKO_CC_DEFINES= -DVOIKKO_STANDALONE_EXTENSION
 	ifeq "$(PLATFORM)" "windows"
-		STANDALONE_EXTENSION_FILES=libvoikko-1.dll 2
+		STANDALONE_EXTENSION_FILES=libvoikko-1.dll 2 3
 	else
 		ifeq "$(PLATFORM)" "macosx"
-			STANDALONE_EXTENSION_FILES=2
+			STANDALONE_EXTENSION_FILES=2 3
 		else
-			STANDALONE_EXTENSION_FILES=libvoikko.so.1 2
+			STANDALONE_EXTENSION_FILES=libvoikko.so.1 2 3
 			LINK_LIBS += -lvoikko
 		endif
 	endif

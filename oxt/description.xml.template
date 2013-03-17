@@ -7,8 +7,8 @@
   <identifier value="org.puimula.ooovoikko" />
 
   <display-name>
-    <name lang="en-US">Voikko - Finnish language tools</name>
-    <name lang="fi">Voikko - suomen kielen kielityökalut</name>
+    <name lang="en-US">Writing aids based on Voikko</name>
+    <name lang="fi">Voikko-pohjaiset kirjoituksen aputyökalut</name>
   </display-name>
 
   <!-- SHOW_LICENSE
