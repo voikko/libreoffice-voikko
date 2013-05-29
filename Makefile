@@ -41,13 +41,13 @@ VOIKKO_DEBUG=NO
 # a standalone extension is to be built.
 # LIBVOIKKO_PATH=/usr/local/voikko
 # LIBVOIKKO_PATH=c:/voikko
-# LIBVOIKKO_PATH=/Users/paakayttaja/voikko
+LIBVOIKKO_PATH=/Users/smo036/alibs
 
 # If you want to have all of the library and dictionary files included within
 # the extension package, uncomment the following and adjust the path to point
 # to a directory containing the required files.
 # STANDALONE_EXTENSION_PATH=extras
-# STANDALONE_EXTENSION_PATH=/Users/paakayttaja/voikko/lib/voikko
+STANDALONE_EXTENSION_PATH=extras
 
 # If you want to have a license text to be displayed upon the installation
 # of this extension, uncomment the following.
@@ -93,7 +93,7 @@ ifeq "$(PLATFORM)" "linux"
 	LINKER_FLAGS=-Wl,--no-undefined
 endif
 
-
+#" 
 # General variables
 ifeq "$(VOIKKO_DEBUG)" "FULL"
 	ifeq "$(PLATFORM)" "windows"
@@ -115,7 +115,7 @@ LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) $(LINKER_FLAGS)
 ifneq "$(PLATFORM)" "macosx"
 	LINK_LIBS+=$(SALLIB) $(CPPULIB) $(CPPUHELPERLIB)
 endif
-VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -I$(PRJ)/include
+VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -I$(PRJ)/include -I/usr/local/include
 
 # STANDALONE_EXTENSION_FILES must contain the libvoikko library (unless it will be
 # linked statically) and versioned directories for dictionary data to be embedded.
@@ -259,7 +259,22 @@ ifeq "$(PLATFORM)" "macosx"
 		nm -gx $^ | $(ADDSYMBOLS) >> build/voikko.map
 		$(LINK) $(COMP_LINK_FLAGS) build/voikko.map $(LINK_LIBS) -o $@ $^ \
 		$(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(CPPUHELPERDYLIB) $(CPPUDYLIB) $(SALDYLIB) \
-		-lvoikko
+        -lvoikko
+#		/Users/smo036/alibs/libarchive.a \
+#        /Users/smo036/alibs/libbz2.a \
+#        /Users/smo036/alibs/libcrypto.a \
+#        /Users/smo036/alibs/libgiomm-2.4.a \
+#        /Users/smo036/alibs/libglib-2.0.a \
+#        /Users/smo036/alibs/libglibmm-2.4.a \
+#        /Users/smo036/alibs/libhfstospell.a \
+#        /Users/smo036/alibs/libiconv.a \
+#        /Users/smo036/alibs/libintl.a \
+#        /Users/smo036/alibs/liblzma.a \
+#        /Users/smo036/alibs/libsigc-2.0.a \
+#        /Users/smo036/alibs/libvoikko.a \
+#        /Users/smo036/alibs/libxml++-2.6.a \
+#        /Users/smo036/alibs/libxml2.a \
+#        /Users/smo036/alibs/libz.a
 		$(INSTALL_NAME_URELIBS)  $@
 else
 		$(LINK) $(LINK_FLAGS) $^ -o $@ $(LINK_LIBS)
