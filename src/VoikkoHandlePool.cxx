@@ -95,7 +95,6 @@ static Bcp47ToOOoMapping const bcpToOOoMapping[] = {
 	{"ga", "ga", "IE"},
 	{"gd", "gd", "GB"},
 	{"gl", "gl", "ES"},
-	{"gn", "gn", ""},		/* Guaraní */
 	{"gu", "gu", "IN"},
 	{"he", "he", "IL"},
 	{"hi", "hi", "IN"},
@@ -111,13 +110,11 @@ static Bcp47ToOOoMapping const bcpToOOoMapping[] = {
 	{"kl", "kl", "GL"},
 	{"koi", "koi", "RU"},
 	{"kpv", "kpv", "RU"},
-	{"ku", "ku", "SY"},
 	{"ku", "ku", "TR"},
+	{"ku", "ku", "SY"},
 	{"la", "la", "VA"},
-	{"liv", "liv", "LV"},	/* Livonian */
 	{"ln", "ln", "CD"},
 	{"lt", "lt", "LT"},
-	{"lv", "lv", "LV"},		/* Latvian */
 	{"mdf", "mdf", "RU"},
 	{"mhr", "mhr", "RU"},
 	{"mk", "mk", "MK"},
@@ -182,7 +179,6 @@ static Bcp47ToOOoMapping const bcpToOOoMapping[] = {
 	{"tn", "tn", "BW"},
 	{"tn", "tn", "ZA"},
 	{"ts", "ts", "ZA"},
-	{"udm", "udm", "RU"},	/* Udmurt */
 	{"uk", "uk", "UA"},
 	{"vep", "vep", "RU"},
 	{"vi", "vi", "VN"},
