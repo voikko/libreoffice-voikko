@@ -299,13 +299,15 @@ void VoikkoHandlePool::addLocale(uno::Sequence<lang::Locale> & locales, const ch
 }
 
 uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedSpellingLocales() {
-	char ** languages = voikkoListSupportedSpellingLanguages(getInstallationPath());
-	uno::Sequence<lang::Locale> locales(0);
-	for (char ** i = languages; *i; i++) {
-		addLocale(locales, *i);
+	// optimization: if we already have found some locales, don't search for more
+	if (supportedSpellingLocales.getLength() == 0) {
+		char ** languages = voikkoListSupportedSpellingLanguages(getInstallationPath());
+		for (char ** i = languages; *i; i++) {
+			addLocale(supportedSpellingLocales, *i);
+		}
+		voikkoFreeCstrArray(languages);
 	}
-	voikkoFreeCstrArray(languages);
-	return locales;
+	return supportedSpellingLocales;
 }
 
 uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedHyphenationLocales() {
