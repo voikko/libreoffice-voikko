@@ -114,6 +114,7 @@ static Bcp47ToOOoMapping const bcpToOOoMapping[] = {
 	{"ku", "ku", "TR"},
 	{"ku", "ku", "SY"},
 	{"la", "la", "VA"},
+	{"liv", "liv", "LV"},
 	{"liv", "liv", "RU"},
 	{"ln", "ln", "CD"},
 	{"lt", "lt", "LT"},
