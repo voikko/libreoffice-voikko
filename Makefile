@@ -28,7 +28,7 @@ include $(PRJ)/settings/std.mk
 # ===== Build settings =====
 
 # Version number of the libreoffice-voikko extension
-VOIKKO_VERSION=3.4
+VOIKKO_VERSION=3.4.1
 
 # VOIKKO_DEBUG controls the amount of debugging information in the resulting UNO
 # package. Possible values are NO (creates an optimized build without any
@@ -80,7 +80,7 @@ endif
 
 # Platform specific variables
 ifeq "$(PLATFORM)" "windows"
-	WARNING_FLAGS=-Wall -WX -wd4061 -wd4365 -wd4514 -wd4619 -wd4625 -wd4626 -wd4668 -wd4710 -wd4711 -wd4820
+	WARNING_FLAGS=-Wall -WX -wd4061 -wd4127 -wd4265 -wd4365 -wd4514 -wd4619 -wd4625 -wd4626 -wd4668 -wd4710 -wd4711 -wd4820
 	# The following warnings should be fixed in the future
 	WARNING_FLAGS+= -wd4640
 	COPYDIR=xcopy /E /I

@@ -58,9 +58,8 @@ Instructions for compilation
     SDK have spaces in their installation path. On Windows you can use spaces in
     these paths if you replace the components containing spaces with the "8.3" name
     during configuration of the SDK as follows:
-      Office =C:\PROGRA~1\OPENOF~1.ORG
-      Office Base = C:\PROGRA~1\OPENOF~1.ORG\Basis
-      URE = C:\PROGRA~1\OPENOF~1.ORG\URE
+      Office = C:\PROGRA~1\LIBREO~1.6
+      URE = C:\PROGRA~1\LIBREO~1.6\URE
 - Run "make oxt". This will build the extensions package voikko.oxt under
   subdirectory build.
   * There are some settings available that can be used to customize the build.
