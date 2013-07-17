@@ -1,7 +1,7 @@
                       Libreoffice-voikko
 © 2005 - 2013 Harri Pitkänen (hatapitk@iki.fi)
 
-Finnis spell checker, hyphenator and grammar checker for LibreOffice.
+Spell checker, hyphenator and grammar checker for LibreOffice.
 This extension uses and may include libvoikko and Suomi-malaga. For more
 information, see the copyright notices in the source code packages
 which should have been made available to you by the distributor of
