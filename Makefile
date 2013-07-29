@@ -245,7 +245,6 @@ ifeq "$(PLATFORM)" "windows"
 else
 ifeq "$(PLATFORM)" "macosx"
 		cat $(PRJ)/settings/component.uno.map > build/voikko.map
-		nm -gx $^ | $(ADDSYMBOLS) >> build/voikko.map
 		$(LINK) $(COMP_LINK_FLAGS) build/voikko.map $(LINK_LIBS) -o $@ $^ \
 		$(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(CPPUHELPERDYLIB) $(CPPUDYLIB) $(SALDYLIB) \
 		-lvoikko
