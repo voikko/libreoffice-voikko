@@ -236,7 +236,7 @@ $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)): build/oxt/%: $(STANDALO
 # Type library C++ headers
 build/hpp.flag:
 	-$(MKDIR) build$(PS)hpp
-	$(CPPUMAKER) -Gc -BUCR -O./build/hpp $(URE_TYPES) $(OFFICE_TYPES)
+	$(CPPUMAKER) -Gc -O./build/hpp $(URE_TYPES) $(OFFICE_TYPES)
 	echo flagged > $@
 
 
