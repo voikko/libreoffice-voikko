@@ -28,7 +28,7 @@ include $(PRJ)/settings/std.mk
 # ===== Build settings =====
 
 # Version number of the libreoffice-voikko extension
-VOIKKO_VERSION=3.4.1
+VOIKKO_VERSION=4.0
 
 # VOIKKO_DEBUG controls the amount of debugging information in the resulting UNO
 # package. Possible values are NO (creates an optimized build without any
@@ -66,17 +66,6 @@ ENABLE_GRAMMAR_CHECKER=1
 DESTDIR=/usr/lib/libreoffice-voikko
 
 # === End build settings ===
-
-# Fix for Intel OS X, see issues 69944 and 86121.
-ifeq "$(PLATFORM)" "macosx"
-	PROCTYPE=$(shell $(PRJ)/config.guess | cut -d "-" -f1)
-	ifeq "$(PROCTYPE)" "i686"
-		UNOPKG_PLATFORM=MacOSX_x86
-	endif
-	ifeq "$(PROCTYPE)" "i386"
-		UNOPKG_PLATFORM=MacOSX_x86
-	endif
-endif
 
 # Platform specific variables
 ifeq "$(PLATFORM)" "windows"
