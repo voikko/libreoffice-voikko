@@ -1,3 +1,8 @@
+2013-07-29 Harri Pitkänen <hatapitk@iki.fi>
+	* Increase version number to 4.0.
+	* LibreOffice 4.1 or later is now needed for building and running
+	  the extension.
+
 2013-06-26 Harri Pitkänen <hatapitk@iki.fi>
 	* Avoid querying available spelling languages too often since
 	  it's very slow for zhfst spellers.
