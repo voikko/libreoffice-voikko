@@ -123,7 +123,7 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 		
 		// we have a real grammar error
 		int errorCode = voikkoGetGrammarErrorCode(vError);
-		OUString ruleIdentifier = OUString::valueOf(static_cast<sal_Int32>(errorCode), 10);
+		OUString ruleIdentifier = OUString::number(errorCode, 10);
 		if (ignoredErrors.count(ruleIdentifier) == 1) {
 			// ignore this error
 			voikkoFreeGrammarError(vError);
