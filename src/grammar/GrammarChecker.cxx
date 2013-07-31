@@ -148,7 +148,7 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 		beans::PropertyValue detailUrl;
 		detailUrl.Name = A2OU("FullCommentURL");
 		uno::Any aDetailUrl;
-		OUString sDetailUrl = A2OU("http://voikko.sourceforge.net/gchelp/fi/") + ruleIdentifier + A2OU(".html");
+		OUString sDetailUrl = A2OU("http://voikko.puimula.org/gchelp/fi/") + ruleIdentifier + A2OU(".html");
 		aDetailUrl <<= sDetailUrl;
 		detailUrl.Value = aDetailUrl;
 		uno::Sequence<beans::PropertyValue> urlSequence(1);
