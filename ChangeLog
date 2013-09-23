@@ -1,3 +1,18 @@
+2013-09-17 Harri Pitkänen <hatapitk@iki.fi>
+	* Support more languages for LibreOffice.
+
+2013-07-29 Harri Pitkänen <hatapitk@iki.fi>
+	* Increase version number to 4.0.
+	* LibreOffice 4.1 or later is now needed for building and running
+	  the extension.
+
+2013-06-26 Harri Pitkänen <hatapitk@iki.fi>
+	* Avoid querying available spelling languages too often since
+	  it's very slow for zhfst spellers.
+
+2013-06-19 Harri Pitkänen <hatapitk@iki.fi>
+	* Support more languages for LibreOffice.
+
 2003-05-30 Sjur Moshagen <sjurnm@mac.com>
 	* Support more languages for LibreOffice.
 

@@ -66,6 +66,7 @@ static Bcp47ToOOoMapping const bcpToOOoMapping[] = {
 	{"ca", "ca", "ES"},
 	{"cs", "cs", "CZ"},
 	{"csb", "csb", "PL"},
+	{"cv", "cv", "RU"},
 	{"cy", "cy", "GB"},
 	{"da", "da", "DK"},
 	{"de", "de", "DE"},
@@ -95,6 +96,7 @@ static Bcp47ToOOoMapping const bcpToOOoMapping[] = {
 	{"ga", "ga", "IE"},
 	{"gd", "gd", "GB"},
 	{"gl", "gl", "ES"},
+	{"gn", "gug", "PY"},
 	{"gu", "gu", "IN"},
 	{"he", "he", "IL"},
 	{"hi", "hi", "IN"},
@@ -113,8 +115,11 @@ static Bcp47ToOOoMapping const bcpToOOoMapping[] = {
 	{"ku", "ku", "TR"},
 	{"ku", "ku", "SY"},
 	{"la", "la", "VA"},
+	{"liv", "liv", "LV"},
+	{"liv", "liv", "RU"},
 	{"ln", "ln", "CD"},
 	{"lt", "lt", "LT"},
+	{"lv", "lv", "LV"},
 	{"mdf", "mdf", "RU"},
 	{"mhr", "mhr", "RU"},
 	{"mk", "mk", "MK"},
@@ -179,6 +184,8 @@ static Bcp47ToOOoMapping const bcpToOOoMapping[] = {
 	{"tn", "tn", "BW"},
 	{"tn", "tn", "ZA"},
 	{"ts", "ts", "ZA"},
+	{"tt", "tt", "RU"},
+	{"udm", "udm", "RU"},
 	{"uk", "uk", "UA"},
 	{"vep", "vep", "RU"},
 	{"vi", "vi", "VN"},
@@ -295,13 +302,15 @@ void VoikkoHandlePool::addLocale(uno::Sequence<lang::Locale> & locales, const ch
 }
 
 uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedSpellingLocales() {
-	char ** languages = voikkoListSupportedSpellingLanguages(getInstallationPath());
-	uno::Sequence<lang::Locale> locales(0);
-	for (char ** i = languages; *i; i++) {
-		addLocale(locales, *i);
+	// optimization: if we already have found some locales, don't search for more
+	if (supportedSpellingLocales.getLength() == 0) {
+		char ** languages = voikkoListSupportedSpellingLanguages(getInstallationPath());
+		for (char ** i = languages; *i; i++) {
+			addLocale(supportedSpellingLocales, *i);
+		}
+		voikkoFreeCstrArray(languages);
 	}
-	voikkoFreeCstrArray(languages);
-	return locales;
+	return supportedSpellingLocales;
 }
 
 uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedHyphenationLocales() {

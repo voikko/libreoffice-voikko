@@ -28,7 +28,7 @@ include $(PRJ)/settings/std.mk
 # ===== Build settings =====
 
 # Version number of the libreoffice-voikko extension
-VOIKKO_VERSION=3.4
+VOIKKO_VERSION=4.0
 
 # VOIKKO_DEBUG controls the amount of debugging information in the resulting UNO
 # package. Possible values are NO (creates an optimized build without any
@@ -67,20 +67,9 @@ DESTDIR=/usr/lib/libreoffice-voikko
 
 # === End build settings ===
 
-# Fix for Intel OS X, see issues 69944 and 86121.
-ifeq "$(PLATFORM)" "macosx"
-	PROCTYPE=$(shell $(PRJ)/config.guess | cut -d "-" -f1)
-	ifeq "$(PROCTYPE)" "i686"
-		UNOPKG_PLATFORM=MacOSX_x86
-	endif
-	ifeq "$(PROCTYPE)" "i386"
-		UNOPKG_PLATFORM=MacOSX_x86
-	endif
-endif
-
 # Platform specific variables
 ifeq "$(PLATFORM)" "windows"
-	WARNING_FLAGS=-Wall -WX -wd4061 -wd4365 -wd4514 -wd4619 -wd4625 -wd4626 -wd4668 -wd4710 -wd4711 -wd4820
+	WARNING_FLAGS=-Wall -WX -wd4061 -wd4127 -wd4265 -wd4365 -wd4514 -wd4619 -wd4625 -wd4626 -wd4668 -wd4710 -wd4711 -wd4820
 	# The following warnings should be fixed in the future
 	WARNING_FLAGS+= -wd4640
 	COPYDIR=xcopy /E /I
@@ -236,7 +225,7 @@ $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)): build/oxt/%: $(STANDALO
 # Type library C++ headers
 build/hpp.flag:
 	-$(MKDIR) build$(PS)hpp
-	$(CPPUMAKER) -Gc -BUCR -O./build/hpp $(URE_TYPES) $(OFFICE_TYPES)
+	$(CPPUMAKER) -Gc -O./build/hpp $(URE_TYPES) $(OFFICE_TYPES)
 	echo flagged > $@
 
 
@@ -256,7 +245,6 @@ ifeq "$(PLATFORM)" "windows"
 else
 ifeq "$(PLATFORM)" "macosx"
 		cat $(PRJ)/settings/component.uno.map > build/voikko.map
-		nm -gx $^ | $(ADDSYMBOLS) >> build/voikko.map
 		$(LINK) $(COMP_LINK_FLAGS) build/voikko.map $(LINK_LIBS) -o $@ $^ \
 		$(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(CPPUHELPERDYLIB) $(CPPUDYLIB) $(SALDYLIB) \
 		-lvoikko

@@ -31,7 +31,7 @@ Porting status
 Build requirements
 ==================
 
-- LibreOffice 3.5 or later (Office and SDK).
+- LibreOffice 4.1 or later (Office and SDK).
 - Libvoikko version 3.0 or later.
 - On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
   needed for compilation are usually present in default setups of any
@@ -53,14 +53,13 @@ Instructions for compilation
   tools. You should answer the questions, although at least on Linux the
   defaults are usually correct. Answers to these questions will be saved under
   the home directory of the user (for example to a file
-  openoffice.org2.0_sdk/setsdkenv_unix.sh).
+  libreoffice4.1_sdk/hostname/setsdkenv_unix.sh).
   * On OS X and Windows you must make sure that neither LibreOffice nor its
     SDK have spaces in their installation path. On Windows you can use spaces in
     these paths if you replace the components containing spaces with the "8.3" name
     during configuration of the SDK as follows:
-      Office =C:\PROGRA~1\OPENOF~1.ORG
-      Office Base = C:\PROGRA~1\OPENOF~1.ORG\Basis
-      URE = C:\PROGRA~1\OPENOF~1.ORG\URE
+      Office = C:\PROGRA~1\LIBREO~1.6
+      URE = C:\PROGRA~1\LIBREO~1.6\URE
 - Run "make oxt". This will build the extensions package voikko.oxt under
   subdirectory build.
   * There are some settings available that can be used to customize the build.
@@ -79,7 +78,7 @@ Supported Make targets
     Same as 'oxt'.
 - install-unpacked DESTDIR=some_directory
     Installs the unpacked extension under directory DESTDIR. Default
-    for DESTDIR is /usr/lib/openoffice.org-voikko.
+    for DESTDIR is /usr/lib/libreoffice-voikko.
 - dist-gzip
     Builds the source package.
 - clean
@@ -102,7 +101,7 @@ Bug reports and patches
 =======================
 
 Patches and bug reports can be sent to the author (hatapitk@iki.fi). The web
-site for libreoffice-voikko is located at http://voikko.sourceforge.net
+site for libreoffice-voikko is located at http://voikko.puimula.org
 
 
 Change history

@@ -1,7 +1,7 @@
                       Libreoffice-voikko
 © 2005 - 2013 Harri Pitkänen (hatapitk@iki.fi)
 
-Suomen kielen oikoluku, tavutus ja kieliopin tarkistin LibreOfficelle.
+Lisäosa oikolukuun, tavutukseen ja kieliopin tarkistukseen LibreOfficelle.
 Tämä lisäosa käyttää libvoikkoa ja Suomi-malagaa, ja nämä komponentit
 voivat tulla lisäosan mukana. Tarkempaa tietoa käytetyistä komponenteista
 ja niiden tekijöistä löydät lähdekoodipaketeista, jotka tämän ohjelman
