@@ -156,7 +156,6 @@ void PropertyManager::initialize() throw (uno::Exception) {
 	linguPropSet = uno::Reference<beans::XPropertySet>(LPIFace, uno::UNO_QUERY);
 	linguPropSet->addPropertyChangeListener(A2OU("IsSpellWithDigits"), this);
 	linguPropSet->addPropertyChangeListener(A2OU("IsSpellUpperCase"), this);
-	linguPropSet->addPropertyChangeListener(A2OU("IsSpellCapitalization"), this);
 	VOIKKO_DEBUG("PropertyManager::initialize: property manager initalized");
 	
 	// synchronize the local settings from global preferences
@@ -322,12 +321,6 @@ void PropertyManager::setValue(const beans::PropertyValue & value) {
 		value.Value >>= bValue;
 		// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
 		VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_IGNORE_UPPERCASE, !bValue);
-	}
-	else if (value.Name == A2OU("IsSpellCapitalization")) {
-		// FIXME: should ignore ALL errors in capitalization
-		value.Value >>= bValue;
-		// VOIKKO_DEBUG_2("PropertyManager::setValue: value %i", vbValue);
-		VoikkoHandlePool::getInstance()->setGlobalBooleanOption(VOIKKO_OPT_ACCEPT_ALL_UPPERCASE, bValue);
 	}
 	else if (value.Name == A2OU("HyphMinLeading")) {
 		sal_Int16 iValue;
