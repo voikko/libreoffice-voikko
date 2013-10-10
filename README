@@ -32,7 +32,7 @@ Build requirements
 ==================
 
 - LibreOffice 4.1 or later (Office and SDK).
-- Libvoikko version 3.0 or later.
+- Libvoikko version 3.7 or later.
 - On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
   needed for compilation are usually present in default setups of any
   distribution.

@@ -1,3 +1,7 @@
+2013-10-10 Harri Pitkänen <hatapitk@iki.fi>
+	* Support grammar checkers and hyphenators for languages
+	  other than Finnish.
+
 2013-10-06 Harri Pitkänen <hatapitk@iki.fi>
 	* Configuration option "Check capitalization" was removed in
 	  LibreOffice 4.0, no need to support it anymore.

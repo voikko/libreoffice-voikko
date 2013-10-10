@@ -80,6 +80,8 @@ class VoikkoHandlePool {
 		std::map<int, int> globalIntegerOptions;
 		std::multimap<std::string, std::pair<std::string, std::string> > bcpToOOoMap;
 		uno::Sequence<lang::Locale> supportedSpellingLocales;
+		uno::Sequence<lang::Locale> supportedHyphenationLocales;
+		uno::Sequence<lang::Locale> supportedGrammarCheckingLocales;
 		rtl::OUString preferredGlobalVariant;
 		rtl::OString installationPath;
 		static VoikkoHandlePool * instance;
