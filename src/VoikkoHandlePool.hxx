@@ -21,6 +21,7 @@
 #include <libvoikko/voikko.h>
 #include <map>
 #include <com/sun/star/lang/Locale.hpp>
+#include <com/sun/star/uno/Sequence.h>
 #include <string>
 
 namespace voikko {
@@ -78,6 +79,9 @@ class VoikkoHandlePool {
 		std::map<int, bool> globalBooleanOptions;
 		std::map<int, int> globalIntegerOptions;
 		std::multimap<std::string, std::pair<std::string, std::string> > bcpToOOoMap;
+		uno::Sequence<lang::Locale> supportedSpellingLocales;
+		uno::Sequence<lang::Locale> supportedHyphenationLocales;
+		uno::Sequence<lang::Locale> supportedGrammarCheckingLocales;
 		rtl::OUString preferredGlobalVariant;
 		rtl::OString installationPath;
 		static VoikkoHandlePool * instance;

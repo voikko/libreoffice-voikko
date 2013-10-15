@@ -319,19 +319,27 @@ uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedSpellingLocales() {
 }
 
 uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedHyphenationLocales() {
-	uno::Sequence<lang::Locale> spellingLocales = getSupportedSpellingLocales();
-	for (sal_Int32 i = 0; i < spellingLocales.getLength(); i++) {
-		if (spellingLocales[i].Language == A2OU("fi")) {
-			uno::Sequence<lang::Locale> locales(1);
-			locales.getArray()[0] = lang::Locale(A2OU("fi"), A2OU("FI"), OUString());
-			return locales;
+	// optimization: if we already have found some locales, don't search for more
+	if (supportedHyphenationLocales.getLength() == 0) {
+		char ** languages = voikkoListSupportedHyphenationLanguages(getInstallationPath());
+		for (char ** i = languages; *i; i++) {
+			addLocale(supportedHyphenationLocales, *i);
 		}
+		voikkoFreeCstrArray(languages);
 	}
-	return uno::Sequence<lang::Locale>(0);
+	return supportedHyphenationLocales;
 }
 
 uno::Sequence<lang::Locale> VoikkoHandlePool::getSupportedGrammarLocales() {
-	return getSupportedHyphenationLocales();
+	// optimization: if we already have found some locales, don't search for more
+	if (supportedGrammarCheckingLocales.getLength() == 0) {
+		char ** languages = voikkoListSupportedGrammarCheckingLanguages(getInstallationPath());
+		for (char ** i = languages; *i; i++) {
+			addLocale(supportedGrammarCheckingLocales, *i);
+		}
+		voikkoFreeCstrArray(languages);
+	}
+	return supportedGrammarCheckingLocales;
 }
 
 OUString VoikkoHandlePool::getInitializationStatus() {

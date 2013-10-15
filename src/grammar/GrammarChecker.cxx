@@ -135,8 +135,10 @@ linguistic2::ProofreadingResult SAL_CALL GrammarChecker::doProofreading(
 		gcErrors[gcI].nErrorStart = startPos;
 		gcErrors[gcI].nErrorLength = errorLength;
 		gcErrors[gcI].nErrorType = text::TextMarkupType::PROOFREADING;
-		OString commentOString = OString(voikko_error_message_cstr(errorCode,
-			PropertyManager::get(compContext)->getMessageLanguage()));
+		char * errorShortDescription = voikkoGetGrammarErrorShortDescription(vError,
+			PropertyManager::get(compContext)->getMessageLanguage());
+		OString commentOString = OString(errorShortDescription);
+		voikkoFreeErrorMessageCstr(errorShortDescription);
 		OUString comment = OStringToOUString(commentOString, RTL_TEXTENCODING_UTF8);
 		#ifdef TEKSTINTUHO
 			comment += UTF82OU(" TEKSTINTUHO K\xc3\x84YT\xc3\x96SS\xc3\x84!");
