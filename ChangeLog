@@ -1,3 +1,6 @@
+2013-10-16 Harri Pitkänen <hatapitk@iki.fi>
+	* Re-license under MPL 2.0 and GPLv3+.
+
 2013-10-10 Harri Pitkänen <hatapitk@iki.fi>
 	* Support grammar checkers and hyphenators for languages
 	  other than Finnish.
