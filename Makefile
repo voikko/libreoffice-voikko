@@ -239,8 +239,8 @@ ifeq "$(PLATFORM)" "windows"
 	mt -manifest build/oxt/voikko.dll.manifest -outputresource:build/oxt/voikko.dll;2
 else
 ifeq "$(PLATFORM)" "macosx"
-		cat $(PRJ)/settings/component.uno.map > build/voikko.map
-		$(LINK) $(COMP_LINK_FLAGS) build/voikko.map $(LINK_LIBS) -o $@ $^ \
+#		cat $(PRJ)/settings/component.uno.map > build/voikko.map
+		$(LINK) $(COMP_LINK_FLAGS) $(LINK_LIBS) -o $@ $^ \
 		$(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(CPPUHELPERDYLIB) $(CPPUDYLIB) $(SALDYLIB) \
 		-lvoikko
 		$(INSTALL_NAME_URELIBS)  $@
