@@ -1,5 +1,5 @@
 # Libreoffice-voikko: Linguistic extension for LibreOffice
-# Copyright (C) 2005 - 2013 Harri Pitkänen <hatapitk@iki.fi>
+# Copyright (C) 2005 - 2014 Harri Pitkänen <hatapitk@iki.fi>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -23,7 +23,7 @@ include $(PRJ)/settings/std.mk
 # ===== Build settings =====
 
 # Version number of the libreoffice-voikko extension
-VOIKKO_VERSION=4.0
+VOIKKO_VERSION=4.1
 
 # VOIKKO_DEBUG controls the amount of debugging information in the resulting UNO
 # package. Possible values are NO (creates an optimized build without any
@@ -158,10 +158,10 @@ endif
 SRCDIST=COPYING Makefile README ChangeLog $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS)) \
         $(patsubst %,src/%.cxx,$(VOIKKO_OBJECTS)) oxt/description.xml.template \
         $(patsubst %,oxt/%,$(COPY_TEMPLATES)) \
-        oxt/META-INF/manifest.xml.template oxt/icon.svg
+        oxt/voikko.components.template oxt/META-INF/manifest.xml.template oxt/icon.svg
 SED=sed
 
-EXTENSION_FILES=build/oxt/META-INF/manifest.xml build/oxt/description.xml \
+EXTENSION_FILES=build/oxt/META-INF/manifest.xml build/oxt/description.xml build/oxt/voikko.components \
 	      build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
 	      $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
 	      $(patsubst %,build/oxt/%,$(COPY_TEMPLATES))
@@ -181,12 +181,13 @@ install-unpacked: extension-files
 	install -m 755 -d "$(DESTDIR)" "$(DESTDIR)/META-INF"
 	install -m 644 build/oxt/META-INF/manifest.xml "$(DESTDIR)/META-INF"
 	install -m 644 build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
-	               build/oxt/description.xml \
+	               build/oxt/description.xml build/oxt/voikko.components \
 	               $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
 	               $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)) $(DESTDIR)
 
 # Sed scripts for modifying templates
-MANIFEST_SEDSCRIPT:=s/VOIKKO_EXTENSION_SHAREDLIB/$(VOIKKO_EXTENSION_SHAREDLIB)/g;s/UNOPKG_PLATFORM/$(UNOPKG_PLATFORM)/g
+MANIFEST_SEDSCRIPT:=s/UNOPKG_PLATFORM/$(UNOPKG_PLATFORM)/g
+COMPONENTS_SEDSCRIPT:=s/VOIKKO_EXTENSION_SHAREDLIB/$(VOIKKO_EXTENSION_SHAREDLIB)/g
 DESCRIPTION_SEDSCRIPT:=s/VOIKKO_VERSION/$(VOIKKO_VERSION)/g
 ifdef ENABLE_GRAMMAR_CHECKER
 	MANIFEST_SEDSCRIPT:=$(MANIFEST_SEDSCRIPT);/GRAMMAR_CHECKER_DISABLED/d
@@ -208,6 +209,10 @@ build/oxt/META-INF/manifest.xml: oxt/META-INF/manifest.xml.template
 build/oxt/description.xml: oxt/description.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(SED) -e $(DESCRIPTION_SEDSCRIPT) < $^ > $@
+
+build/oxt/voikko.components: oxt/voikko.components.template
+	-$(MKDIR) $(subst /,$(PS),$(@D))
+	$(SED) -e $(COMPONENTS_SEDSCRIPT) < $^ > $@
 
 $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)): build/oxt/%: oxt/%
 	-$(MKDIR) $(subst /,$(PS),$(@D))

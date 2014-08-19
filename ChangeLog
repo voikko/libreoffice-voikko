@@ -1,3 +1,6 @@
+2014-08-19 Harri Pitkänen <hatapitk@iki.fi>
+	* Switch to passive component registration.
+
 2013-10-16 Harri Pitkänen <hatapitk@iki.fi>
 	* Re-license under MPL 2.0 and GPLv3+.
 

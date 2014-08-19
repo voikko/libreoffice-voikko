@@ -3,8 +3,8 @@
     "Manifest.dtd">
 <manifest:manifest xmlns:manifest="http://openoffice.org/2001/manifest">
   <manifest:file-entry
-   manifest:media-type="application/vnd.sun.star.uno-component;type=native;platform=UNOPKG_PLATFORM"
-   manifest:full-path="VOIKKO_EXTENSION_SHAREDLIB"/>
+   manifest:media-type="application/vnd.sun.star.uno-components;type=native;platform=UNOPKG_PLATFORM"
+   manifest:full-path="voikko.components"/>
   <manifest:file-entry
    manifest:media-type="application/vnd.sun.star.configuration-data"
    manifest:full-path="config.xcu"/>
