@@ -48,9 +48,6 @@ VOIKKO_DEBUG=NO
 # of this extension, uncomment the following.
 # SHOW_LICENSE=1
 
-# If you want to enable the grammar checker, set this option to 1
-ENABLE_GRAMMAR_CHECKER=1
-
 # Setting this option to 1 causes ugly warnings to be added to visible places
 # in the extension without removing any functionality (codename "tekstintuho").
 # Useful for binary builds that are released for public testing.
@@ -121,10 +118,6 @@ else
 	LINK_LIBS += -lvoikko
 endif
 
-ifndef ENABLE_GRAMMAR_CHECKER
-	VOIKKO_CC_DEFINES += -DDISABLE_GRAMMAR_CHECKER
-endif
-
 # Build extension package name
 ifdef SHOW_UGLY_WARNINGS
         VOIKKO_PACKAGENAME:=tekstintuho
@@ -189,9 +182,6 @@ install-unpacked: extension-files
 MANIFEST_SEDSCRIPT:=s/UNOPKG_PLATFORM/$(UNOPKG_PLATFORM)/g
 COMPONENTS_SEDSCRIPT:=s/VOIKKO_EXTENSION_SHAREDLIB/$(VOIKKO_EXTENSION_SHAREDLIB)/g
 DESCRIPTION_SEDSCRIPT:=s/VOIKKO_VERSION/$(VOIKKO_VERSION)/g
-ifdef ENABLE_GRAMMAR_CHECKER
-	MANIFEST_SEDSCRIPT:=$(MANIFEST_SEDSCRIPT);/GRAMMAR_CHECKER_DISABLED/d
-endif
 ifdef SHOW_LICENSE
 	DESCRIPTION_SEDSCRIPT:=$(DESCRIPTION_SEDSCRIPT);/SHOW_LICENSE/d
 endif

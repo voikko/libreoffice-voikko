@@ -49,12 +49,10 @@ static ::cppu::ImplementationEntry const regEntries[] = {
 	  &Hyphenator::getImplementationName_static,
 	  &Hyphenator::getSupportedServiceNames_static,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
-#ifndef DISABLE_GRAMMAR_CHECKER
 	{ &GrammarChecker::get,
 	  &GrammarChecker::getImplementationName_static,
 	  &GrammarChecker::getSupportedServiceNames_static,
 	  &::cppu::createSingleComponentFactory, 0, 0 },
-#endif
 	{ &regSettingsCreate,
 	  &SettingsEventHandler::getImplementationName_static,
 	  &SettingsEventHandler::getSupportedServiceNames_static,

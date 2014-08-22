@@ -1,3 +1,7 @@
+2014-08-22 Harri Pitkänen <hatapitk@iki.fi>
+	* Unconditionally enable grammar checker since it is now
+	  used only with dictionaries and backends that support it.
+
 2014-08-19 Harri Pitkänen <hatapitk@iki.fi>
 	* Switch to passive component registration.
 

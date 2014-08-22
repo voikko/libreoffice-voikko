@@ -14,10 +14,8 @@
   <manifest:file-entry
    manifest:media-type="application/vnd.sun.star.configuration-data"
    manifest:full-path="SettingsDialog.xcu"/>
-  <!-- GRAMMAR_CHECKER_DISABLED
   <manifest:file-entry
    manifest:media-type="application/vnd.sun.star.configuration-data"
    manifest:full-path="Linguistic.xcu"/>
-  GRAMMAR_CHECKER_DISABLED -->
 </manifest:manifest>
 
