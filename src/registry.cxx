@@ -35,8 +35,7 @@ extern "C" SAL_DLLPUBLIC_EXPORT void SAL_CALL
 	*ppEnvTypeName = CPPU_CURRENT_LANGUAGE_BINDING_NAME ":unsafe";
 } 
 
-Reference<XInterface> SAL_CALL regSettingsCreate(const Reference<XComponentContext> & context)
-	SAL_THROW((Exception)) {
+Reference<XInterface> SAL_CALL regSettingsCreate(const Reference<XComponentContext> & context) {
 	return static_cast< ::cppu::OWeakObject * >(new SettingsEventHandler(context));
 }
 
