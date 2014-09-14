@@ -24,9 +24,9 @@ Icon:
 Porting status
 ==============
 - Linux: This is the primary development platform, and should always work
-- FreeBSD: Status unknown
+- FreeBSD: Is known to work with at least LibreOffice 4.2 and FreeBSD 10.
 - Windows: Should usually work without too much patching.
-- Mac OS X: Version 10.5 (Intel) was supported, current status unknown.
+- Mac OS X: Usually works but may need some Makefile patching depending on OS X version.
 
 
 Build requirements
