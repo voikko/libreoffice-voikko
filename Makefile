@@ -74,6 +74,12 @@ ifeq "$(PLATFORM)" "linux"
 	LINKER_FLAGS=-Wl,--no-undefined
 endif
 
+ifeq "$(PLATFORM)" "freebsd"
+	CC=cc
+	LINK=c++
+	LIBVOIKKO_PATH=/usr/local
+	SDK_ZIP=zip
+endif
 
 # General variables
 ifeq "$(VOIKKO_DEBUG)" "FULL"
