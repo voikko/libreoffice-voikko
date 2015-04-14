@@ -1,3 +1,6 @@
+2015-04-14 Harri Pitkänen <hatapitk@iki.fi>
+	* Initial support for non-hardcoded locales.
+
 2014-08-22 Harri Pitkänen <hatapitk@iki.fi>
 	* Unconditionally enable grammar checker since it is now
 	  used only with dictionaries and backends that support it.

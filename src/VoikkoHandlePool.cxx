@@ -332,7 +332,12 @@ VoikkoHandle * VoikkoHandlePool::openHandle(const OString & language) {
 }
 
 VoikkoHandle * VoikkoHandlePool::getHandle(const lang::Locale & locale) {
-	OString language = OUStringToOString(locale.Language, RTL_TEXTENCODING_UTF8);
+	OString language;
+	if (locale.Language == "qlt") {
+		language = OUStringToOString(locale.Variant, RTL_TEXTENCODING_UTF8);
+	} else {
+		language = OUStringToOString(locale.Language, RTL_TEXTENCODING_UTF8);
+	}
 	if (handles.find(language) != handles.end()) {
 		return handles[language];
 	}
@@ -375,12 +380,28 @@ void VoikkoHandlePool::addLocale(uno::Sequence<lang::Locale> & locales, const ch
 	sal_Int32 position = locales.getLength();
 	pair<multimap<string, pair<string, string> >::iterator, multimap<string, pair<string, string> >::iterator>
 	   matchingLangs = bcpToOOoMap.equal_range(language);
+	bool foundInMap = false;
 	for (multimap<string, pair<string, string> >::iterator it = matchingLangs.first;
 	     it != matchingLangs.second; ++it) {
 		locales.realloc(++position);
 		OUString lang = A2OU((*it).second.first.c_str());
 		OUString region = A2OU((*it).second.second.c_str());
 		locales.getArray()[position - 1] = lang::Locale(lang, region, OUString());
+		foundInMap = true;
+	}
+	if (!foundInMap) {
+		locales.realloc(++position);
+		const char * lang;
+		const char * variant;
+		if (strlen(language) <= 3) { // assume this is ISO 639-1 or ISO 639-3 code
+			lang = language;
+			variant = "";
+		}
+		else {
+			lang = "qlt";
+			variant = language;
+		}
+		locales.getArray()[position - 1] = lang::Locale(A2OU(lang), OUString(), A2OU(variant));
 	}
 }
 
@@ -454,6 +475,10 @@ static bool containsLocale(const lang::Locale & localeToFind, const uno::Sequenc
 	for (sal_Int32 i = 0; i < locales.getLength(); i++) {
 		if (locales[i].Language == localeToFind.Language &&
 		    locales[i].Country == localeToFind.Country) {
+			return true;
+		}
+		if (locales[i].Language == "qlt" &&
+		    (locales[i].Variant == localeToFind.Language || (localeToFind.Language == "qlt" && locales[i].Variant == localeToFind.Variant))) {
 			return true;
 		}
 	}
