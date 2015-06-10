@@ -482,6 +482,19 @@ static bool containsLocale(const lang::Locale & localeToFind, const uno::Sequenc
 			return true;
 		}
 	}
+	if (localeToFind.Language == "qlt") {
+		// See if we can try again with a trimmed tag: some tags may contain extra
+		// components that can be skipped while matching such as country in crk-Cans-CN
+		OUString tagToFind = localeToFind.Variant;
+		sal_Int32 tagLen = tagToFind.getLength();
+		if (tagLen > 9 && tagToFind[tagLen - 3] == '-') {
+			lang::Locale loc;
+			loc.Language = "qlt";
+			loc.Country = "";
+			loc.Variant = tagToFind.copy(0, tagLen - 3);
+			return containsLocale(loc, locales);
+		}
+	}
 	return false;
 }
 
