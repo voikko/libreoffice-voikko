@@ -1,5 +1,5 @@
 <components xmlns="http://openoffice.org/2010/uno-components">
-  <component loader="com.sun.star.loader.SharedLibrary" uri="VOIKKO_EXTENSION_SHAREDLIB">
+  <component loader="com.sun.star.loader.Python" uri="lovoikko.py">
     <implementation name="org.puimula.ooovoikko.SettingsEventHandlerImplementation">
       <service name="org.puimula.ooovoikko.SettingsEventHandlerService"/>
     </implementation>
