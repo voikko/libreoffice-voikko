@@ -150,17 +150,18 @@ VOIKKO_HEADERS=macros common PropertyManager VoikkoHandlePool \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
                grammar/GrammarChecker settings/SettingsEventHandler
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
-               SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu
+               SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu \
+               voikko.components
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
 endif
 SRCDIST=COPYING Makefile README ChangeLog $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS)) \
         $(patsubst %,src/%.cxx,$(VOIKKO_OBJECTS)) oxt/description.xml.template \
         $(patsubst %,oxt/%,$(COPY_TEMPLATES)) \
-        oxt/voikko.components.template oxt/META-INF/manifest.xml.template oxt/icon.svg
+        oxt/META-INF/manifest.xml.template oxt/icon.svg
 SED=sed
 
-EXTENSION_FILES=build/oxt/META-INF/manifest.xml build/oxt/description.xml build/oxt/voikko.components \
+EXTENSION_FILES=build/oxt/META-INF/manifest.xml build/oxt/description.xml \
 	      build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
 	      $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
 	      $(patsubst %,build/oxt/%,$(COPY_TEMPLATES))
@@ -180,13 +181,12 @@ install-unpacked: extension-files
 	install -m 755 -d "$(DESTDIR)" "$(DESTDIR)/META-INF"
 	install -m 644 build/oxt/META-INF/manifest.xml "$(DESTDIR)/META-INF"
 	install -m 644 build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
-	               build/oxt/description.xml build/oxt/voikko.components \
+	               build/oxt/description.xml \
 	               $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
 	               $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)) $(DESTDIR)
 
 # Sed scripts for modifying templates
 MANIFEST_SEDSCRIPT:=s/UNOPKG_PLATFORM/$(UNOPKG_PLATFORM)/g
-COMPONENTS_SEDSCRIPT:=s/VOIKKO_EXTENSION_SHAREDLIB/$(VOIKKO_EXTENSION_SHAREDLIB)/g
 DESCRIPTION_SEDSCRIPT:=s/VOIKKO_VERSION/$(VOIKKO_VERSION)/g
 ifdef SHOW_LICENSE
 	DESCRIPTION_SEDSCRIPT:=$(DESCRIPTION_SEDSCRIPT);/SHOW_LICENSE/d
@@ -205,10 +205,6 @@ build/oxt/META-INF/manifest.xml: oxt/META-INF/manifest.xml.template
 build/oxt/description.xml: oxt/description.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(SED) -e $(DESCRIPTION_SEDSCRIPT) < $^ > $@
-
-build/oxt/voikko.components: oxt/voikko.components.template
-	-$(MKDIR) $(subst /,$(PS),$(@D))
-	$(SED) -e $(COMPONENTS_SEDSCRIPT) < $^ > $@
 
 $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)): build/oxt/%: oxt/%
 	-$(MKDIR) $(subst /,$(PS),$(@D))
