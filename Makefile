@@ -158,7 +158,7 @@ endif
 SRCDIST=COPYING Makefile README ChangeLog $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS)) \
         $(patsubst %,src/%.cxx,$(VOIKKO_OBJECTS)) oxt/description.xml.template \
         $(patsubst %,oxt/%,$(COPY_TEMPLATES)) \
-        oxt/META-INF/manifest.xml.template oxt/icon.svg
+        oxt/META-INF/manifest.xml oxt/icon.svg
 SED=sed
 
 EXTENSION_FILES=build/oxt/META-INF/manifest.xml build/oxt/description.xml \
@@ -186,7 +186,6 @@ install-unpacked: extension-files
 	               $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)) $(DESTDIR)
 
 # Sed scripts for modifying templates
-MANIFEST_SEDSCRIPT:=s/UNOPKG_PLATFORM/$(UNOPKG_PLATFORM)/g
 DESCRIPTION_SEDSCRIPT:=s/VOIKKO_VERSION/$(VOIKKO_VERSION)/g
 ifdef SHOW_LICENSE
 	DESCRIPTION_SEDSCRIPT:=$(DESCRIPTION_SEDSCRIPT);/SHOW_LICENSE/d
@@ -194,14 +193,9 @@ endif
 ifdef SHOW_UGLY_WARNINGS
 	DESCRIPTION_SEDSCRIPT:=$(DESCRIPTION_SEDSCRIPT);s/Voikko/TEKSTINTUHO/g
 endif
-MANIFEST_SEDSCRIPT:="$(MANIFEST_SEDSCRIPT)"
 DESCRIPTION_SEDSCRIPT:="$(DESCRIPTION_SEDSCRIPT)"
 
 # Create extension files
-build/oxt/META-INF/manifest.xml: oxt/META-INF/manifest.xml.template
-	-$(MKDIR) $(subst /,$(PS),$(@D))
-	$(SED) -e $(MANIFEST_SEDSCRIPT) < $^ > $@
-
 build/oxt/description.xml: oxt/description.xml.template
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(SED) -e $(DESCRIPTION_SEDSCRIPT) < $^ > $@
