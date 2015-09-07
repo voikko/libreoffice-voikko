@@ -158,10 +158,10 @@ endif
 SRCDIST=COPYING Makefile README ChangeLog $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS)) \
         $(patsubst %,src/%.cxx,$(VOIKKO_OBJECTS)) oxt/description.xml.template \
         $(patsubst %,oxt/%,$(COPY_TEMPLATES)) \
-        oxt/META-INF/manifest.xml oxt/icon.svg
+        oxt/icon.svg
 SED=sed
 
-EXTENSION_FILES=build/oxt/META-INF/manifest.xml build/oxt/description.xml \
+EXTENSION_FILES=build/oxt/description.xml \
 	      $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
 	      $(patsubst %,build/oxt/%,$(COPY_TEMPLATES))
 

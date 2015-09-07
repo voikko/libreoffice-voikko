@@ -3,7 +3,7 @@
     "Manifest.dtd">
 <manifest:manifest xmlns:manifest="http://openoffice.org/2001/manifest">
   <manifest:file-entry
-   manifest:media-type="application/vnd.sun.star.uno-component;type=Python"
+   manifest:media-type="application/vnd.sun.star.uno-components"
    manifest:full-path="voikko.components"/>
   <manifest:file-entry
    manifest:media-type="application/vnd.sun.star.configuration-data"
