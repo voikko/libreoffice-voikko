@@ -151,7 +151,7 @@ VOIKKO_HEADERS=macros common PropertyManager VoikkoHandlePool \
                grammar/GrammarChecker settings/SettingsEventHandler
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
                SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu \
-               voikko.components
+               voikko.components META-INF/manifest.xml lovoikko.py
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
 endif
@@ -162,7 +162,6 @@ SRCDIST=COPYING Makefile README ChangeLog $(patsubst %,src/%.hxx,$(VOIKKO_HEADER
 SED=sed
 
 EXTENSION_FILES=build/oxt/META-INF/manifest.xml build/oxt/description.xml \
-	      build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
 	      $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
 	      $(patsubst %,build/oxt/%,$(COPY_TEMPLATES))
 
@@ -180,8 +179,7 @@ all: oxt
 install-unpacked: extension-files
 	install -m 755 -d "$(DESTDIR)" "$(DESTDIR)/META-INF"
 	install -m 644 build/oxt/META-INF/manifest.xml "$(DESTDIR)/META-INF"
-	install -m 644 build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB) \
-	               build/oxt/description.xml \
+	install -m 644 build/oxt/description.xml \
 	               $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
 	               $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)) $(DESTDIR)
 
@@ -219,27 +217,6 @@ build/hpp.flag:
 build/src/%.$(OBJ_EXT): src/%.cxx build/hpp.flag $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS))
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(CC) $(CC_FLAGS) $(VOIKKO_CC_FLAGS) $(CC_DEFINES) $(VOIKKO_CC_DEFINES) $(CC_OUTPUT_SWITCH)$@ $<
-
-
-# Link the shared library
-build/oxt/$(VOIKKO_EXTENSION_SHAREDLIB): $(patsubst %,build/src/%.$(OBJ_EXT),$(VOIKKO_OBJECTS))
-ifeq "$(PLATFORM)" "windows"
-	$(LINK) $(COMP_LINK_FLAGS) /OUT:$@ \
-	/MAP:build/voikko.map $^ \
-	 $(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) msvcrt.lib kernel32.lib $(LIBVOIKKO_PATH)\lib\libvoikko-1.lib
-	mt -manifest build/oxt/voikko.dll.manifest -outputresource:build/oxt/voikko.dll;2
-else
-ifeq "$(PLATFORM)" "macosx"
-#		cat $(PRJ)/settings/component.uno.map > build/voikko.map
-		$(LINK) $(COMP_LINK_FLAGS) $(LINK_LIBS) -o $@ $^ \
-		$(CPPUHELPERLIB) $(CPPULIB) $(SALLIB) $(CPPUHELPERDYLIB) $(CPPUDYLIB) $(SALDYLIB) \
-		-lvoikko
-		$(INSTALL_NAME_URELIBS)  $@
-else
-		$(LINK) $(LINK_FLAGS) $^ -o $@ $(LINK_LIBS)
-endif
-endif
-
 
 
 # Rules for creating the source distribution
