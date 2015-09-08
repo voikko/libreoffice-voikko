@@ -10,5 +10,14 @@
 # case the provisions of the GPL are applicable instead of those above.
 
 import unohelper
+from SettingsEventHandler import SettingsEventHandler
+from SpellChecker import SpellChecker
 
-implementationHelper = unohelper.ImplementationHelper()
+# name of g_ImplementationHelper is significant, Python component loader expects to find it
+g_ImplementationHelper = unohelper.ImplementationHelper()
+g_ImplementationHelper.addImplementation(SettingsEventHandler, \
+                    "org.puimula.ooovoikko.SettingsEventHandlerImplementation",
+                    ("org.puimula.ooovoikko.SettingsEventHandlerService",),)
+g_ImplementationHelper.addImplementation(SpellChecker, \
+                    "voikko.SpellChecker",
+                    ("com.sun.star.linguistic2.SpellChecker",),)
