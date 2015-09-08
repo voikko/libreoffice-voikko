@@ -89,8 +89,11 @@ Supported Make targets
 Diagnostic tools
 ================
 
-Compiling libreoffice-voikko with DEBUG=LOG or DEBUG=FULL will create a
-build that prints some useful diagnostic output to stdout.
+Setting environment variable PYUNO_LOGLEVEL=ARGS before starting LibreOffice
+causes debug information from PyUNO to be printed to stderr.
+
+Setting environment variable VOIKKO_DEBUG to any value before starting
+LibreOffice causes debug output from this extension to be printed to stderr.
 
 To debug possible initialization errors in production builds, try listing
 spelling suggestions for string "VoikkoGetStatusInformation". This will

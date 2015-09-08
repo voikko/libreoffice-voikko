@@ -9,9 +9,14 @@
 # the GNU General Public License Version 3 or later (the "GPL"), in which
 # case the provisions of the GPL are applicable instead of those above.
 
+import os
+import logging
 import unohelper
 from SettingsEventHandler import SettingsEventHandler
 from SpellChecker import SpellChecker
+
+if "VOIKKO_DEBUG" in os.environ:
+	logging.getLogger().setLevel(logging.DEBUG)
 
 # name of g_ImplementationHelper is significant, Python component loader expects to find it
 g_ImplementationHelper = unohelper.ImplementationHelper()

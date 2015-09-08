@@ -25,12 +25,6 @@ include $(PRJ)/settings/std.mk
 # Version number of the libreoffice-voikko extension
 VOIKKO_VERSION=4.1
 
-# VOIKKO_DEBUG controls the amount of debugging information in the resulting UNO
-# package. Possible values are NO (creates an optimized build without any
-# debugging information), LOG (creates an optimized build with runtime debug
-# logging) and FULL (creates a build with full debugging symbols and logging).
-VOIKKO_DEBUG=NO
-
 # If you have installed libvoikko to some non-standard location, uncomment the
 # following and adjust the path accordingly. For OS X this must be set if
 # a standalone extension is to be built.
@@ -81,20 +75,6 @@ ifeq "$(PLATFORM)" "freebsd"
 	SDK_ZIP=zip
 endif
 
-# General variables
-ifeq "$(VOIKKO_DEBUG)" "FULL"
-	ifeq "$(PLATFORM)" "windows"
-		OPT_FLAGS=-Od -Z7
-	else
-		OPT_FLAGS=-O0 -g
-	endif
-else
-	OPT_FLAGS=-O2
-	ifneq "$(PLATFORM)" "windows"
-		WARNING_FLAGS+= -fno-strict-aliasing
-	endif
-endif
-
 # separated generic link flags and linked libs are needed to build with -Wl,--as-needed
 # this flag has been enabled by default on openSUSE-11.2
 LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) $(LINKER_FLAGS)
@@ -130,9 +110,6 @@ ifdef SHOW_UGLY_WARNINGS
         VOIKKO_CC_DEFINES += -DTEKSTINTUHO
 else
         VOIKKO_PACKAGENAME:=voikko
-endif
-ifneq "$(VOIKKO_DEBUG)" "NO"
-        VOIKKO_CC_DEFINES+= -DVOIKKO_DEBUG_OUTPUT
 endif
 
 ifdef LIBVOIKKO_PATH

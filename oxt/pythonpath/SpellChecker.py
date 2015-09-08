@@ -9,6 +9,7 @@
 # the GNU General Public License Version 3 or later (the "GPL"), in which
 # case the provisions of the GPL are applicable instead of those above.
 
+import logging
 import unohelper
 from com.sun.star.linguistic2 import XSpellChecker, XLinguServiceEventBroadcaster
 from com.sun.star.lang import XServiceInfo, XInitialization, XServiceDisplayName
@@ -16,4 +17,4 @@ from com.sun.star.lang import XServiceInfo, XInitialization, XServiceDisplayName
 class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEventBroadcaster, XInitialization, XServiceDisplayName):
 
 	def __init__(self, ctx, *args):
-		print("SpellChecker.__init__")
+		logging.debug("SpellChecker.__init__")
