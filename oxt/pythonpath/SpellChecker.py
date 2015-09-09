@@ -13,6 +13,7 @@ import logging
 import unohelper
 from com.sun.star.linguistic2 import XSpellChecker, XLinguServiceEventBroadcaster
 from com.sun.star.lang import XServiceInfo, XInitialization, XServiceDisplayName
+from VoikkoHandlePool import VoikkoHandlePool
 
 class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEventBroadcaster, XInitialization, XServiceDisplayName):
 
@@ -25,7 +26,7 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 
 	# From XSupportedLocales
 	def getLocales(self):
-		return () # TODO
+		return VoikkoHandlePool.getInstance().getSupportedSpellingLocales()
 
 SpellChecker.IMPLEMENTATION_NAME = "voikko.SpellChecker"
 SpellChecker.SUPPORTED_SERVICE_NAMES = ("com.sun.star.linguistic2.SpellChecker",)
