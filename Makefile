@@ -55,39 +55,19 @@ DESTDIR=/usr/lib/libreoffice-voikko
 
 # Platform specific variables
 ifeq "$(PLATFORM)" "windows"
-	WARNING_FLAGS=-Wall -WX -wd4061 -wd4127 -wd4265 -wd4365 -wd4514 -wd4619 -wd4625 -wd4626 -wd4668 -wd4710 -wd4711 -wd4820 -wd4996
-	# The following warnings should be fixed in the future
-	WARNING_FLAGS+= -wd4640
 	COPYDIR=xcopy /E /I
 	PS="\"
 else
-	WARNING_FLAGS=-Wall -Wno-non-virtual-dtor
 	COPYDIR=cp -r
-endif
-ifeq "$(PLATFORM)" "linux"
-	LINKER_FLAGS=-Wl,--no-undefined
 endif
 
 ifeq "$(PLATFORM)" "freebsd"
-	CC=cc
-	LINK=c++
-	LIBVOIKKO_PATH=/usr/local
 	SDK_ZIP=zip
 endif
-
-# separated generic link flags and linked libs are needed to build with -Wl,--as-needed
-# this flag has been enabled by default on openSUSE-11.2
-LINK_FLAGS=$(COMP_LINK_FLAGS) $(OPT_FLAGS) $(LINKER_FLAGS)
-
-ifneq "$(PLATFORM)" "macosx"
-	LINK_LIBS+=$(SALLIB) $(CPPULIB) $(CPPUHELPERLIB)
-endif
-VOIKKO_CC_FLAGS=$(OPT_FLAGS) $(WARNING_FLAGS) -Ibuild/hpp -I$(PRJ)/include/stl -I$(PRJ)/include
 
 # STANDALONE_EXTENSION_FILES must contain the libvoikko library (unless it will be
 # linked statically) and versioned directories for dictionary data to be embedded.
 ifdef STANDALONE_EXTENSION_PATH
-	VOIKKO_CC_DEFINES= -DVOIKKO_STANDALONE_EXTENSION
 	ifeq "$(PLATFORM)" "windows"
 		STANDALONE_EXTENSION_FILES=libvoikko-1.dll 2 3
 	else
@@ -95,29 +75,19 @@ ifdef STANDALONE_EXTENSION_PATH
 			STANDALONE_EXTENSION_FILES=2 3
 		else
 			STANDALONE_EXTENSION_FILES=libvoikko.so.1 2 3
-			LINK_LIBS += -lvoikko
 		endif
 	endif
 else
-	VOIKKO_CC_DEFINES=
 	STANDALONE_EXTENSION_FILES=
-	LINK_LIBS += -lvoikko
 endif
 
 # Build extension package name
 ifdef SHOW_UGLY_WARNINGS
         VOIKKO_PACKAGENAME:=tekstintuho
-        VOIKKO_CC_DEFINES += -DTEKSTINTUHO
 else
         VOIKKO_PACKAGENAME:=voikko
 endif
 
-ifdef LIBVOIKKO_PATH
-	LINK_FLAGS+= -L$(LIBVOIKKO_PATH)/lib
-	VOIKKO_CC_FLAGS+= -I$(LIBVOIKKO_PATH)/include
-endif
-
-VOIKKO_EXTENSION_SHAREDLIB=voikko.$(SHAREDLIB_EXT)
 VOIKKO_OBJECTS=registry common PropertyManager VoikkoHandlePool \
                spellchecker/SpellAlternatives spellchecker/SpellChecker \
                hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
@@ -183,18 +153,6 @@ $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)): build/oxt/%: oxt/%
 $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)): build/oxt/%: $(STANDALONE_EXTENSION_PATH)/%
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(COPYDIR) "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
-
-# Type library C++ headers
-build/hpp.flag:
-	-$(MKDIR) build$(PS)hpp
-	$(CPPUMAKER) -Gc -O./build/hpp $(URE_TYPES) $(OFFICE_TYPES)
-	echo flagged > $@
-
-
-# Compile the C++ source files
-build/src/%.$(OBJ_EXT): src/%.cxx build/hpp.flag $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS))
-	-$(MKDIR) $(subst /,$(PS),$(@D))
-	$(CC) $(CC_FLAGS) $(VOIKKO_CC_FLAGS) $(CC_DEFINES) $(VOIKKO_CC_DEFINES) $(CC_OUTPUT_SWITCH)$@ $<
 
 
 # Rules for creating the source distribution

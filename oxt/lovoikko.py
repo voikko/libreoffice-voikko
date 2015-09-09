@@ -24,5 +24,5 @@ g_ImplementationHelper.addImplementation(SettingsEventHandler, \
                     "org.puimula.ooovoikko.SettingsEventHandlerImplementation",
                     ("org.puimula.ooovoikko.SettingsEventHandlerService",),)
 g_ImplementationHelper.addImplementation(SpellChecker, \
-                    "voikko.SpellChecker",
-                    ("com.sun.star.linguistic2.SpellChecker",),)
+                    SpellChecker.IMPLEMENTATION_NAME,
+                    SpellChecker.SUPPORTED_SERVICE_NAMES,)

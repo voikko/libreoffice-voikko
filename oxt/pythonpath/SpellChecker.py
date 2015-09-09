@@ -18,3 +18,14 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 
 	def __init__(self, ctx, *args):
 		logging.debug("SpellChecker.__init__")
+
+	# From XServiceInfo
+	def getImplementationName(self):
+		return SpellChecker.IMPLEMENTATION_NAME
+
+	# From XSupportedLocales
+	def getLocales(self):
+		return () # TODO
+
+SpellChecker.IMPLEMENTATION_NAME = "voikko.SpellChecker"
+SpellChecker.SUPPORTED_SERVICE_NAMES = ("com.sun.star.linguistic2.SpellChecker",)
