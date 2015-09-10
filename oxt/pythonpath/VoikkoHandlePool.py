@@ -307,5 +307,25 @@ class VoikkoHandlePool:
 				self.__addLocale(self.__supportedSpellingLocales, lang)
 		return tuple(self.__supportedSpellingLocales)
 
+	def __containsLocale(self, localeToFind, locales):
+		for locale in locales:
+			if locale.Language == localeToFind.Language and locale.Country == localeToFind.Country:
+				return True
+			if locale.Language == "qlt" and \
+			   (locale.Variant == localeToFind.Language or (localeToFind.Language == "qlt" and locale.Variant == localeToFind.Variant)):
+				return True
+		if localeToFind.Language == "qlt":
+			# See if we can try again with a trimmed tag: some tags may contain extra
+			# components that can be skipped while matching such as country in crk-Cans-CN
+			tagToFind = localeToFind.Variant
+			tagLen = len(tagToFind)
+			if tagLen > 9 and tagToFind[tagLen - 3] == "-":
+				loc = Locale("qlt", "", tagToFind[0:-3])
+				return __containsLocale(loc, locales)
+		return False
+
+	def supportsSpellingLocale(self, locale):
+		return self.__containsLocale(locale, self.getSupportedSpellingLocales())
+
 
 VoikkoHandlePool.instance = None

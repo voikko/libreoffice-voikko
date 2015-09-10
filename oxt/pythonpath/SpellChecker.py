@@ -28,5 +28,13 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 	def getLocales(self):
 		return VoikkoHandlePool.getInstance().getSupportedSpellingLocales()
 
+	def hasLocale(self, aLocale):
+		return VoikkoHandlePool.getInstance().supportsSpellingLocale(aLocale)
+
+	# From XLinguServiceEventBroadcaster
+	def addLinguServiceEventListener(self, xLstnr):
+		logging.debug("SpellChecker.addLinguServiceEventListener")
+		return False # TODO
+
 SpellChecker.IMPLEMENTATION_NAME = "voikko.SpellChecker"
 SpellChecker.SUPPORTED_SERVICE_NAMES = ("com.sun.star.linguistic2.SpellChecker",)
