@@ -11,6 +11,7 @@
 
 from libvoikko import Voikko
 from collections import defaultdict
+from com.sun.star.lang import Locale
 
 class Bcp47ToLoMapping:
 
@@ -272,7 +273,7 @@ BCP_TO_LO_MAPPING = [
 class VoikkoHandlePool:
 
 	def __init__(self):
-		self.__supportedSpellingLocales = ()
+		self.__supportedSpellingLocales = []
 		self.__installationPath = None
 		self.__bcpToOOoMap = defaultdict(list)
 		for m in BCP_TO_LO_MAPPING:
@@ -288,7 +289,15 @@ class VoikkoHandlePool:
 		return self.__installationPath
 
 	def __addLocale(self, locales, language):
-		pass # TODO
+		matchingMappings = self.__bcpToOOoMap[language]
+		for bcpMapping in matchingMappings:
+			locales.append(Locale(bcpMapping.loLanguage, bcpMapping.loRegion, ""))
+		if len(matchingMappings) == 0:
+			if len(language) <= 3:
+				# assume this is ISO 639-1 or ISO 639-3 code
+				locales.append(Locale(language, "", ""))
+			else:
+				locales.append(Locale("qlt", "", language))
 
 	def getSupportedSpellingLocales(self):
 		# optimization: if we already have found some locales, don't search for more
@@ -296,7 +305,7 @@ class VoikkoHandlePool:
 			languages = Voikko.listSupportedSpellingLanguages(self.getInstallationPath())
 			for lang in languages:
 				self.__addLocale(self.__supportedSpellingLocales, lang)
-		return self.__supportedSpellingLocales
+		return tuple(self.__supportedSpellingLocales)
 
 
 VoikkoHandlePool.instance = None
