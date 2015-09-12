@@ -347,6 +347,16 @@ class VoikkoHandlePool:
 				self.__addLocale(self.__supportedSpellingLocales, lang)
 		return tuple(self.__supportedSpellingLocales)
 
+	def getInitializationStatus(self):
+		status = "Init OK:["
+		for key, value in self.__handles.items():
+			status = status + key + " "
+		status = status + "] FAILED:["
+		for key, value in self.__initializationErrors.items():
+			status = status + key + ":'" + value + "' "
+		status = status + "]"
+		return status
+
 	def __containsLocale(self, localeToFind, locales):
 		for locale in locales:
 			if locale.Language == localeToFind.Language and locale.Country == localeToFind.Country:
