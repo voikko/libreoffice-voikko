@@ -31,6 +31,14 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 	def hasLocale(self, aLocale):
 		return VoikkoHandlePool.getInstance().supportsSpellingLocale(aLocale)
 
+	# From XSpellChecker
+	def isValid(self, word, locale, properties):
+		# TODO mutex
+		voikko = VoikkoHandlePool.getInstance().getHandle(locale)
+		if voikko is None:
+			return False
+		# TODO
+
 	# From XLinguServiceEventBroadcaster
 	def addLinguServiceEventListener(self, xLstnr):
 		logging.debug("SpellChecker.addLinguServiceEventListener")

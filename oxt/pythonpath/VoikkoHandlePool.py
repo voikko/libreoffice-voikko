@@ -9,7 +9,8 @@
 # the GNU General Public License Version 3 or later (the "GPL"), in which
 # case the provisions of the GPL are applicable instead of those above.
 
-from libvoikko import Voikko
+import logging
+from libvoikko import Voikko, VoikkoException
 from collections import defaultdict
 from com.sun.star.lang import Locale
 
@@ -275,6 +276,11 @@ class VoikkoHandlePool:
 	def __init__(self):
 		self.__supportedSpellingLocales = []
 		self.__installationPath = None
+		self.__handles = {}
+		self.__initializationErrors = {}
+		self.__globalBooleanOptions = {}
+		self.__globalIntegerOptions = {}
+		self.__preferredGlobalVariant = None
 		self.__bcpToOOoMap = defaultdict(list)
 		for m in BCP_TO_LO_MAPPING:
 			self.__bcpToOOoMap[m.bcpTag].append(m)
@@ -287,6 +293,40 @@ class VoikkoHandlePool:
 
 	def getInstallationPath(self):
 		return self.__installationPath
+
+	def __openHandleWithVariant(self, language, fullVariant):
+		logging.debug("VoikkoHandlePool.__openHandleWithVariant")
+		try:
+			voikkoHandle = Voikko(fullVariant, self.getInstallationPath())
+			self.__handles[language] = voikkoHandle
+			for booleanOpt, booleanValue in self.__globalBooleanOptions:
+				voikkoHandle.setBooleanOption(booleanOpt, booleanValue)
+			for integerOpt, integerValue in self.__globalIntegerOptions:
+				voikkoHandle.setIntegerOption(integerOpt, integerValue)
+			return voikkoHandle;
+		except VoikkoException as e:
+			self.__initializationErrors[language] = e.args[0]
+			return None
+
+	def __openHandle(self, language):
+		if self.__preferredGlobalVariant is not None:
+			languageWithVariant = language + "-x-" + self.__preferredGlobalVariant
+			handle = self.__openHandleWithVariant(language, languageWithVariant)
+			if handle is not None:
+				return handle
+		return self.__openHandleWithVariant(language, language)
+
+	def getHandle(self, locale):
+		language = None
+		if locale.Language == "qlt":
+			language = locale.Variant
+		else:
+			language = locale.Language
+		if language in self.__handles:
+			return self.__handles[language]
+		if language in self.__initializationErrors:
+			return None
+		return self.__openHandle(language)
 
 	def __addLocale(self, locales, language):
 		matchingMappings = self.__bcpToOOoMap[language]
