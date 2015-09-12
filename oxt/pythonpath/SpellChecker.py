@@ -14,6 +14,7 @@ import unohelper
 from com.sun.star.linguistic2 import XSpellChecker, XLinguServiceEventBroadcaster
 from com.sun.star.lang import XServiceInfo, XInitialization, XServiceDisplayName
 from VoikkoHandlePool import VoikkoHandlePool
+from SpellAlternatives import SpellAlternatives
 
 class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEventBroadcaster, XInitialization, XServiceDisplayName):
 
@@ -37,7 +38,29 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 		voikko = VoikkoHandlePool.getInstance().getHandle(locale)
 		if voikko is None:
 			return False
-		# TODO
+		# TODO PropertyManager::get(compContext)->setValues(aProperties);
+		result = voikko.spell(word)
+		# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+		return result
+
+	def spell(self, word, locale, properties):
+		# Check if diagnostic message should be returned
+		if word == "VoikkoGetStatusInformation":
+			suggestions = [VoikkoHandlePool.getInstance().getInitializationStatus()]
+			return SpellAlternatives(word, suggestions, locale)
+		
+		# TODO mutex
+		voikko = VoikkoHandlePool.getInstance().getHandle(locale)
+		if voikko is None:
+			return None
+		
+		# TODO PropertyManager::get(compContext)->setValues(aProperties);
+		if voikko.spell(word):
+			# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+			return None
+		suggestions = voikko.suggest(word)
+		# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+		return SpellAlternatives(word, suggestions, locale)
 
 	# From XLinguServiceEventBroadcaster
 	def addLinguServiceEventListener(self, xLstnr):
