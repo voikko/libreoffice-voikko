@@ -14,6 +14,7 @@ import logging
 import unohelper
 from SettingsEventHandler import SettingsEventHandler
 from SpellChecker import SpellChecker
+from PropertyManager import PropertyManager
 
 if "VOIKKO_DEBUG" in os.environ:
 	logging.getLogger().setLevel(logging.DEBUG)
@@ -26,3 +27,6 @@ g_ImplementationHelper.addImplementation(SettingsEventHandler, \
 g_ImplementationHelper.addImplementation(SpellChecker, \
                     SpellChecker.IMPLEMENTATION_NAME,
                     SpellChecker.SUPPORTED_SERVICE_NAMES,)
+
+# Force initialization of property manager so that it is done before anything else
+PropertyManager.getInstance()

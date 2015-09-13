@@ -15,6 +15,7 @@ from com.sun.star.linguistic2 import XSpellChecker, XLinguServiceEventBroadcaste
 from com.sun.star.lang import XServiceInfo, XInitialization, XServiceDisplayName
 from VoikkoHandlePool import VoikkoHandlePool
 from SpellAlternatives import SpellAlternatives
+from PropertyManager import PropertyManager
 
 class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEventBroadcaster, XInitialization, XServiceDisplayName):
 
@@ -38,7 +39,7 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 		voikko = VoikkoHandlePool.getInstance().getHandle(locale)
 		if voikko is None:
 			return False
-		# TODO PropertyManager::get(compContext)->setValues(aProperties);
+		PropertyManager.getInstance().setValues(properties)
 		result = voikko.spell(word)
 		# TODO PropertyManager::get(compContext)->resetValues(aProperties);
 		return result

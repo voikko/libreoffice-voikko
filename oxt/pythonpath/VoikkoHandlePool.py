@@ -328,6 +328,12 @@ class VoikkoHandlePool:
 			return None
 		return self.__openHandle(language)
 
+	def closeAllHandles(self):
+		for key, value in self.__handles.items():
+			value.terminate()
+		self.__handles.clear()
+		self.__initializationErrors.clear()
+
 	def __addLocale(self, locales, language):
 		matchingMappings = self.__bcpToOOoMap[language]
 		for bcpMapping in matchingMappings:
@@ -348,6 +354,7 @@ class VoikkoHandlePool:
 		return tuple(self.__supportedSpellingLocales)
 
 	def getInitializationStatus(self):
+		"""Returns initialization status diagnostics"""
 		status = "Init OK:["
 		for key, value in self.__handles.items():
 			status = status + key + " "
@@ -356,6 +363,14 @@ class VoikkoHandlePool:
 			status = status + key + ":'" + value + "' "
 		status = status + "]"
 		return status
+
+	def setPreferredGlobalVariant(self, variant):
+		if variant != self.__preferredGlobalVariant:
+			self.__preferredGlobalVariant = variant
+			self.closeAllHandles()
+
+	def setInstallationPath(self, path):
+		self.__installationPath = path
 
 	def __containsLocale(self, localeToFind, locales):
 		for locale in locales:
