@@ -14,6 +14,7 @@ import logging
 import unohelper
 from SettingsEventHandler import SettingsEventHandler
 from SpellChecker import SpellChecker
+from Hyphenator import Hyphenator
 from PropertyManager import PropertyManager
 
 if "VOIKKO_DEBUG" in os.environ:
@@ -22,11 +23,14 @@ if "VOIKKO_DEBUG" in os.environ:
 # name of g_ImplementationHelper is significant, Python component loader expects to find it
 g_ImplementationHelper = unohelper.ImplementationHelper()
 g_ImplementationHelper.addImplementation(SettingsEventHandler, \
-                    "org.puimula.ooovoikko.SettingsEventHandlerImplementation",
-                    ("org.puimula.ooovoikko.SettingsEventHandlerService",),)
+                    SettingsEventHandler.IMPLEMENTATION_NAME,
+                    SettingsEventHandler.SUPPORTED_SERVICE_NAMES,)
 g_ImplementationHelper.addImplementation(SpellChecker, \
                     SpellChecker.IMPLEMENTATION_NAME,
                     SpellChecker.SUPPORTED_SERVICE_NAMES,)
+g_ImplementationHelper.addImplementation(Hyphenator, \
+                    Hyphenator.IMPLEMENTATION_NAME,
+                    Hyphenator.SUPPORTED_SERVICE_NAMES,)
 
 # Force initialization of property manager so that it is done before anything else
 PropertyManager.getInstance()

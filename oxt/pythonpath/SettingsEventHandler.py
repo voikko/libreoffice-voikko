@@ -15,3 +15,6 @@ class SettingsEventHandler(unohelper.Base):
 
 	def __init__(self, ctx, *args):
 		print("SettingsEventHandler.__init__")
+
+SettingsEventHandler.IMPLEMENTATION_NAME = "org.puimula.ooovoikko.SettingsEventHandlerImplementation"
+SettingsEventHandler.SUPPORTED_SERVICE_NAMES = ("org.puimula.ooovoikko.SettingsEventHandlerService",)

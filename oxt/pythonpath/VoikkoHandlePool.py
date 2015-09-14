@@ -275,6 +275,7 @@ class VoikkoHandlePool:
 
 	def __init__(self):
 		self.__supportedSpellingLocales = []
+		self.__supportedHyphenationLocales = []
 		self.__installationPath = None
 		self.__handles = {}
 		self.__initializationErrors = {}
@@ -345,13 +346,19 @@ class VoikkoHandlePool:
 			else:
 				locales.append(Locale("qlt", "", language))
 
-	def getSupportedSpellingLocales(self):
+	def __getSupportedLocalesForOperation(self, localeList, localeOperation):
 		# optimization: if we already have found some locales, don't search for more
-		if len(self.__supportedSpellingLocales) == 0:
-			languages = Voikko.listSupportedSpellingLanguages(self.getInstallationPath())
+		if len(localeList) == 0:
+			languages = localeOperation(self.getInstallationPath())
 			for lang in languages:
-				self.__addLocale(self.__supportedSpellingLocales, lang)
-		return tuple(self.__supportedSpellingLocales)
+				self.__addLocale(localeList, lang)
+		return tuple(localeList)
+
+	def getSupportedSpellingLocales(self):
+		return self.__getSupportedLocalesForOperation(self.__supportedSpellingLocales, Voikko.listSupportedSpellingLanguages)
+
+	def getSupportedHyphenationLocales(self):
+		return self.__getSupportedLocalesForOperation(self.__supportedHyphenationLocales, Voikko.listSupportedHyphenationLanguages)
 
 	def getInitializationStatus(self):
 		"""Returns initialization status diagnostics"""

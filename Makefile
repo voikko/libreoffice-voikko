@@ -35,14 +35,15 @@ ifdef SystemRoot # Windows
 	COPYDIR=xcopy /E /I
 	COPY=copy
 	PS="\"
+	MKDIR=mkdir
 else
 	COPYDIR=cp -r
 	COPY=cp
 	PS="/"
+	MKDIR=mkdir -p
 endif
 ZIP=zip
 SED=sed
-MKDIR=mkdir
 
 # STANDALONE_EXTENSION_FILES must contain the libvoikko library (unless it will be
 # linked statically) and versioned directories for dictionary data to be embedded.
@@ -79,7 +80,7 @@ COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_
                SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu \
                voikko.components META-INF/manifest.xml lovoikko.py \
                pythonpath/SettingsEventHandler.py pythonpath/SpellChecker.py pythonpath/VoikkoHandlePool.py \
-               pythonpath/SpellAlternatives.py pythonpath/PropertyManager.py
+               pythonpath/SpellAlternatives.py pythonpath/PropertyManager.py pythonpath/Hyphenator.py
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
 endif
