@@ -10,33 +10,10 @@
 # case the provisions of the GPL are applicable instead of those above.
 ###############################################################################
 
-
-# Check that build environment is properly set up
-ifndef OO_SDK_HOME
-$(error You must run setsdkenv before running make)
-endif
-PRJ=$(OO_SDK_HOME)
-# Load SDK settings
-include $(PRJ)/settings/settings.mk
-include $(PRJ)/settings/std.mk
-
 # ===== Build settings =====
 
 # Version number of the libreoffice-voikko extension
 VOIKKO_VERSION=4.1
-
-# If you have installed libvoikko to some non-standard location, uncomment the
-# following and adjust the path accordingly. For OS X this must be set if
-# a standalone extension is to be built.
-# LIBVOIKKO_PATH=/usr/local/voikko
-# LIBVOIKKO_PATH=c:/voikko
-# LIBVOIKKO_PATH=/Users/paakayttaja/voikko
-
-# If you want to have all of the library and dictionary files included within
-# the extension package, uncomment the following and adjust the path to point
-# to a directory containing the required files.
-# STANDALONE_EXTENSION_PATH=extras
-# STANDALONE_EXTENSION_PATH=/Users/paakayttaja/voikko/lib/voikko
 
 # If you want to have a license text to be displayed upon the installation
 # of this extension, uncomment the following.
@@ -54,16 +31,18 @@ DESTDIR=/usr/lib/libreoffice-voikko
 # === End build settings ===
 
 # Platform specific variables
-ifeq "$(PLATFORM)" "windows"
+ifdef SystemRoot # Windows
 	COPYDIR=xcopy /E /I
+	COPY=copy
 	PS="\"
 else
 	COPYDIR=cp -r
+	COPY=cp
+	PS="/"
 endif
-
-ifeq "$(PLATFORM)" "freebsd"
-	SDK_ZIP=zip
-endif
+ZIP=zip
+SED=sed
+MKDIR=mkdir
 
 # STANDALONE_EXTENSION_FILES must contain the libvoikko library (unless it will be
 # linked statically) and versioned directories for dictionary data to be embedded.
@@ -108,7 +87,6 @@ SRCDIST=COPYING Makefile README ChangeLog $(patsubst %,src/%.hxx,$(VOIKKO_HEADER
         $(patsubst %,src/%.cxx,$(VOIKKO_OBJECTS)) oxt/description.xml.template \
         $(patsubst %,oxt/%,$(COPY_TEMPLATES)) \
         oxt/icon.svg
-SED=sed
 
 EXTENSION_FILES=build/oxt/description.xml \
 	      $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
@@ -120,7 +98,7 @@ EXTENSION_FILES=build/oxt/description.xml \
 extension-files : $(EXTENSION_FILES)
 
 oxt: $(EXTENSION_FILES)
-	cd build/oxt && $(SDK_ZIP) -r -9 ../$(VOIKKO_PACKAGENAME).oxt \
+	cd build/oxt && $(ZIP) -r -9 ../$(VOIKKO_PACKAGENAME).oxt \
 	   $(patsubst build/oxt/%,%,$^)
 
 all: oxt
