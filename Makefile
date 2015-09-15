@@ -70,17 +70,18 @@ endif
 
 VOIKKO_OBJECTS=registry common PropertyManager VoikkoHandlePool \
                spellchecker/SpellChecker \
-               hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
+               hyphenator/Hyphenator hyphenator/PossibleHyphens \
                grammar/GrammarChecker settings/SettingsEventHandler
 VOIKKO_HEADERS=macros common PropertyManager VoikkoHandlePool \
                spellchecker/SpellChecker \
-               hyphenator/Hyphenator hyphenator/HyphenatedWord hyphenator/PossibleHyphens \
+               hyphenator/Hyphenator hyphenator/PossibleHyphens \
                grammar/GrammarChecker settings/SettingsEventHandler
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
                SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu \
                voikko.components META-INF/manifest.xml lovoikko.py \
                pythonpath/SettingsEventHandler.py pythonpath/SpellChecker.py pythonpath/VoikkoHandlePool.py \
-               pythonpath/SpellAlternatives.py pythonpath/PropertyManager.py pythonpath/Hyphenator.py
+               pythonpath/SpellAlternatives.py pythonpath/PropertyManager.py pythonpath/Hyphenator.py \
+               pythonpath/HyphenatedWord.py
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
 endif
