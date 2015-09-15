@@ -36,5 +36,12 @@ class Hyphenator(unohelper.Base, XServiceInfo, XHyphenator, XLinguServiceEventBr
 		logging.debug("Hyphenator.addLinguServiceEventListener")
 		return False # TODO
 
+	# From XServiceDisplayName
+	def getServiceDisplayName(self, locale):
+		if locale.Language == "fi":
+			return "Tavutus (Voikko)"
+		else:
+			return "Hyphenator (Voikko)"
+
 Hyphenator.IMPLEMENTATION_NAME = "voikko.Hyphenator"
 Hyphenator.SUPPORTED_SERVICE_NAMES = ("com.sun.star.linguistic2.Hyphenator",)

@@ -276,6 +276,7 @@ class VoikkoHandlePool:
 	def __init__(self):
 		self.__supportedSpellingLocales = []
 		self.__supportedHyphenationLocales = []
+		self.__supportedGrammarCheckingLocales = []
 		self.__installationPath = None
 		self.__handles = {}
 		self.__initializationErrors = {}
@@ -360,6 +361,9 @@ class VoikkoHandlePool:
 	def getSupportedHyphenationLocales(self):
 		return self.__getSupportedLocalesForOperation(self.__supportedHyphenationLocales, Voikko.listSupportedHyphenationLanguages)
 
+	def getSupportedGrammarLocales(self):
+		return self.__getSupportedLocalesForOperation(self.__supportedGrammarCheckingLocales, Voikko.listSupportedGrammarCheckingLanguages)
+
 	def getInitializationStatus(self):
 		"""Returns initialization status diagnostics"""
 		status = "Init OK:["
@@ -399,5 +403,10 @@ class VoikkoHandlePool:
 	def supportsSpellingLocale(self, locale):
 		return self.__containsLocale(locale, self.getSupportedSpellingLocales())
 
+	def supportsHyphenationLocale(self, locale):
+		return self.__containsLocale(locale, self.getSupportedHyphenationLocales())
+
+	def supportsGrammarLocale(self, locale):
+		return self.__containsLocale(locale, self.getSupportedGrammarLocales())
 
 VoikkoHandlePool.instance = None

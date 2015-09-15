@@ -68,5 +68,12 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 		logging.debug("SpellChecker.addLinguServiceEventListener")
 		return False # TODO
 
+	# From XServiceDisplayName
+	def getServiceDisplayName(self, locale):
+		if locale.Language == "fi":
+			return "Oikoluku (Voikko)"
+		else:
+			return "Spellchecker (Voikko)"
+
 SpellChecker.IMPLEMENTATION_NAME = "voikko.SpellChecker"
 SpellChecker.SUPPORTED_SERVICE_NAMES = ("com.sun.star.linguistic2.SpellChecker",)
