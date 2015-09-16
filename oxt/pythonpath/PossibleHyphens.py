@@ -30,4 +30,4 @@ class PossibleHyphens(unohelper.Base, XPossibleHyphens):
 		return self.__hyphenatedWord
 
 	def getHyphenationPositions(self):
-		return self.__hyphenationPositions
+		return tuple(self.__hyphenationPositions)

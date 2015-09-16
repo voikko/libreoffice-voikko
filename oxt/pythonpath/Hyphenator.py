@@ -79,7 +79,47 @@ class Hyphenator(unohelper.Base, XServiceInfo, XHyphenator, XLinguServiceEventBr
 			return HyphenatedWord(word, hyphenPos - 1, locale)
 		else:
 			return None
-	
+
+	def queryAlternativeSpelling(self, word, locale, index, properties):
+		logging.debug("Hyphenator.queryAlternativeSpelling")
+		# Implementing this might be necessary, although everything seems to work fine without it.
+		return None
+
+	def createPossibleHyphens(self, word, locale, properties):
+		# TODO mutex
+		logging.debug("Hyphenator.createPossibleHyphens")
+		wlen = len(word)
+		if wlen > 10000:
+			return None
+		voikko = VoikkoHandlePool.getInstance().getHandle(locale)
+		if voikko is None:
+			return None
+		PropertyManager.getInstance().setValues(properties)
+
+		# If the word is too short to be hyphenated, return no hyphenation points
+		minLeading = PropertyManager.getInstance().getHyphMinLeading()
+		minTrailing = PropertyManager.getInstance().getHyphMinTrailing()
+		if wlen < PropertyManager.getInstance().getHyphMinWordLength() or wlen < minLeading + minTrailing:
+			# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+			return None
+
+		hyphenationPoints = voikko.getHyphenationPattern(word)
+		if hyphenationPoints is None:
+			# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+			return None
+
+		hyphenSeq = []
+		hyphenatedWord = ""
+		for i in range(0, wlen):
+			hyphenatedWord = hyphenatedWord + word[i]
+			if i >= minLeading - 1 and i < wlen - minTrailing and hyphenationPoints[i + 1] == '-':
+				hyphenSeq.append(i)
+				hyphenatedWord = hyphenatedWord + "="
+
+		res = PossibleHyphens(word, hyphenatedWord, hyphenSeq, locale)
+		# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+		return res
+
 	# From XLinguServiceEventBroadcaster
 	def addLinguServiceEventListener(self, xLstnr):
 		logging.debug("Hyphenator.addLinguServiceEventListener")
