@@ -43,6 +43,15 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		logging.debug("PropertyManager.initialize: starting")
 		# TODO
 
+	def getHyphMinLeading(self):
+		return self.__hyphMinLeading
+
+	def getHyphMinTrailing(self):
+		return self.__hyphMinTrailing
+
+	def getHyphMinWordLength(self):
+		return self.__hyphMinWordLength
+
 	def __getInstallationPath(self):
 		dname = os.path.dirname(sys.modules[__name__].__file__)
 		if dname.endswith("pythonpath"):

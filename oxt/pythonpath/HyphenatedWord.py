@@ -26,7 +26,7 @@ class HyphenatedWord(unohelper.Base, XHyphenatedWord):
 			self.__hyphenatedWord = word
 			self.__isAlternative = False
 		logging.debug("HyphenatedWord.__init__: " + word)
-		logging.debug("HyphenatedWord.__init__: " + pos)
+		logging.debug("HyphenatedWord.__init__: " + str(pos))
 
 	def getWord(self):
 		return self.__word

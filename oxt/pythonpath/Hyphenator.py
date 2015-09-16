@@ -15,6 +15,7 @@ from com.sun.star.linguistic2 import XHyphenator, XLinguServiceEventBroadcaster
 from com.sun.star.lang import XServiceInfo, XInitialization, XServiceDisplayName
 from VoikkoHandlePool import VoikkoHandlePool
 from HyphenatedWord import HyphenatedWord
+from PropertyManager import PropertyManager
 
 class Hyphenator(unohelper.Base, XServiceInfo, XHyphenator, XLinguServiceEventBroadcaster, XInitialization, XServiceDisplayName):
 
@@ -33,6 +34,50 @@ class Hyphenator(unohelper.Base, XServiceInfo, XHyphenator, XLinguServiceEventBr
 		return VoikkoHandlePool.getInstance().supportsHyphenationLocale(aLocale)
 
 	# From XHyphenator
+	def hyphenate(self, word, locale, nMaxLeading, properties):
+		# TODO mutex
+		logging.debug("Hyphenator.hyphenate")
+		if len(word) > 10000:
+			return None
+		voikko = VoikkoHandlePool.getInstance().getHandle(locale)
+		if voikko is None:
+			return None
+		PropertyManager.getInstance().setValues(properties)
+
+		minLeading = PropertyManager.getInstance().getHyphMinLeading()
+		minTrailing = PropertyManager.getInstance().getHyphMinTrailing()
+		wlen = len(word)
+
+		# If the word is too short to be hyphenated, return no hyphenation points
+		if wlen < PropertyManager.getInstance().getHyphMinWordLength() or wlen < minLeading + minTrailing:
+			# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+			return None
+
+		hyphenationPoints = voikko.getHyphenationPattern(word)
+		if hyphenationPoints is None:
+			# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+			return None
+
+		# find the hyphenation point
+		hyphenPos = -1
+		i = wlen - minTrailing # The last generally allowed hyphenation point
+		if i > nMaxLeading:
+			i = nMaxLeading # The last allowed point on this line
+		while i >= minLeading and hyphenPos == -1:
+			if word[i] == '\'':
+				i = i - 1
+				continue
+			if hyphenationPoints[i] == '-' or hyphenationPoints[i] == '=':
+				hyphenPos = i
+				break
+			i = i - 1
+
+		# return the result
+		# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+		if hyphenPos != -1:
+			return HyphenatedWord(word, hyphenPos - 1, locale)
+		else:
+			return None
 	
 	# From XLinguServiceEventBroadcaster
 	def addLinguServiceEventListener(self, xLstnr):
