@@ -15,6 +15,7 @@ from com.sun.star.linguistic2 import XHyphenator, XLinguServiceEventBroadcaster
 from com.sun.star.lang import XServiceInfo, XInitialization, XServiceDisplayName
 from VoikkoHandlePool import VoikkoHandlePool
 from HyphenatedWord import HyphenatedWord
+from PossibleHyphens import PossibleHyphens
 from PropertyManager import PropertyManager
 
 class Hyphenator(unohelper.Base, XServiceInfo, XHyphenator, XLinguServiceEventBroadcaster, XInitialization, XServiceDisplayName):
