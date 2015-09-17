@@ -66,6 +66,9 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		# TODO
 		return ""
 
+	def getMessageLanguage(self):
+		return self.__messageLanguage
+
 	def setValues(self, values):
 		pass # TODO
 

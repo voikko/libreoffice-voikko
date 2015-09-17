@@ -11,8 +11,10 @@
 
 import logging
 import unohelper
-from com.sun.star.linguistic2 import XProofreader
+from com.sun.star.linguistic2 import XProofreader, ProofreadingResult, SingleProofreadingError
 from com.sun.star.lang import XServiceInfo, XInitialization, XServiceDisplayName
+from com.sun.star.beans import PropertyValue
+from com.sun.star.text.TextMarkupType import PROOFREADING
 from VoikkoHandlePool import VoikkoHandlePool
 from PropertyManager import PropertyManager
 
@@ -32,6 +34,72 @@ class GrammarChecker(unohelper.Base, XServiceInfo, XProofreader, XInitialization
 
 	def hasLocale(self, aLocale):
 		return VoikkoHandlePool.getInstance().supportsGrammarLocale(aLocale)
+
+	# From XProofreader
+	def doProofreading(self, aDocumentIdentifier, aText, aLocale, nStartOfSentencePos, nSuggestedBehindEndOfSentencePosition, aProperties):
+		logging.debug("GrammarChecker.doProofreading")
+		result = ProofreadingResult()
+		result.aDocumentIdentifier = aDocumentIdentifier
+		result.xFlatParagraph = None
+		result.aText = aText
+		result.aLocale = aLocale
+		result.nStartOfSentencePosition = nStartOfSentencePos
+		result.nBehindEndOfSentencePosition = nSuggestedBehindEndOfSentencePosition
+		result.xProofreader = self
+
+		voikko = VoikkoHandlePool.getInstance().getHandle(aLocale)
+		if voikko is None:
+			logging.error("GrammarChecker.doProofreading called without initializing libvoikko")
+			return result
+
+		gcErrors = []
+		gcI = 0
+		vErrorCount = 0
+		for vError in voikko.grammarErrors(aText, PropertyManager.getInstance().getMessageLanguage()):
+			startPos = vError.startPos
+			errorLength = vError.errorLen
+
+			if startPos < result.nStartOfSentencePosition:
+				continue
+			if startPos >= result.nBehindEndOfSentencePosition:
+				break
+			if startPos + errorLength > result.nBehindEndOfSentencePosition:
+				result.nBehindEndOfSentencePosition = startPos + errorLength
+
+			# we have a real grammar error
+			errorCode = vError.errorCode
+			ruleIdentifier = str(errorCode)
+			if ruleIdentifier in self.__ignoredErrors:
+				# ignore this error
+				continue
+
+			suggestions = vError.suggestions
+
+			gcError = SingleProofreadingError()
+			gcErrors.append(gcError)
+			gcError.nErrorStart = startPos
+			gcError.nErrorLength = errorLength
+			gcError.nErrorType = PROOFREADING
+			comment = vError.shortDescription
+			# TODO ifdef TEKSTINTUHO
+			# TODO comment = comment + " TEKSTINTUHO KÄYTÖSSÄ!"
+			# TODO endif
+			gcError.aShortComment = comment
+			gcError.aFullComment = comment
+			gcError.aRuleIdentifier = ruleIdentifier
+
+			detailUrl = PropertyValue()
+			detailUrl.Name = "FullCommentURL"
+			detailUrl.Value = "http://voikko.puimula.org/gchelp/fi/" + ruleIdentifier + ".html"
+			gcError.aProperties = (detailUrl,)
+
+			# add suggestions
+			if len(suggestions) > 0:
+				gcerror.aSuggestions = tuple(suggestions)
+
+		result.aErrors = tuple(gcErrors)
+		result.nStartOfNextSentencePosition = result.nBehindEndOfSentencePosition
+		return result
 
 	# From XServiceDisplayName
 	def getServiceDisplayName(self, locale):

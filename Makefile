@@ -68,7 +68,7 @@ else
         VOIKKO_PACKAGENAME:=voikko
 endif
 
-VOIKKO_OBJECTS=registry common PropertyManager VoikkoHandlePool \
+VOIKKO_OBJECTS=common PropertyManager VoikkoHandlePool \
                spellchecker/SpellChecker \
                hyphenator/Hyphenator \
                grammar/GrammarChecker settings/SettingsEventHandler
