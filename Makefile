@@ -81,7 +81,7 @@ COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_
                voikko.components META-INF/manifest.xml lovoikko.py \
                pythonpath/SettingsEventHandler.py pythonpath/SpellChecker.py pythonpath/VoikkoHandlePool.py \
                pythonpath/SpellAlternatives.py pythonpath/PropertyManager.py pythonpath/Hyphenator.py \
-               pythonpath/HyphenatedWord.py pythonpath/PossibleHyphens.py
+               pythonpath/HyphenatedWord.py pythonpath/PossibleHyphens.py pythonpath/GrammarChecker.py
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
 endif

@@ -15,6 +15,7 @@ import unohelper
 from SettingsEventHandler import SettingsEventHandler
 from SpellChecker import SpellChecker
 from Hyphenator import Hyphenator
+from GrammarChecker import GrammarChecker
 from PropertyManager import PropertyManager
 
 if "VOIKKO_DEBUG" in os.environ:
@@ -31,6 +32,9 @@ g_ImplementationHelper.addImplementation(SpellChecker, \
 g_ImplementationHelper.addImplementation(Hyphenator, \
                     Hyphenator.IMPLEMENTATION_NAME,
                     Hyphenator.SUPPORTED_SERVICE_NAMES,)
+g_ImplementationHelper.addImplementation(GrammarChecker, \
+                    GrammarChecker.IMPLEMENTATION_NAME,
+                    GrammarChecker.SUPPORTED_SERVICE_NAMES,)
 
 # Force initialization of property manager so that it is done before anything else
 PropertyManager.getInstance()
