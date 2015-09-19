@@ -43,7 +43,27 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		self.initialize()
 
 	def __setUiLanguage(self):
-		pass # TODO
+		try:
+			lang = self.readFromRegistry("org.openoffice.Office.Linguistic/General", "UILocale")
+			logging.debug("Specified UI locale = '" + lang + "'")
+			if lang is not None and len(lang) > 0:
+				self.__messageLanguage = lang
+			else:
+				# Use system default language
+				# FIXME: This does not check LC_MESSAGES. There is
+				# also GetSystemUILanguage but that cannot be used
+				# from extension.
+				# TODO
+				# rtl_Locale * rtlLocale;
+				# osl_getProcessLocale(&rtlLocale);
+				# OUString localeLang(rtlLocale->Language);
+				# VOIKKO_DEBUG_2("Locale language = '%s'", OU2DEBUG(localeLang));
+				# if (localeLang.match(A2OU("fi"), 0)) {
+				# 	messageLanguage = "fi_FI";
+				# }
+				pass
+		except UnknownPropertyException:
+			logging.error("PropertyManager.initialize caught UnknownPropertyException")
 
 	def initialize(self):
 		logging.debug("PropertyManager.initialize: starting")
@@ -97,8 +117,11 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 			return None
 
 	def readFromRegistry(self, group, key):
-		# TODO
-		return ""
+		rootView = PropertyManager.getRegistryProperties(group)
+		if rootView is None:
+			logging.error("PropertyManager.readFromRegistry: failed to obtain rootView " + group)
+			raise UnknownPropertyException()
+		return rootView.getHierarchicalPropertyValue(key)
 
 	def getMessageLanguage(self):
 		return self.__messageLanguage
@@ -144,6 +167,19 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 
 	def __sendLinguEvent(self, event):
 		pass # TODO
+
+	def getRegistryProperties(group):
+		logging.debug("PropertyManager.getRegistryProperties: " + group)
+		compContext = uno.getComponentContext()
+		servManager = compContext.ServiceManager
+		provider = servManager.createInstanceWithContext("com.sun.star.configuration.ConfigurationProvider", compContext)
+		pathArgument = PropertyValue()
+		pathArgument.Name = "nodepath"
+		pathArgument.Value = group
+		aArguments = (pathArgument,)
+		rootView = provider.createInstanceWithArguments("com.sun.star.configuration.ConfigurationUpdateAccess", aArguments)
+		return rootView;
+	getRegistryProperties = staticmethod(getRegistryProperties)
 
 	def getInstance():
 		if PropertyManager.instance is None:
