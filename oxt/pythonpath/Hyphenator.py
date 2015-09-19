@@ -51,12 +51,12 @@ class Hyphenator(unohelper.Base, XServiceInfo, XHyphenator, XLinguServiceEventBr
 
 		# If the word is too short to be hyphenated, return no hyphenation points
 		if wlen < PropertyManager.getInstance().getHyphMinWordLength() or wlen < minLeading + minTrailing:
-			# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+			PropertyManager.getInstance().resetValues(properties)
 			return None
 
 		hyphenationPoints = voikko.getHyphenationPattern(word)
 		if hyphenationPoints is None:
-			# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+			PropertyManager.getInstance().resetValues(properties)
 			return None
 
 		# find the hyphenation point
@@ -74,7 +74,7 @@ class Hyphenator(unohelper.Base, XServiceInfo, XHyphenator, XLinguServiceEventBr
 			i = i - 1
 
 		# return the result
-		# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+		PropertyManager.getInstance().resetValues(properties)
 		if hyphenPos != -1:
 			return HyphenatedWord(word, hyphenPos - 1, locale)
 		else:
@@ -100,12 +100,12 @@ class Hyphenator(unohelper.Base, XServiceInfo, XHyphenator, XLinguServiceEventBr
 		minLeading = PropertyManager.getInstance().getHyphMinLeading()
 		minTrailing = PropertyManager.getInstance().getHyphMinTrailing()
 		if wlen < PropertyManager.getInstance().getHyphMinWordLength() or wlen < minLeading + minTrailing:
-			# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+			PropertyManager.getInstance().resetValues(properties)
 			return None
 
 		hyphenationPoints = voikko.getHyphenationPattern(word)
 		if hyphenationPoints is None:
-			# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+			PropertyManager.getInstance().resetValues(properties)
 			return None
 
 		hyphenSeq = []
@@ -117,7 +117,7 @@ class Hyphenator(unohelper.Base, XServiceInfo, XHyphenator, XLinguServiceEventBr
 				hyphenatedWord = hyphenatedWord + "="
 
 		res = PossibleHyphens(word, hyphenatedWord, hyphenSeq, locale)
-		# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+		PropertyManager.getInstance().resetValues(properties)
 		return res
 
 	# From XLinguServiceEventBroadcaster

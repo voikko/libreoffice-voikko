@@ -13,8 +13,11 @@ import logging
 import unohelper
 import os
 import sys
+import uno
 from VoikkoHandlePool import VoikkoHandlePool
-from com.sun.star.beans import XPropertyChangeListener, UnknownPropertyException
+from com.sun.star.beans import XPropertyChangeListener, UnknownPropertyException, PropertyValue
+from com.sun.star.linguistic2 import LinguServiceEvent
+from com.sun.star.linguistic2.LinguServiceEventFlags import SPELL_CORRECT_WORDS_AGAIN, SPELL_WRONG_WORDS_AGAIN, HYPHENATE_AGAIN, PROOFREAD_AGAIN
 
 class PropertyManager(unohelper.Base, XPropertyChangeListener):
 
@@ -23,7 +26,7 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		self.__messageLanguage = "en_US"
 		VoikkoHandlePool.getInstance().setInstallationPath(self.__getInstallationPath())
 		logging.debug("PropertyManager.__init__")
-		self.__linguPropSet = 0
+		self.__linguPropSet = None
 		self.__hyphMinLeading = 2
 		self.__hyphMinTrailing = 2
 		self.__hyphMinWordLength = 5
@@ -39,9 +42,37 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 			VoikkoHandlePool.getInstance().setPreferredGlobalVariant("")
 		self.initialize()
 
+	def __setUiLanguage(self):
+		pass # TODO
+
 	def initialize(self):
 		logging.debug("PropertyManager.initialize: starting")
-		# TODO
+		self.__setUiLanguage()
+
+		VoikkoHandlePool.getInstance().setGlobalBooleanOption(PropertyManager.VOIKKO_OPT_IGNORE_DOT, True)
+		VoikkoHandlePool.getInstance().setGlobalBooleanOption(PropertyManager.VOIKKO_OPT_NO_UGLY_HYPHENATION, True)
+
+		# Set these options globally until OOo bug #97945 is resolved.
+		VoikkoHandlePool.getInstance().setGlobalBooleanOption(PropertyManager.VOIKKO_OPT_ACCEPT_TITLES_IN_GC, True)
+		VoikkoHandlePool.getInstance().setGlobalBooleanOption(PropertyManager.VOIKKO_OPT_ACCEPT_BULLETED_LISTS_IN_GC, True)
+
+		VoikkoHandlePool.getInstance().setGlobalBooleanOption(PropertyManager.VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC, True)
+
+		compContext = uno.getComponentContext()
+		servManager = compContext.ServiceManager
+		self.__linguPropSet = servManager.createInstanceWithContext("com.sun.star.linguistic2.LinguProperties", compContext)
+		self.__linguPropSet.addPropertyChangeListener("IsSpellWithDigits", self)
+		self.__linguPropSet.addPropertyChangeListener("IsSpellUpperCase", self)
+		logging.debug("PropertyManager.initialize: property manager initalized")
+
+		# synchronize the local settings from global preferences
+		self.__setProperties(self.__linguPropSet)
+		self.readVoikkoSettings()
+		# request that all users of linguistic services run the spellchecker and hyphenator
+		# again with updated settings
+		event = LinguServiceEvent()
+		event.nEvent = SPELL_CORRECT_WORDS_AGAIN | SPELL_WRONG_WORDS_AGAIN | HYPHENATE_AGAIN | PROOFREAD_AGAIN
+		self.__sendLinguEvent(event)
 
 	def getHyphMinLeading(self):
 		return self.__hyphMinLeading
@@ -51,6 +82,9 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 
 	def getHyphMinWordLength(self):
 		return self.__hyphMinWordLength
+
+	def readVoikkoSettings(self):
+		pass # TODO
 
 	def __getInstallationPath(self):
 		dname = os.path.dirname(sys.modules[__name__].__file__)
@@ -69,9 +103,19 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 	def getMessageLanguage(self):
 		return self.__messageLanguage
 
+	def __setProperties(self, properties):
+		pass # TODO
+
 	def setValues(self, values):
 		for v in values:
 			self.setValue(v)
+
+	def resetValues(self, values):
+		for v in values:
+			globalV = PropertyValue()
+			globalV.Name = v.Name
+			globalV.Value = self.__linguPropSet.getPropertyValue(v.Name)
+			self.setValue(globalV)
 
 	def setValue(self, value):
 		if value.Name == "IsSpellWithDigits":
@@ -98,6 +142,9 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 			VoikkoHandlePool.getInstance().setGlobalIntegerOption(PropertyManager.VOIKKO_MIN_HYPHENATED_WORD_LENGTH, 2)
 		VoikkoHandlePool.getInstance().setGlobalBooleanOption(PropertyManager.VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS, self.__hyphUnknownWords)
 
+	def __sendLinguEvent(self, event):
+		pass # TODO
+
 	def getInstance():
 		if PropertyManager.instance is None:
 			PropertyManager.instance = PropertyManager()
@@ -109,3 +156,8 @@ PropertyManager.VOIKKO_OPT_IGNORE_NUMBERS = 1
 PropertyManager.VOIKKO_OPT_IGNORE_UPPERCASE = 3
 PropertyManager.VOIKKO_MIN_HYPHENATED_WORD_LENGTH = 9
 PropertyManager.VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS = 15
+PropertyManager.VOIKKO_OPT_IGNORE_DOT = 0
+PropertyManager.VOIKKO_OPT_NO_UGLY_HYPHENATION = 4
+PropertyManager.VOIKKO_OPT_ACCEPT_TITLES_IN_GC = 13
+PropertyManager.VOIKKO_OPT_ACCEPT_BULLETED_LISTS_IN_GC = 16
+PropertyManager.VOIKKO_OPT_ACCEPT_UNFINISHED_PARAGRAPHS_IN_GC = 14

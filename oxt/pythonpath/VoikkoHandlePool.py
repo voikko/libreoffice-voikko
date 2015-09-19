@@ -301,9 +301,9 @@ class VoikkoHandlePool:
 		try:
 			voikkoHandle = Voikko(fullVariant, self.getInstallationPath())
 			self.__handles[language] = voikkoHandle
-			for booleanOpt, booleanValue in self.__globalBooleanOptions:
+			for booleanOpt, booleanValue in self.__globalBooleanOptions.items():
 				voikkoHandle.setBooleanOption(booleanOpt, booleanValue)
-			for integerOpt, integerValue in self.__globalIntegerOptions:
+			for integerOpt, integerValue in self.__globalIntegerOptions.items():
 				voikkoHandle.setIntegerOption(integerOpt, integerValue)
 			return voikkoHandle;
 		except VoikkoException as e:

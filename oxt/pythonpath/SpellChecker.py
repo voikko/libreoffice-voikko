@@ -41,7 +41,7 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 			return False
 		PropertyManager.getInstance().setValues(properties)
 		result = voikko.spell(word)
-		# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+		PropertyManager.getInstance().resetValues(properties)
 		return result
 
 	def spell(self, word, locale, properties):
@@ -55,12 +55,12 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 		if voikko is None:
 			return None
 		
-		# TODO PropertyManager::get(compContext)->setValues(aProperties);
+		PropertyManager.getInstance().setValues(properties)
 		if voikko.spell(word):
-			# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+			PropertyManager.getInstance().resetValues(properties)
 			return None
 		suggestions = voikko.suggest(word)
-		# TODO PropertyManager::get(compContext)->resetValues(aProperties);
+		PropertyManager.getInstance().resetValues(properties)
 		return SpellAlternatives(word, suggestions, locale)
 
 	# From XLinguServiceEventBroadcaster
