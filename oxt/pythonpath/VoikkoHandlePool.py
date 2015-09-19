@@ -336,6 +336,20 @@ class VoikkoHandlePool:
 		self.__handles.clear()
 		self.__initializationErrors.clear()
 
+	def setGlobalBooleanOption(self, option, value):
+		if option in self.__globalBooleanOptions and self.__globalBooleanOptions[option] == value:
+			return
+		self.__globalBooleanOptions[option] = value
+		for lang, handle in self.__handles.items():
+			handle.setBooleanOption(option, value)
+
+	def setGlobalIntegerOption(self, option, value):
+		if option in self.__globalIntegerOptions and self.__globalIntegerOptions[option] == value:
+			return
+		self.__globalIntegerOptions[option] = value
+		for lang, handle in self.__handles.items():
+			handle.setIntegerOption(option, value)
+
 	def __addLocale(self, locales, language):
 		matchingMappings = self.__bcpToOOoMap[language]
 		for bcpMapping in matchingMappings:

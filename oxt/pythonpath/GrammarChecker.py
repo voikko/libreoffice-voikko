@@ -95,7 +95,7 @@ class GrammarChecker(unohelper.Base, XServiceInfo, XProofreader, XInitialization
 
 			# add suggestions
 			if len(suggestions) > 0:
-				gcerror.aSuggestions = tuple(suggestions)
+				gcError.aSuggestions = tuple(suggestions)
 
 		result.aErrors = tuple(gcErrors)
 		result.nStartOfNextSentencePosition = result.nBehindEndOfSentencePosition

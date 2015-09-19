@@ -70,7 +70,33 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		return self.__messageLanguage
 
 	def setValues(self, values):
-		pass # TODO
+		for v in values:
+			self.setValue(v)
+
+	def setValue(self, value):
+		if value.Name == "IsSpellWithDigits":
+			VoikkoHandlePool.getInstance().setGlobalBooleanOption(PropertyManager.VOIKKO_OPT_IGNORE_NUMBERS, not value.Value)
+		elif value.Name == "IsSpellUpperCase":
+			VoikkoHandlePool.getInstance().setGlobalBooleanOption(PropertyManager.VOIKKO_OPT_IGNORE_UPPERCASE, not value.Value)
+		elif value.Name == "HyphMinLeading":
+			if value.Value is not None:
+				self.__hyphMinLeading = value.Value
+				self.__syncHyphenatorSettings()
+		elif value.Name == "HyphMinTrailing":
+			if value.Value is not None:
+				self.__hyphMinTrailing = value.Value
+				self.__syncHyphenatorSettings()
+		elif value.Name == "HyphMinWordLength":
+			if value.Value is not None:
+				self.__hyphMinWordLength = value.Value
+				self.__syncHyphenatorSettings()
+
+	def __syncHyphenatorSettings(self):
+		if self.__hyphWordParts:
+			VoikkoHandlePool.getInstance().setGlobalIntegerOption(PropertyManager.VOIKKO_MIN_HYPHENATED_WORD_LENGTH, self.__hyphMinWordLength)
+		else:
+			VoikkoHandlePool.getInstance().setGlobalIntegerOption(PropertyManager.VOIKKO_MIN_HYPHENATED_WORD_LENGTH, 2)
+		VoikkoHandlePool.getInstance().setGlobalBooleanOption(PropertyManager.VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS, self.__hyphUnknownWords)
 
 	def getInstance():
 		if PropertyManager.instance is None:
@@ -79,3 +105,7 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 	getInstance = staticmethod(getInstance)
 
 PropertyManager.instance = None
+PropertyManager.VOIKKO_OPT_IGNORE_NUMBERS = 1
+PropertyManager.VOIKKO_OPT_IGNORE_UPPERCASE = 3
+PropertyManager.VOIKKO_MIN_HYPHENATED_WORD_LENGTH = 9
+PropertyManager.VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS = 15
