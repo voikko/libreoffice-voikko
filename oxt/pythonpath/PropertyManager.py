@@ -104,7 +104,30 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		return self.__hyphMinWordLength
 
 	def readVoikkoSettings(self):
-		pass # TODO
+		voikko = VoikkoHandlePool.getInstance()
+		event = LinguServiceEvent()
+		event.nEvent = 0
+		try:
+			hyphWordParts = self.readFromRegistry("/org.puimula.ooovoikko.Config/hyphenator", "hyphWordParts")
+			if hyphWordParts != self.__hyphWordParts:
+				event.nEvent = event.nEvent | HYPHENATE_AGAIN
+				self.__hyphWordParts = hyphWordParts
+
+			hyphUnknownWords = self.readFromRegistry("/org.puimula.ooovoikko.Config/hyphenator", "hyphUnknownWords")
+			if hyphUnknownWords != self.__hyphUnknownWords:
+				event.nEvent = event.nEvent | HYPHENATE_AGAIN
+				self.__hyphUnknownWords = hyphUnknownWords
+
+			dictVariant = self.readFromRegistry("/org.puimula.ooovoikko.Config/dictionary", "variant")
+			if dictVariant is None or dictVariant == "":
+				dictVariant = voikko.getPreferredGlobalVariant()
+			if dictVariant != voikko.getPreferredGlobalVariant():
+				event.nEvent =  event.nEvent | SPELL_CORRECT_WORDS_AGAIN | SPELL_WRONG_WORDS_AGAIN | PROOFREAD_AGAIN
+				voikko.setPreferredGlobalVariant(dictVariant)
+		except UnknownPropertyException as e:
+			logging.exception("PropertyManager.reloadVoikkoSettings", e)
+		self.__syncHyphenatorSettings()
+		self.__sendLinguEvent(event)
 
 	def __getInstallationPath(self):
 		dname = os.path.dirname(sys.modules[__name__].__file__)

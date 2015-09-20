@@ -397,6 +397,9 @@ class VoikkoHandlePool:
 	def setInstallationPath(self, path):
 		self.__installationPath = path
 
+	def getPreferredGlobalVariant(self):
+		return self.__preferredGlobalVariant
+
 	def __containsLocale(self, localeToFind, locales):
 		for locale in locales:
 			if locale.Language == localeToFind.Language and locale.Country == localeToFind.Country:

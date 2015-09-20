@@ -23,7 +23,7 @@ class SettingsEventHandler(unohelper.Base, XServiceInfo, XContainerWindowEventHa
 
 	def __init__(self, ctx, *args):
 		print("SettingsEventHandler.__init__")
-		self.__dictionaryVariantList = []
+		self.__dictionaryVariantList = ["standard: standard dictionary"]
 
 	# From XServiceInfo
 	def getImplementationName(self):
