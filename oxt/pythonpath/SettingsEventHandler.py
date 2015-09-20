@@ -67,6 +67,28 @@ class SettingsEventHandler(unohelper.Base, XServiceInfo, XContainerWindowEventHa
 
 		self.__initVariantDropdown(window)
 
+	def __saveOptionsFromWindowToRegistry(self, window):
+		logging.debug("SettingsEventHandler.__saveOptionsFromWindowToRegistry")
+
+		hyphWordParts = window.getControl("hyphWordParts")
+		hyphWordPartsProps = hyphWordParts.getModel()
+		hyphWordPartsValue = hyphWordPartsProps.getPropertyValue("State") # 0 = unchecked, 1 = checked
+
+		hyphUnknownWords = window.getControl("hyphUnknownWords")
+		hyphUnknownWordsProps = hyphUnknownWords.getModel()
+		hyphUnknownWordsValue = hyphUnknownWordsProps.getPropertyValue("State") # 0 = unchecked, 1 = checked
+
+		rootView = PropertyManager.getRegistryProperties("/org.puimula.ooovoikko.Config/hyphenator")
+		rootView.setHierarchicalPropertyValue("hyphWordParts", hyphWordPartsValue == 1)
+		rootView.setHierarchicalPropertyValue("hyphUnknownWords", hyphUnknownWordsValue == 1)
+		rootView.commitChanges()
+
+		# dictionary variant
+		variantValue = self.__getSelectedVariant(window)
+		rootView = PropertyManager.getRegistryProperties("/org.puimula.ooovoikko.Config/dictionary")
+		rootView.setHierarchicalPropertyValue("variant", variantValue)
+		rootView.commitChanges()
+
 	def __initVariantDropdown(self, windowContainer):
 		variantDropdown = windowContainer.getControl("variant")
 		variantProps = variantDropdown.getModel()
@@ -98,6 +120,24 @@ class SettingsEventHandler(unohelper.Base, XServiceInfo, XContainerWindowEventHa
 		for vDict in dicts:
 			dictName = vDict.variant + ": " + vDict.description
 			self.__dictionaryVariantList.append(dictName)
+
+	def __getSelectedVariant(self, windowContainer):
+		variantDropdown = windowContainer.getControl("variant")
+		variantProps = variantDropdown.getModel()
+
+		# get all values
+		stringListValue = variantProps.getPropertyValue("StringItemList")
+
+		# get the selected item index
+		selectedValues = variantProps.getPropertyValue("SelectedItems")
+
+		# parse the variant id from the string
+		selectedValue = stringListValue[selectedValues[0]]
+		if ":" in selectedValue:
+			return selectedValue[0:selectedValue.find(":")]
+		logging.error("Failed to get the selected variant, returning default")
+		return "standard"
+
 
 SettingsEventHandler.IMPLEMENTATION_NAME = "org.puimula.ooovoikko.SettingsEventHandlerImplementation"
 SettingsEventHandler.SUPPORTED_SERVICE_NAMES = ("org.puimula.ooovoikko.SettingsEventHandlerService",)

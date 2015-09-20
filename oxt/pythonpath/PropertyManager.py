@@ -126,6 +126,9 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 	def getMessageLanguage(self):
 		return self.__messageLanguage
 
+	def reloadVoikkoSettings(self):
+		pass # TODO
+
 	def __setProperties(self, properties):
 		pass # TODO
 
