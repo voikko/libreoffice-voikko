@@ -11,15 +11,19 @@
 
 import unohelper
 import logging
-from com.sun.star.lang import XServiceInfo, XInitialization, XServiceDisplayName
+import uno
+from com.sun.star.lang import XServiceInfo
 from com.sun.star.awt import XContainerWindowEventHandler
 from com.sun.star.beans import UnknownPropertyException
 from PropertyManager import PropertyManager
+from VoikkoHandlePool import VoikkoHandlePool
+from libvoikko import Voikko
 
 class SettingsEventHandler(unohelper.Base, XServiceInfo, XContainerWindowEventHandler):
 
 	def __init__(self, ctx, *args):
 		print("SettingsEventHandler.__init__")
+		self.__dictionaryVariantList = []
 
 	# From XServiceInfo
 	def getImplementationName(self):
@@ -62,6 +66,38 @@ class SettingsEventHandler(unohelper.Base, XServiceInfo, XContainerWindowEventHa
 		hyphUnknownWordsProps.setPropertyValue("State", 1 if hyphUnknownWordsValue else 0)
 
 		self.__initVariantDropdown(window)
+
+	def __initVariantDropdown(self, windowContainer):
+		variantDropdown = windowContainer.getControl("variant")
+		variantProps = variantDropdown.getModel()
+
+		# populate dropdown list with available variants
+		self.__initAvailableVariants()
+		uno.invoke(variantProps, "setPropertyValue", ("StringItemList", uno.Any("[]string", tuple(self.__dictionaryVariantList))))
+
+		# read selected dictionary variant from registry
+		registryVariantValue = "standard"
+		try:
+			registryVariantValue = PropertyManager.getInstance().readFromRegistry("/org.puimula.ooovoikko.Config/dictionary", "variant")
+		except UnknownPropertyException as e:
+			logging.exception(e)
+			return
+		registryVariantValue = registryVariantValue + ": "
+		selectedValues = [0]
+		for i, dVariant in enumerate(self.__dictionaryVariantList):
+			if dVariant.startswith(registryVariantValue):
+				selectedValues[0] = i;
+				break;
+
+		# set the selected item in the dropdown list
+		uno.invoke(variantProps, "setPropertyValue", ("SelectedItems", uno.Any("[]short", tuple(selectedValues))))
+
+	def __initAvailableVariants(self):
+		dicts = Voikko.listDicts(VoikkoHandlePool.getInstance().getInstallationPath())
+		self.__dictionaryVariantList = []
+		for vDict in dicts:
+			dictName = vDict.variant + ": " + vDict.description
+			self.__dictionaryVariantList.append(dictName)
 
 SettingsEventHandler.IMPLEMENTATION_NAME = "org.puimula.ooovoikko.SettingsEventHandlerImplementation"
 SettingsEventHandler.SUPPORTED_SERVICE_NAMES = ("org.puimula.ooovoikko.SettingsEventHandlerService",)
