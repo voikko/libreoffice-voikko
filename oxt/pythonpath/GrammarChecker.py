@@ -22,7 +22,7 @@ class GrammarChecker(unohelper.Base, XServiceInfo, XProofreader, XInitialization
 
 	def __init__(self, ctx, *args):
 		logging.debug("GrammarChecker.__init__")
-		self.__ignoredErrors = [] # Grammar checker error codes that should be ignored
+		self.__ignoredErrors = set() # Grammar checker error codes that should be ignored
 
 	# From XServiceInfo
 	def getImplementationName(self):
@@ -100,6 +100,12 @@ class GrammarChecker(unohelper.Base, XServiceInfo, XProofreader, XInitialization
 		result.aErrors = tuple(gcErrors)
 		result.nStartOfNextSentencePosition = result.nBehindEndOfSentencePosition
 		return result
+
+	def ignoreRule(self, ruleIdentifier, locale):
+		self.__ignoredErrors.add(ruleIdentifier)
+
+	def resetIgnoreRules(self):
+		ignoredErrors.clear()
 
 	# From XServiceDisplayName
 	def getServiceDisplayName(self, locale):
