@@ -70,12 +70,10 @@ endif
 
 VOIKKO_OBJECTS=common PropertyManager \
                spellchecker/SpellChecker \
-               hyphenator/Hyphenator \
-               grammar/GrammarChecker
+               hyphenator/Hyphenator
 VOIKKO_HEADERS=common PropertyManager \
                spellchecker/SpellChecker \
-               hyphenator/Hyphenator \
-               grammar/GrammarChecker
+               hyphenator/Hyphenator
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
                SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu \
                voikko.components META-INF/manifest.xml lovoikko.py \

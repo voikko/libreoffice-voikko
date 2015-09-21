@@ -28,6 +28,12 @@ class GrammarChecker(unohelper.Base, XServiceInfo, XProofreader, XInitialization
 	def getImplementationName(self):
 		return GrammarChecker.IMPLEMENTATION_NAME
 
+	def supportsService(self, serviceName):
+		return serviceName in self.getSupportedServiceNames()
+
+	def getSupportedServiceNames(self):
+		return GrammarChecker.SUPPORTED_SERVICE_NAMES
+
 	# From XSupportedLocales
 	def getLocales(self):
 		return VoikkoHandlePool.getInstance().getSupportedGrammarLocales()
@@ -36,6 +42,9 @@ class GrammarChecker(unohelper.Base, XServiceInfo, XProofreader, XInitialization
 		return VoikkoHandlePool.getInstance().supportsGrammarLocale(aLocale)
 
 	# From XProofreader
+	def isSpellChecker(self):
+		return False
+
 	def doProofreading(self, aDocumentIdentifier, aText, aLocale, nStartOfSentencePos, nSuggestedBehindEndOfSentencePosition, aProperties):
 		logging.debug("GrammarChecker.doProofreading")
 		result = ProofreadingResult()
@@ -106,6 +115,10 @@ class GrammarChecker(unohelper.Base, XServiceInfo, XProofreader, XInitialization
 
 	def resetIgnoreRules(self):
 		ignoredErrors.clear()
+
+	# From XInitialization
+	def initialize(self):
+		pass
 
 	# From XServiceDisplayName
 	def getServiceDisplayName(self, locale):
