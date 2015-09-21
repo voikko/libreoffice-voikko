@@ -68,14 +68,14 @@ else
         VOIKKO_PACKAGENAME:=voikko
 endif
 
-VOIKKO_OBJECTS=common PropertyManager VoikkoHandlePool \
+VOIKKO_OBJECTS=common PropertyManager \
                spellchecker/SpellChecker \
                hyphenator/Hyphenator \
-               grammar/GrammarChecker settings/SettingsEventHandler
-VOIKKO_HEADERS=macros common PropertyManager VoikkoHandlePool \
+               grammar/GrammarChecker
+VOIKKO_HEADERS=common PropertyManager \
                spellchecker/SpellChecker \
                hyphenator/Hyphenator \
-               grammar/GrammarChecker settings/SettingsEventHandler
+               grammar/GrammarChecker
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
                SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu \
                voikko.components META-INF/manifest.xml lovoikko.py \

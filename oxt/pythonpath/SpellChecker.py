@@ -26,6 +26,12 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 	def getImplementationName(self):
 		return SpellChecker.IMPLEMENTATION_NAME
 
+	def supportsService(self, serviceName):
+		return serviceName in self.getSupportedServiceNames()
+
+	def getSupportedServiceNames(self):
+		return SpellChecker.SUPPORTED_SERVICE_NAMES
+
 	# From XSupportedLocales
 	def getLocales(self):
 		return VoikkoHandlePool.getInstance().getSupportedSpellingLocales()

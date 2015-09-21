@@ -29,6 +29,12 @@ class SettingsEventHandler(unohelper.Base, XServiceInfo, XContainerWindowEventHa
 	def getImplementationName(self):
 		return SettingsEventHandler.IMPLEMENTATION_NAME
 
+	def supportsService(self, serviceName):
+		return serviceName in self.getSupportedServiceNames()
+
+	def getSupportedServiceNames(self):
+		return SettingsEventHandler.SUPPORTED_SERVICE_NAMES
+
 	# From XContainerWindowEventHandler
 	def callHandlerMethod(self, xWindow, eventObject, methodName):
 		if methodName != "external_event":
