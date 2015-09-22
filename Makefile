@@ -69,11 +69,9 @@ else
 endif
 
 VOIKKO_OBJECTS=common PropertyManager \
-               spellchecker/SpellChecker \
-               hyphenator/Hyphenator
+               spellchecker/SpellChecker
 VOIKKO_HEADERS=common PropertyManager \
-               spellchecker/SpellChecker \
-               hyphenator/Hyphenator
+               spellchecker/SpellChecker
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
                SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu \
                voikko.components META-INF/manifest.xml lovoikko.py \

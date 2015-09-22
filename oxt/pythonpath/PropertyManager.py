@@ -103,6 +103,16 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 	def getHyphMinWordLength(self):
 		return self.__hyphMinWordLength
 
+	def addLinguServiceEventListener(self, xLstnr):
+		logging.debug("PropertyManager.addLinguServiceEventListener")
+		# TODO
+		return True
+
+	def removeLinguServiceEventListener(self, xLstnr):
+		logging.debug("PropertyManager.removeLinguServiceEventListener")
+		# TODO
+		return True
+
 	def readVoikkoSettings(self):
 		voikko = VoikkoHandlePool.getInstance()
 		event = LinguServiceEvent()

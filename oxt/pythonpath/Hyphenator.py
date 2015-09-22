@@ -27,6 +27,12 @@ class Hyphenator(unohelper.Base, XServiceInfo, XHyphenator, XLinguServiceEventBr
 	def getImplementationName(self):
 		return Hyphenator.IMPLEMENTATION_NAME
 
+	def supportsService(self, serviceName):
+		return serviceName in self.getSupportedServiceNames()
+
+	def getSupportedServiceNames(self):
+		return Hyphenator.SUPPORTED_SERVICE_NAMES
+
 	# From XSupportedLocales
 	def getLocales(self):
 		return VoikkoHandlePool.getInstance().getSupportedHyphenationLocales()
@@ -122,8 +128,18 @@ class Hyphenator(unohelper.Base, XServiceInfo, XHyphenator, XLinguServiceEventBr
 
 	# From XLinguServiceEventBroadcaster
 	def addLinguServiceEventListener(self, xLstnr):
+		# TODO mutex
 		logging.debug("Hyphenator.addLinguServiceEventListener")
-		return False # TODO
+		return PropertyManager.getInstance().addLinguServiceEventListener(xLstnr)
+
+	def removeLinguServiceEventListener(self, xLstnr):
+		# TODO mutex
+		logging.debug("Hyphenator.removeLinguServiceEventListener")
+		return PropertyManager.getInstance().removeLinguServiceEventListener(xLstnr)
+
+	# From XInitialization
+	def initialize(self, seq):
+		pass
 
 	# From XServiceDisplayName
 	def getServiceDisplayName(self, locale):
