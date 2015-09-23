@@ -32,6 +32,7 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		self.__hyphMinWordLength = 5
 		self.__hyphWordParts = False
 		self.__hyphUnknownWords = True
+		self.__linguEventListeners = {}
 		try:
 			dictVariant = self.readFromRegistry("/org.puimula.ooovoikko.Config/dictionary", "variant")
 			## TODO "Any"?
@@ -41,6 +42,13 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 			logging.debug("Setting initial dictionary variant to default")
 			VoikkoHandlePool.getInstance().setPreferredGlobalVariant("")
 		self.initialize()
+
+	def propertyChange(self, evt):
+		logging.debug("PropertyManager.propertyChange")
+		self.__setProperties(self.__linguPropSet)
+		event = LinguServiceEvent()
+		event.nEvent = SPELL_CORRECT_WORDS_AGAIN | SPELL_WRONG_WORDS_AGAIN | HYPHENATE_AGAIN | PROOFREAD_AGAIN
+		self.__sendLinguEvent(event);
 
 	def __setUiLanguage(self):
 		try:
@@ -105,13 +113,17 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 
 	def addLinguServiceEventListener(self, xLstnr):
 		logging.debug("PropertyManager.addLinguServiceEventListener")
-		# TODO
+		if id(xLstnr) in self.__linguEventListeners:
+			return False
+		self.__linguEventListeners[id(xLstnr)] = xLstnr
 		return True
 
 	def removeLinguServiceEventListener(self, xLstnr):
 		logging.debug("PropertyManager.removeLinguServiceEventListener")
-		# TODO
-		return True
+		if id(xLstnr) in self.__linguEventListeners:
+			del self.__linguEventListeners[id(xLstnr)]
+			return True
+		return False
 
 	def readVoikkoSettings(self):
 		voikko = VoikkoHandlePool.getInstance()
@@ -163,7 +175,11 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		pass # TODO
 
 	def __setProperties(self, properties):
-		pass # TODO
+		for p in properties.getPropertySetInfo().getProperties():
+			pValue = PropertyValue()
+			pValue.Name = p.Name
+			pValue.Value = properties.getPropertyValue(p.Name)
+			self.setValue(pValue)
 
 	def setValues(self, values):
 		for v in values:
@@ -202,7 +218,10 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		VoikkoHandlePool.getInstance().setGlobalBooleanOption(PropertyManager.VOIKKO_OPT_HYPHENATE_UNKNOWN_WORDS, self.__hyphUnknownWords)
 
 	def __sendLinguEvent(self, event):
-		pass # TODO
+		logging.debug("PropertyManager.sendLinguEvent")
+		for key, lstnr in self.__linguEventListeners.items():
+			logging.debug("PropertyManager.sendLinguEvent sending event")
+			lstnr.processLinguServiceEvent(event)
 
 	def getRegistryProperties(group):
 		logging.debug("PropertyManager.getRegistryProperties: " + group)
