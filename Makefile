@@ -68,10 +68,8 @@ else
         VOIKKO_PACKAGENAME:=voikko
 endif
 
-VOIKKO_OBJECTS=common PropertyManager \
-               spellchecker/SpellChecker
-VOIKKO_HEADERS=common PropertyManager \
-               spellchecker/SpellChecker
+VOIKKO_OBJECTS=common PropertyManager
+VOIKKO_HEADERS=common PropertyManager
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
                SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu \
                voikko.components META-INF/manifest.xml lovoikko.py \

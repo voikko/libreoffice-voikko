@@ -71,8 +71,18 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 
 	# From XLinguServiceEventBroadcaster
 	def addLinguServiceEventListener(self, xLstnr):
+		# TODO mutex
 		logging.debug("SpellChecker.addLinguServiceEventListener")
-		return False # TODO
+		return PropertyManager.getInstance().addLinguServiceEventListener(xLstnr)
+
+	def removeLinguServiceEventListener(self, xLstnr):
+		# TODO mutex
+		logging.debug("SpellChecker.removeLinguServiceEventListener")
+		return PropertyManager.getInstance().removeLinguServiceEventListener(xLstnr)
+
+	# From XInitialization
+	def initialize(self, seq):
+		pass
 
 	# From XServiceDisplayName
 	def getServiceDisplayName(self, locale):
