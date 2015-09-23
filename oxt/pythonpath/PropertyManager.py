@@ -35,7 +35,6 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		self.__linguEventListeners = {}
 		try:
 			dictVariant = self.readFromRegistry("/org.puimula.ooovoikko.Config/dictionary", "variant")
-			## TODO "Any"?
 			VoikkoHandlePool.getInstance().setPreferredGlobalVariant(dictVariant)
 			logging.debug("Initial dictionary variant '" + dictVariant + "'")
 		except UnknownPropertyException as e:
@@ -126,6 +125,34 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		return False
 
 	def readVoikkoSettings(self):
+		try:
+			self.__hyphWordParts = self.readFromRegistry("/org.puimula.ooovoikko.Config/hyphenator", "hyphWordParts")
+			self.__hyphUnknownWords = self.readFromRegistry("/org.puimula.ooovoikko.Config/hyphenator", "hyphUnknownWords")
+		except UnknownPropertyException as e:
+			logging.exception("PropertyManager.readVoikkoSettings", e)
+		self.__syncHyphenatorSettings()
+
+	def __getInstallationPath(self):
+		dname = os.path.dirname(sys.modules[__name__].__file__)
+		if dname.endswith("pythonpath"):
+			dname = dname[:-11]
+			logging.debug("PropertyManager.getInstallationPath: '" + dname + "'")
+			return dname
+		else:
+			logging.debug("PropertyManager.getInstallationPath: not using unexpect '" + dname + "'")
+			return None
+
+	def readFromRegistry(self, group, key):
+		rootView = PropertyManager.getRegistryProperties(group)
+		if rootView is None:
+			logging.error("PropertyManager.readFromRegistry: failed to obtain rootView " + group)
+			raise UnknownPropertyException()
+		return rootView.getHierarchicalPropertyValue(key)
+
+	def getMessageLanguage(self):
+		return self.__messageLanguage
+
+	def reloadVoikkoSettings(self):
 		voikko = VoikkoHandlePool.getInstance()
 		event = LinguServiceEvent()
 		event.nEvent = 0
@@ -150,29 +177,6 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 			logging.exception("PropertyManager.reloadVoikkoSettings", e)
 		self.__syncHyphenatorSettings()
 		self.__sendLinguEvent(event)
-
-	def __getInstallationPath(self):
-		dname = os.path.dirname(sys.modules[__name__].__file__)
-		if dname.endswith("pythonpath"):
-			dname = dname[:-11]
-			logging.debug("PropertyManager.getInstallationPath: '" + dname + "'")
-			return dname
-		else:
-			logging.debug("PropertyManager.getInstallationPath: not using unexpect '" + dname + "'")
-			return None
-
-	def readFromRegistry(self, group, key):
-		rootView = PropertyManager.getRegistryProperties(group)
-		if rootView is None:
-			logging.error("PropertyManager.readFromRegistry: failed to obtain rootView " + group)
-			raise UnknownPropertyException()
-		return rootView.getHierarchicalPropertyValue(key)
-
-	def getMessageLanguage(self):
-		return self.__messageLanguage
-
-	def reloadVoikkoSettings(self):
-		pass # TODO
 
 	def __setProperties(self, properties):
 		for p in properties.getPropertySetInfo().getProperties():
