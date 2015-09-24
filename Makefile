@@ -68,8 +68,6 @@ else
         VOIKKO_PACKAGENAME:=voikko
 endif
 
-VOIKKO_OBJECTS=common PropertyManager
-VOIKKO_HEADERS=common PropertyManager
 COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
                SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu \
                voikko.components META-INF/manifest.xml lovoikko.py \
@@ -79,8 +77,7 @@ COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
 endif
-SRCDIST=COPYING Makefile README ChangeLog $(patsubst %,src/%.hxx,$(VOIKKO_HEADERS)) \
-        $(patsubst %,src/%.cxx,$(VOIKKO_OBJECTS)) oxt/description.xml.template \
+SRCDIST=COPYING Makefile README ChangeLog oxt/description.xml.template \
         $(patsubst %,oxt/%,$(COPY_TEMPLATES)) \
         oxt/icon.svg
 
