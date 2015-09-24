@@ -13,6 +13,7 @@ import logging
 import unohelper
 import os
 import sys
+import locale
 import uno
 from VoikkoHandlePool import VoikkoHandlePool
 from com.sun.star.beans import XPropertyChangeListener, UnknownPropertyException, PropertyValue
@@ -57,18 +58,10 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 				self.__messageLanguage = lang
 			else:
 				# Use system default language
-				# FIXME: This does not check LC_MESSAGES. There is
-				# also GetSystemUILanguage but that cannot be used
-				# from extension.
-				# TODO
-				# rtl_Locale * rtlLocale;
-				# osl_getProcessLocale(&rtlLocale);
-				# OUString localeLang(rtlLocale->Language);
-				# VOIKKO_DEBUG_2("Locale language = '%s'", OU2DEBUG(localeLang));
-				# if (localeLang.match(A2OU("fi"), 0)) {
-				# 	messageLanguage = "fi_FI";
-				# }
-				pass
+				lang = locale.getdefaultlocale()[0]
+				if lang is not None:
+					logging.debug("Locale language = '" + lang + "'")
+					self.__messageLanguage = lang
 		except UnknownPropertyException:
 			logging.error("PropertyManager.initialize caught UnknownPropertyException")
 
