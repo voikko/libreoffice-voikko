@@ -2,8 +2,6 @@ What is this?
 =============
 This is libreoffice-voikko, a multi language spellchecker, grammar checker and
 hyphenator extension for LibreOffice. It uses libvoikko for all linguistic operations.
-Spell checking is supported for multiple languages. Other features are currently
-available only for Finnish.
 
 
 License
@@ -17,50 +15,28 @@ Authors
 =======
 
 Source code:
-  2005 - 2014 Harri Pitkänen (hatapitk@iki.fi)
+  2005 - 2015 Harri Pitkänen (hatapitk@iki.fi)
 Icon:
   2011 Tarja Lindfors (tarja@puimula.org)
 
 Porting status
 ==============
 - Linux: This is the primary development platform, and should always work
-- FreeBSD: Is known to work with at least LibreOffice 4.2 and FreeBSD 10.
-- Windows: Should usually work without too much patching.
-- Mac OS X: Usually works but may need some Makefile patching depending on OS X version.
+- Other platforms: The extension is platform independent Python code and should
+  work as long as libvoikko is available for the platform.
 
 
-Build requirements
-==================
+Requirements
+============
 
-- LibreOffice 4.1 or later (Office and SDK).
-- Libvoikko version 3.7 or later.
-- On Linux: the C++ compiler from the GCC, version 3.4 or later. Other tools
-  needed for compilation are usually present in default setups of any
-  distribution.
-- On Windows: Microsoft Visual C++ 2005 or later (the Express Edition is sufficient),
-  GNU make, GNU sed and Info-Zip zip.
-- On OS X: Xcode tools from the operating system installation CD.
-  Static versions of libvoikko and its dependencies
-  are needed to build a standalone extension.
+- LibreOffice 4.1 or later (must come with Python 3 or later)
+- Libvoikko version 3.8.1 or later.
+- Make, sed and zip for packaging.
 
-
-Instructions for compilation
-============================
+Instructions for packaging
+==========================
 
 - Install all of the required software listed above.
-- In a shell, run the SDK setup script which is located in the SDK installation
-  directory. It is called setsdkenv_unix on Linux and OS X, and setsdkenv_windows on
-  Windows. During the first run, this script will ask the location of certain
-  tools. You should answer the questions, although at least on Linux the
-  defaults are usually correct. Answers to these questions will be saved under
-  the home directory of the user (for example to a file
-  libreoffice4.1_sdk/hostname/setsdkenv_unix.sh).
-  * On OS X and Windows you must make sure that neither LibreOffice nor its
-    SDK have spaces in their installation path. On Windows you can use spaces in
-    these paths if you replace the components containing spaces with the "8.3" name
-    during configuration of the SDK as follows:
-      Office = C:\PROGRA~1\LIBREO~1.6
-      URE = C:\PROGRA~1\LIBREO~1.6\URE
 - Run "make oxt". This will build the extensions package voikko.oxt under
   subdirectory build.
   * There are some settings available that can be used to customize the build.
@@ -117,9 +93,13 @@ current practices for OpenOffice.org extension development. The old code
 was based on the internals of OpenOffice.org 1.0 and designed to work with
 a non-free Finnish spellchecking library.
 
-In version 2.0 the license was changed from LGPL to GPL to reflect the fact
-that this extension is useless without libvoikko, which is distributed under
-the GPL.
+Version 3.0 added support for grammar checking. Version 3.2 added support
+for spell checking in languages other than Finnish.
 
-For changes since 2.0 see ChangeLog.
+Version 4.0 extended support for grammar checkers and hyphenators to any
+language. The license was changed from GPL to MPL.
 
+Version 5.0 changed the implementation language from C++ to Python in
+order to make the extension code platform independent.
+
+For more detailed changes since 2.0 see ChangeLog.

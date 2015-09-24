@@ -1,3 +1,6 @@
+2015-09-24 Harri Pitkänen <hatapitk@iki.fi>
+	* Re-write the extension code in Python instead of C++.
+
 2015-04-14 Harri Pitkänen <hatapitk@iki.fi>
 	* Initial support for non-hardcoded locales.
 
