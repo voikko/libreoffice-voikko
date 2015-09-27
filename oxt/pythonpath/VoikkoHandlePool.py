@@ -12,6 +12,7 @@
 import logging
 from libvoikko import Voikko, VoikkoException
 from collections import defaultdict
+from threading import RLock
 from com.sun.star.lang import Locale
 
 class Bcp47ToLoMapping:
@@ -427,3 +428,4 @@ class VoikkoHandlePool:
 		return self.__containsLocale(locale, self.getSupportedGrammarLocales())
 
 VoikkoHandlePool.instance = None
+VoikkoHandlePool.mutex = RLock()

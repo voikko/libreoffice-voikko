@@ -56,59 +56,63 @@ class GrammarChecker(unohelper.Base, XServiceInfo, XProofreader, XInitialization
 		result.nBehindEndOfSentencePosition = nSuggestedBehindEndOfSentencePosition
 		result.xProofreader = self
 
-		voikko = VoikkoHandlePool.getInstance().getHandle(aLocale)
-		if voikko is None:
-			logging.error("GrammarChecker.doProofreading called without initializing libvoikko")
+		VoikkoHandlePool.mutex.acquire()
+		try:
+			voikko = VoikkoHandlePool.getInstance().getHandle(aLocale)
+			if voikko is None:
+				logging.error("GrammarChecker.doProofreading called without initializing libvoikko")
+				return result
+
+			gcErrors = []
+			gcI = 0
+			vErrorCount = 0
+			for vError in voikko.grammarErrors(aText, PropertyManager.getInstance().getMessageLanguage()):
+				startPos = vError.startPos
+				errorLength = vError.errorLen
+
+				if startPos < result.nStartOfSentencePosition:
+					continue
+				if startPos >= result.nBehindEndOfSentencePosition:
+					break
+				if startPos + errorLength > result.nBehindEndOfSentencePosition:
+					result.nBehindEndOfSentencePosition = startPos + errorLength
+
+				# we have a real grammar error
+				errorCode = vError.errorCode
+				ruleIdentifier = str(errorCode)
+				if ruleIdentifier in self.__ignoredErrors:
+					# ignore this error
+					continue
+
+				suggestions = vError.suggestions
+
+				gcError = SingleProofreadingError()
+				gcErrors.append(gcError)
+				gcError.nErrorStart = startPos
+				gcError.nErrorLength = errorLength
+				gcError.nErrorType = PROOFREADING
+				comment = vError.shortDescription
+				# TODO ifdef TEKSTINTUHO
+				# TODO comment = comment + " TEKSTINTUHO KÄYTÖSSÄ!"
+				# TODO endif
+				gcError.aShortComment = comment
+				gcError.aFullComment = comment
+				gcError.aRuleIdentifier = ruleIdentifier
+
+				detailUrl = PropertyValue()
+				detailUrl.Name = "FullCommentURL"
+				detailUrl.Value = "http://voikko.puimula.org/gchelp/fi/" + ruleIdentifier + ".html"
+				gcError.aProperties = (detailUrl,)
+
+				# add suggestions
+				if len(suggestions) > 0:
+					gcError.aSuggestions = tuple(suggestions)
+
+			result.aErrors = tuple(gcErrors)
+			result.nStartOfNextSentencePosition = result.nBehindEndOfSentencePosition
 			return result
-
-		gcErrors = []
-		gcI = 0
-		vErrorCount = 0
-		for vError in voikko.grammarErrors(aText, PropertyManager.getInstance().getMessageLanguage()):
-			startPos = vError.startPos
-			errorLength = vError.errorLen
-
-			if startPos < result.nStartOfSentencePosition:
-				continue
-			if startPos >= result.nBehindEndOfSentencePosition:
-				break
-			if startPos + errorLength > result.nBehindEndOfSentencePosition:
-				result.nBehindEndOfSentencePosition = startPos + errorLength
-
-			# we have a real grammar error
-			errorCode = vError.errorCode
-			ruleIdentifier = str(errorCode)
-			if ruleIdentifier in self.__ignoredErrors:
-				# ignore this error
-				continue
-
-			suggestions = vError.suggestions
-
-			gcError = SingleProofreadingError()
-			gcErrors.append(gcError)
-			gcError.nErrorStart = startPos
-			gcError.nErrorLength = errorLength
-			gcError.nErrorType = PROOFREADING
-			comment = vError.shortDescription
-			# TODO ifdef TEKSTINTUHO
-			# TODO comment = comment + " TEKSTINTUHO KÄYTÖSSÄ!"
-			# TODO endif
-			gcError.aShortComment = comment
-			gcError.aFullComment = comment
-			gcError.aRuleIdentifier = ruleIdentifier
-
-			detailUrl = PropertyValue()
-			detailUrl.Name = "FullCommentURL"
-			detailUrl.Value = "http://voikko.puimula.org/gchelp/fi/" + ruleIdentifier + ".html"
-			gcError.aProperties = (detailUrl,)
-
-			# add suggestions
-			if len(suggestions) > 0:
-				gcError.aSuggestions = tuple(suggestions)
-
-		result.aErrors = tuple(gcErrors)
-		result.nStartOfNextSentencePosition = result.nBehindEndOfSentencePosition
-		return result
+		finally:
+			VoikkoHandlePool.mutex.release()
 
 	def ignoreRule(self, ruleIdentifier, locale):
 		self.__ignoredErrors.add(ruleIdentifier)

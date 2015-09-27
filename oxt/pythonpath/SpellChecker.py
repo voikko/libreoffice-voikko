@@ -41,14 +41,17 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 
 	# From XSpellChecker
 	def isValid(self, word, locale, properties):
-		# TODO mutex
-		voikko = VoikkoHandlePool.getInstance().getHandle(locale)
-		if voikko is None:
-			return False
-		PropertyManager.getInstance().setValues(properties)
-		result = voikko.spell(word)
-		PropertyManager.getInstance().resetValues(properties)
-		return result
+		VoikkoHandlePool.mutex.acquire()
+		try:
+			voikko = VoikkoHandlePool.getInstance().getHandle(locale)
+			if voikko is None:
+				return False
+			PropertyManager.getInstance().setValues(properties)
+			result = voikko.spell(word)
+			PropertyManager.getInstance().resetValues(properties)
+			return result
+		finally:
+			VoikkoHandlePool.mutex.release()
 
 	def spell(self, word, locale, properties):
 		# Check if diagnostic message should be returned
@@ -56,29 +59,39 @@ class SpellChecker(unohelper.Base, XServiceInfo, XSpellChecker, XLinguServiceEve
 			suggestions = [VoikkoHandlePool.getInstance().getInitializationStatus()]
 			return SpellAlternatives(word, suggestions, locale)
 		
-		# TODO mutex
-		voikko = VoikkoHandlePool.getInstance().getHandle(locale)
-		if voikko is None:
-			return None
-		
-		PropertyManager.getInstance().setValues(properties)
-		if voikko.spell(word):
+		VoikkoHandlePool.mutex.acquire()
+		try:
+			voikko = VoikkoHandlePool.getInstance().getHandle(locale)
+			if voikko is None:
+				return None
+
+			PropertyManager.getInstance().setValues(properties)
+			if voikko.spell(word):
+				PropertyManager.getInstance().resetValues(properties)
+				return None
+			suggestions = voikko.suggest(word)
 			PropertyManager.getInstance().resetValues(properties)
-			return None
-		suggestions = voikko.suggest(word)
-		PropertyManager.getInstance().resetValues(properties)
-		return SpellAlternatives(word, suggestions, locale)
+			return SpellAlternatives(word, suggestions, locale)
+		finally:
+			VoikkoHandlePool.mutex.release()
 
 	# From XLinguServiceEventBroadcaster
 	def addLinguServiceEventListener(self, xLstnr):
-		# TODO mutex
 		logging.debug("SpellChecker.addLinguServiceEventListener")
-		return PropertyManager.getInstance().addLinguServiceEventListener(xLstnr)
+		VoikkoHandlePool.mutex.acquire()
+		try:
+			return PropertyManager.getInstance().addLinguServiceEventListener(xLstnr)
+		finally:
+			VoikkoHandlePool.mutex.release()
+
 
 	def removeLinguServiceEventListener(self, xLstnr):
-		# TODO mutex
 		logging.debug("SpellChecker.removeLinguServiceEventListener")
-		return PropertyManager.getInstance().removeLinguServiceEventListener(xLstnr)
+		VoikkoHandlePool.mutex.acquire()
+		try:
+			return PropertyManager.getInstance().removeLinguServiceEventListener(xLstnr)
+		finally:
+			VoikkoHandlePool.mutex.release()
 
 	# From XInitialization
 	def initialize(self, seq):

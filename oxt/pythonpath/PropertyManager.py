@@ -23,7 +23,6 @@ from com.sun.star.linguistic2.LinguServiceEventFlags import SPELL_CORRECT_WORDS_
 class PropertyManager(unohelper.Base, XPropertyChangeListener):
 
 	def __init__(self):
-		# TODO linguEventListeners(getVoikkoMutex()),
 		self.__messageLanguage = "en_US"
 		VoikkoHandlePool.getInstance().setInstallationPath(self.__getInstallationPath())
 		logging.debug("PropertyManager.__init__")
