@@ -92,9 +92,6 @@ class GrammarChecker(unohelper.Base, XServiceInfo, XProofreader, XInitialization
 				gcError.nErrorLength = errorLength
 				gcError.nErrorType = PROOFREADING
 				comment = vError.shortDescription
-				# TODO ifdef TEKSTINTUHO
-				# TODO comment = comment + " TEKSTINTUHO KÄYTÖSSÄ!"
-				# TODO endif
 				gcError.aShortComment = comment
 				gcError.aFullComment = comment
 				gcError.aRuleIdentifier = ruleIdentifier
