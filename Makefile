@@ -13,7 +13,7 @@
 # ===== Build settings =====
 
 # Version number of the libreoffice-voikko extension
-VOIKKO_VERSION=4.1
+VOIKKO_VERSION=5
 
 # If you want to have a license text to be displayed upon the installation
 # of this extension, uncomment the following.
@@ -27,6 +27,11 @@ VOIKKO_VERSION=4.1
 # Destination directory when installing unpacked extension with
 # make install-unpacked
 DESTDIR=/usr/lib/libreoffice-voikko
+
+# Uncomment the following if you want to build a standalone extension.
+# Files to be delivered with the extension must be placed under directory voikko/
+# and libvoikko.py under oxt/pythonpath/
+# STANDALONE_EXTENSION=1
 
 # === End build settings ===
 
@@ -44,22 +49,7 @@ else
 endif
 ZIP=zip
 SED=sed
-
-# STANDALONE_EXTENSION_FILES must contain the libvoikko library (unless it will be
-# linked statically) and versioned directories for dictionary data to be embedded.
-ifdef STANDALONE_EXTENSION_PATH
-	ifeq "$(PLATFORM)" "windows"
-		STANDALONE_EXTENSION_FILES=libvoikko-1.dll 2 3
-	else
-		ifeq "$(PLATFORM)" "macosx"
-			STANDALONE_EXTENSION_FILES=2 3
-		else
-			STANDALONE_EXTENSION_FILES=libvoikko.so.1 2 3
-		endif
-	endif
-else
-	STANDALONE_EXTENSION_FILES=
-endif
+FIND=find
 
 # Build extension package name
 ifdef SHOW_UGLY_WARNINGS
@@ -68,18 +58,28 @@ else
         VOIKKO_PACKAGENAME:=voikko
 endif
 
-COPY_TEMPLATES=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
-               SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu \
-               voikko.components META-INF/manifest.xml lovoikko.py \
-               pythonpath/SettingsEventHandler.py pythonpath/SpellChecker.py pythonpath/VoikkoHandlePool.py \
-               pythonpath/SpellAlternatives.py pythonpath/PropertyManager.py pythonpath/Hyphenator.py \
-               pythonpath/HyphenatedWord.py pythonpath/PossibleHyphens.py pythonpath/GrammarChecker.py
+SRC_AND_DIST=config.xcu config.xcs icon.png SettingsDialog.xdl SettingsDialog_en_US.properties \
+             SettingsDialog_fi_FI.properties SettingsDialog_en_US.default SettingsDialog.xcu Linguistic.xcu \
+             voikko.components META-INF/manifest.xml lovoikko.py \
+             pythonpath/SettingsEventHandler.py pythonpath/SpellChecker.py pythonpath/VoikkoHandlePool.py \
+             pythonpath/SpellAlternatives.py pythonpath/PropertyManager.py pythonpath/Hyphenator.py \
+             pythonpath/HyphenatedWord.py pythonpath/PossibleHyphens.py pythonpath/GrammarChecker.py
+SRCDIST=COPYING Makefile README ChangeLog oxt/description.xml.template \
+        $(patsubst %,oxt/%,$(SRC_AND_DIST)) \
+        oxt/icon.svg oxt/license_fi.txt oxt/license_en-US.txt
+
+COPY_TEMPLATES=$(SRC_AND_DIST)
+
 ifdef SHOW_LICENSE
 	COPY_TEMPLATES+=license_fi.txt license_en-US.txt
 endif
-SRCDIST=COPYING Makefile README ChangeLog oxt/description.xml.template \
-        $(patsubst %,oxt/%,$(COPY_TEMPLATES)) \
-        oxt/icon.svg
+
+ifdef STANDALONE_EXTENSION
+	STANDALONE_EXTENSION_FILES=$(shell find voikko -type f '!' -name '.*' '!' -path 'voikko*/.*')
+	COPY_TEMPLATES+=pythonpath/libvoikko.py
+else
+	STANDALONE_EXTENSION_FILES=
+endif
 
 EXTENSION_FILES=build/oxt/description.xml \
 	      $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
@@ -122,7 +122,7 @@ $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)): build/oxt/%: oxt/%
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(COPY) "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
 
-$(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)): build/oxt/%: $(STANDALONE_EXTENSION_PATH)/%
+$(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)): build/oxt/%: %
 	-$(MKDIR) $(subst /,$(PS),$(@D))
 	$(COPYDIR) "$(subst /,$(PS),$^)" "$(subst /,$(PS),$@)"
 

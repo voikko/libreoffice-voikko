@@ -31,7 +31,7 @@ Requirements
 
 - LibreOffice 4.1 or later (must come with Python 3 or later)
 - Libvoikko version 3.8.1 or later.
-- Make, sed and zip for packaging.
+- Make, sed, find and zip for packaging.
 
 Instructions for packaging
 ==========================
