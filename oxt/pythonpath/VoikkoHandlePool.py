@@ -10,6 +10,8 @@
 # case the provisions of the GPL are applicable instead of those above.
 
 import logging
+import os
+import platform
 from libvoikko import Voikko, VoikkoException
 from collections import defaultdict
 from threading import RLock
@@ -397,6 +399,9 @@ class VoikkoHandlePool:
 
 	def setInstallationPath(self, path):
 		self.__installationPath = path
+		searchPath = os.path.join(path, "voikko", platform.system() + "-" + "-".join(platform.architecture()))
+		logging.debug("VoikkoHandlePool.setInstallationPath: library search path is " + searchPath)
+		Voikko.setLibrarySearchPath(searchPath)
 
 	def getPreferredGlobalVariant(self):
 		return self.__preferredGlobalVariant
