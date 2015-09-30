@@ -1,5 +1,5 @@
 # Libreoffice-voikko: Linguistic extension for LibreOffice
-# Copyright (C) 2005 - 2014 Harri Pitkänen <hatapitk@iki.fi>
+# Copyright (C) 2005 - 2015 Harri Pitkänen <hatapitk@iki.fi>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
