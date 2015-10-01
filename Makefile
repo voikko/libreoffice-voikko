@@ -13,7 +13,7 @@
 # ===== Build settings =====
 
 # Version number of the libreoffice-voikko extension
-VOIKKO_VERSION=5
+VOIKKO_VERSION=5.0
 
 # If you want to have a license text to be displayed upon the installation
 # of this extension, uncomment the following.

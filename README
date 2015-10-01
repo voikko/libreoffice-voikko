@@ -25,6 +25,11 @@ Porting status
 - Other platforms: The extension is platform independent Python code and should
   work as long as libvoikko is available for the platform.
 
+Platform identifiers to be used as directory names for native libraries on some of
+the common platforms are:
+
+  Windows (64 bit): Windows-64bit-WindowsPE
+  Windows (32 bit): Windows-32bit-WindowsPE
 
 Requirements
 ============
