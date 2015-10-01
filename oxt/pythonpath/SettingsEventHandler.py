@@ -121,7 +121,7 @@ class SettingsEventHandler(unohelper.Base, XServiceInfo, XContainerWindowEventHa
 		uno.invoke(variantProps, "setPropertyValue", ("SelectedItems", uno.Any("[]short", tuple(selectedValues))))
 
 	def __initAvailableVariants(self):
-		dicts = Voikko.listDicts(VoikkoHandlePool.getInstance().getInstallationPath())
+		dicts = Voikko.listDicts(VoikkoHandlePool.getInstance().getDictionaryPath())
 		self.__dictionaryVariantList = []
 		for vDict in dicts:
 			dictName = vDict.variant + ": " + vDict.description

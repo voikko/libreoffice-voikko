@@ -299,10 +299,13 @@ class VoikkoHandlePool:
 	def getInstallationPath(self):
 		return self.__installationPath
 
+	def getDictionaryPath(self):
+		return os.path.join(self.getInstallationPath(), "voikko")
+
 	def __openHandleWithVariant(self, language, fullVariant):
 		logging.debug("VoikkoHandlePool.__openHandleWithVariant")
 		try:
-			voikkoHandle = Voikko(fullVariant, self.getInstallationPath())
+			voikkoHandle = Voikko(fullVariant, self.getDictionaryPath())
 			self.__handles[language] = voikkoHandle
 			for booleanOpt, booleanValue in self.__globalBooleanOptions.items():
 				voikkoHandle.setBooleanOption(booleanOpt, booleanValue)
@@ -367,7 +370,7 @@ class VoikkoHandlePool:
 	def __getSupportedLocalesForOperation(self, localeList, localeOperation):
 		# optimization: if we already have found some locales, don't search for more
 		if len(localeList) == 0:
-			languages = localeOperation(self.getInstallationPath())
+			languages = localeOperation(self.getDictionaryPath())
 			for lang in languages:
 				self.__addLocale(localeList, lang)
 		return tuple(localeList)
