@@ -171,10 +171,10 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 		self.__sendLinguEvent(event)
 
 	def __setProperties(self, properties):
-		for p in properties.getPropertySetInfo().getProperties():
+		for p in ["IsSpellWithDigits", "IsSpellUpperCase", "HyphMinLeading", "HyphMinTrailing", "HyphMinWordLength"]:
 			pValue = PropertyValue()
-			pValue.Name = p.Name
-			pValue.Value = properties.getPropertyValue(p.Name)
+			pValue.Name = p
+			pValue.Value = properties.getPropertyValue(p)
 			self.setValue(pValue)
 
 	def setValues(self, values):
