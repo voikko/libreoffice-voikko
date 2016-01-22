@@ -1,5 +1,5 @@
                       Libreoffice-voikko
-© 2005 - 2015 Harri Pitkänen (hatapitk@iki.fi)
+© 2005 - 2016 Harri Pitkänen (hatapitk@iki.fi)
 
 Lisäosa oikolukuun, tavutukseen ja kieliopin tarkistukseen LibreOfficelle.
 Tämä lisäosa käyttää libvoikkoa ja Suomi-malagaa, ja nämä komponentit
