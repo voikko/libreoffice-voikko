@@ -423,7 +423,7 @@ class VoikkoHandlePool:
 			tagLen = len(tagToFind)
 			if tagLen > 9 and tagToFind[tagLen - 3] == "-":
 				loc = Locale("qlt", "", tagToFind[0:-3])
-				return __containsLocale(loc, locales)
+				return self.__containsLocale(loc, locales)
 		return False
 
 	def supportsSpellingLocale(self, locale):
