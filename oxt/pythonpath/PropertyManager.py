@@ -239,6 +239,7 @@ class PropertyManager(unohelper.Base, XPropertyChangeListener):
 	getInstance = staticmethod(getInstance)
 
 PropertyManager.instance = None
+PropertyManager.loadingFailed = False
 PropertyManager.VOIKKO_OPT_IGNORE_NUMBERS = 1
 PropertyManager.VOIKKO_OPT_IGNORE_UPPERCASE = 3
 PropertyManager.VOIKKO_MIN_HYPHENATED_WORD_LENGTH = 9
