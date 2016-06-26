@@ -24,6 +24,11 @@ class Bcp47ToLoMapping:
 		self.loLanguage = loLanguage
 		self.loRegion = loRegion
 
+# This list should contain all the languages that either
+# 1) need to be mapped from BCP 47 tag to legacy LibreOffice locale
+# OR
+# 2) where a speller without country code should also be used for
+#    checking text that has language and some specific country specified
 BCP_TO_LO_MAPPING = [
 	Bcp47ToLoMapping("af",	"af",	"NA"), \
 	Bcp47ToLoMapping("af",	"af",	"ZA"), \
@@ -257,7 +262,6 @@ BCP_TO_LO_MAPPING = [
 	Bcp47ToLoMapping("ss",	"ss",	"ZA"), \
 	Bcp47ToLoMapping("st",	"st",	"ZA"), \
 	Bcp47ToLoMapping("sto",	"sto",	"CA"), \
-	Bcp47ToLoMapping("sto",	"sto",	"CA"), \
 	Bcp47ToLoMapping("sv",	"sv",	"FI"), \
 	Bcp47ToLoMapping("sv",	"sv",	"SE"), \
 	Bcp47ToLoMapping("sw",	"sw",	"KE"), \
@@ -294,6 +298,31 @@ BCP_TO_LO_MAPPING = [
 	Bcp47ToLoMapping("zu-SZ",	"zu",	"SZ")
 ]
 
+# This list should contain language codes that should be used for checking
+# text without country code even when the language is listed in BCP_TO_LO_MAPPING
+BCP_ADVERTISE_WITHOUT_COUNTRY = [
+	"alq",
+	"atj",
+	"chr",
+	"crj",
+	"crl",
+	"crm",
+	"csw",
+	"cwd",
+	"hax",
+	"mis",
+	"moe",
+	"nsk",
+	"ojb",
+	"ojc",
+	"ojg",
+	"ojs",
+	"ojw",
+	"srs",
+	"sto",
+	"tau"
+]
+
 class VoikkoHandlePool:
 
 	def __init__(self):
@@ -309,6 +338,7 @@ class VoikkoHandlePool:
 		self.__bcpToOOoMap = defaultdict(list)
 		for m in BCP_TO_LO_MAPPING:
 			self.__bcpToOOoMap[m.bcpTag].append(m)
+		self.__bcpAdvertiseWithoutCountry = set(BCP_ADVERTISE_WITHOUT_COUNTRY)
 
 	def getInstance():
 		if VoikkoHandlePool.instance is None:
@@ -380,6 +410,9 @@ class VoikkoHandlePool:
 		matchingMappings = self.__bcpToOOoMap[language]
 		for bcpMapping in matchingMappings:
 			locales.append(Locale(bcpMapping.loLanguage, bcpMapping.loRegion, ""))
+		if language in self.__bcpAdvertiseWithoutCountry:
+			locales.append(Locale(language, "", ""))
+			return
 		if len(matchingMappings) == 0:
 			if len(language) <= 3:
 				# assume this is ISO 639-1 or ISO 639-3 code
