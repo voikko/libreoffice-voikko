@@ -27,6 +27,7 @@ class Bcp47ToLoMapping:
 BCP_TO_LO_MAPPING = [
 	Bcp47ToLoMapping("af",	"af",	"NA"), \
 	Bcp47ToLoMapping("af",	"af",	"ZA"), \
+	Bcp47ToLoMapping("alq",	"alq",	"CA"), \
 	Bcp47ToLoMapping("am",	"am",	"ET"), \
 	Bcp47ToLoMapping("an",	"an",	"ES"), \
 	Bcp47ToLoMapping("ar",	"ar",	"AE"), \
@@ -57,6 +58,7 @@ BCP_TO_LO_MAPPING = [
 	Bcp47ToLoMapping("as",	"as",	"IN"), \
 	Bcp47ToLoMapping("as-BT",	"as",	"BT"), \
 	Bcp47ToLoMapping("ast",	"ast",	"ES"), \
+	Bcp47ToLoMapping("atj",	"atj",	"CA"), \
 	Bcp47ToLoMapping("av",	"av",	"RU"), \
 	Bcp47ToLoMapping("av-AZ",	"av",	"AZ"), \
 	Bcp47ToLoMapping("av-GE",	"av",	"GE"), \
@@ -78,13 +80,19 @@ BCP_TO_LO_MAPPING = [
 	Bcp47ToLoMapping("ce",	"ce",	"RU"), \
 	Bcp47ToLoMapping("ceb",	"ceb",	"PH"), \
 	Bcp47ToLoMapping("chp",	"chp",	"CA"), \
+	Bcp47ToLoMapping("chr",	"chr",	"US"), \
 	Bcp47ToLoMapping("ciw",	"ciw",	"US"), \
 	Bcp47ToLoMapping("cos",	"cos",	"FR"), \
+	Bcp47ToLoMapping("crj",	"crj",	"CA"), \
 	Bcp47ToLoMapping("crk",	"crk",	"CA"), \
 	Bcp47ToLoMapping("crk-US",	"crk",	"US"), \
+	Bcp47ToLoMapping("crl",	"crl",	"CA"), \
+	Bcp47ToLoMapping("crm",	"crm",	"CA"), \
 	Bcp47ToLoMapping("cs",	"cs",	"CZ"), \
 	Bcp47ToLoMapping("csb",	"csb",	"PL"), \
+	Bcp47ToLoMapping("csw",	"csw",	"CA"), \
 	Bcp47ToLoMapping("cv",	"cv",	"RU"), \
+	Bcp47ToLoMapping("cwd",	"cwd",	"CA"), \
 	Bcp47ToLoMapping("cy",	"cy",	"GB"), \
 	Bcp47ToLoMapping("da",	"da",	"DK"), \
 	Bcp47ToLoMapping("de",	"de",	"DE"), \
@@ -127,6 +135,7 @@ BCP_TO_LO_MAPPING = [
 	Bcp47ToLoMapping("guc",	"guc",	"CO"), \
 	Bcp47ToLoMapping("guc-VE",	"guc",	"VE"), \
 	Bcp47ToLoMapping("gv",	"gv",	"IM"), \
+	Bcp47ToLoMapping("hax",	"hax",	"CA"), \
 	Bcp47ToLoMapping("hdn",	"hdn",	"CA"), \
 	Bcp47ToLoMapping("hdn-US",	"hdn",	"US"), \
 	Bcp47ToLoMapping("he",	"he",	"IL"), \
@@ -170,9 +179,11 @@ BCP_TO_LO_MAPPING = [
 	Bcp47ToLoMapping("lv",	"lv",	"LV"), \
 	Bcp47ToLoMapping("mdf",	"mdf",	"RU"), \
 	Bcp47ToLoMapping("mhr",	"mhr",	"RU"), \
+	Bcp47ToLoMapping("mis",	"mis",	"XX"), \
 	Bcp47ToLoMapping("mk",	"mk",	"MK"), \
 	Bcp47ToLoMapping("ml",	"ml",	"IN"), \
 	Bcp47ToLoMapping("ml",	"ml",	"IN"), \
+	Bcp47ToLoMapping("moe",	"moe",	"CA"), \
 	Bcp47ToLoMapping("mr",	"mr",	"IN"), \
 	Bcp47ToLoMapping("mrj",	"mrj",	"RU"), \
 	Bcp47ToLoMapping("ms",	"ms",	""), \
@@ -190,10 +201,16 @@ BCP_TO_LO_MAPPING = [
 	Bcp47ToLoMapping("nn",	"nn",	"NO"), \
 	Bcp47ToLoMapping("nog",	"nog",	"RU"), \
 	Bcp47ToLoMapping("nr",	"nr",	"ZA"), \
+	Bcp47ToLoMapping("nsk",	"nsk",	"CA"), \
 	Bcp47ToLoMapping("nso",	"ns",	"ZA"), \
 	Bcp47ToLoMapping("nso",	"nso",	"ZA"), \
 	Bcp47ToLoMapping("ny",	"ny",	"MW"), \
 	Bcp47ToLoMapping("oc",	"oc",	"FR"), \
+	Bcp47ToLoMapping("ojb",	"ojb",	"CA"), \
+	Bcp47ToLoMapping("ojc",	"ojc",	"CA"), \
+	Bcp47ToLoMapping("ojg",	"ojg",	"CA"), \
+	Bcp47ToLoMapping("ojs",	"ojs",	"CA"), \
+	Bcp47ToLoMapping("ojw",	"ojw",	"CA"), \
 	Bcp47ToLoMapping("olo",	"olo",	"RU"), \
 	Bcp47ToLoMapping("or",	"or",	"IN"), \
 	Bcp47ToLoMapping("otw",	"otw",	"CA"), \
@@ -236,14 +253,17 @@ BCP_TO_LO_MAPPING = [
 	Bcp47ToLoMapping("sms",	"sms",	"FI"), \
 	Bcp47ToLoMapping("so",	"so",	"SO"), \
 	Bcp47ToLoMapping("sq",	"sq",	"AL"), \
+	Bcp47ToLoMapping("srs",	"srs",	"CA"), \
 	Bcp47ToLoMapping("ss",	"ss",	"ZA"), \
 	Bcp47ToLoMapping("st",	"st",	"ZA"), \
+	Bcp47ToLoMapping("sto",	"sto",	"CA"), \
 	Bcp47ToLoMapping("sto",	"sto",	"CA"), \
 	Bcp47ToLoMapping("sv",	"sv",	"FI"), \
 	Bcp47ToLoMapping("sv",	"sv",	"SE"), \
 	Bcp47ToLoMapping("sw",	"sw",	"KE"), \
 	Bcp47ToLoMapping("sw",	"sw",	"TZ"), \
 	Bcp47ToLoMapping("ta",	"ta",	"IN"), \
+	Bcp47ToLoMapping("tau",	"tau",	"US"), \
 	Bcp47ToLoMapping("te",	"te",	"IN"), \
 	Bcp47ToLoMapping("tet",	"tet",	"ID"), \
 	Bcp47ToLoMapping("tet",	"tet",	"TL"), \
