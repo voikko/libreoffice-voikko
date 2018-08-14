@@ -57,6 +57,9 @@ if not PropertyManager.loadingFailed:
 	except OSError as e:
 		PropertyManager.loadingFailed = True
 		messageBox("OSError: {0}".format(e))
+	except AttributeError as e:
+		PropertyManager.loadingFailed = True
+		messageBox("AttributeError: {0}".format(e))
 	except:
 		PropertyManager.loadingFailed = True
 		messageBox(str(sys.exc_info()[0]))
