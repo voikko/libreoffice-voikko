@@ -21,8 +21,8 @@
   SHOW_LICENSE -->
 
   <publisher>
-    <name xlink:href="http://voikko.puimula.org" lang="fi">Voikon kehittäjäyhteisö</name>
-    <name xlink:href="http://voikko.puimula.org" lang="en">Voikko development community</name>
+    <name xlink:href="https://voikko.puimula.org" lang="fi">Voikon kehittäjäyhteisö</name>
+    <name xlink:href="https://voikko.puimula.org" lang="en">Voikko development community</name>
   </publisher>
 
   <icon>

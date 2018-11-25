@@ -98,7 +98,7 @@ class GrammarChecker(unohelper.Base, XServiceInfo, XProofreader, XInitialization
 
 				detailUrl = PropertyValue()
 				detailUrl.Name = "FullCommentURL"
-				detailUrl.Value = "http://voikko.puimula.org/gchelp/fi/" + ruleIdentifier + ".html"
+				detailUrl.Value = "https://voikko.puimula.org/gchelp/fi/" + ruleIdentifier + ".html"
 				gcError.aProperties = (detailUrl,)
 
 				# add suggestions
