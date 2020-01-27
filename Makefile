@@ -98,10 +98,8 @@ all: oxt
 
 install-unpacked: extension-files
 	install -m 755 -d "$(DESTDIR)" "$(DESTDIR)/META-INF"
-	install -m 644 build/oxt/META-INF/manifest.xml "$(DESTDIR)/META-INF"
-	install -m 644 build/oxt/description.xml \
-	               $(patsubst %,build/oxt/%,$(STANDALONE_EXTENSION_FILES)) \
-	               $(patsubst %,build/oxt/%,$(COPY_TEMPLATES)) $(DESTDIR)
+	install -m 755 -d "$(DESTDIR)" "$(DESTDIR)/pythonpath"
+	cd oxt && find . -type f -exec install -D {} $(DESTDIR)/{} \;
 
 # Sed scripts for modifying templates
 DESCRIPTION_SEDSCRIPT:=s/VOIKKO_VERSION/$(VOIKKO_VERSION)/g
